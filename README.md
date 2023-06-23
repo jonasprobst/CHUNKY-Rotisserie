@@ -36,7 +36,7 @@ The status of the system, Access Point, and motor will be indicated by LEDs.
 6. **System Controller:** Main controller for the system, manages the system LED and oversees the AP button functionality.
 7. **LED Controller:** Controls the LED indicators for system status, AP status, and motor status, based on states received from the System Controller, Web Server, and Motor Controller.
 
-### Additional considerations:
+### Additional considerations
 
 - **Exception and Error Handling:** Implement robust error handling, especially in the Hardware Abstraction Layer (HAL), where we are directly interfacing with hardware.
 - **Unit and Integration Tests:** Write and execute tests for all the major functionalities and classes as we go forward.
