@@ -2,22 +2,23 @@
 
 #pragma once
 #include <Arduino.h>
+#include <AccelStepper.h>
 
 /**
  * @class StepperMotor
- * @brief This class controls a stepper motor connected to an L298N H-bridge module.
+ * @brief This class controls a stepper motor using the AccelStepper library.
+ * The update() function must be called in the main loop to ensure correct functionality.
  */
 class StepperMotor {
 public:
   /**
    * @brief Construct a new Stepper Motor object
    * 
-   * @param speed_pin The pin to output the PWM signal for speed control
    * @param forward_pin The pin to control the forward direction of the motor
    * @param backward_pin The pin to control the backward direction of the motor
    */
-  StepperMotor(int speed_pin, int forward_pin, int backward_pin);
-  
+  StepperMotor(int forward_pin, int backward_pin);
+
   /**
    * @brief Set the target position for the motor to move to
    * 
@@ -57,7 +58,8 @@ public:
   void stop();
 
   /**
-   * @brief Update the motor state and control logic
+   * @brief Update the motor state and control logic. 
+   * This method needs to be called periodically in the main loop.
    */
   void update();
 
@@ -70,23 +72,12 @@ public:
   bool isMoving();
 
 private:
-  int speed_pin_;
   int forward_pin_;
   int backward_pin_;
-
-  long target_position_;
   long current_position_;
-
-  float current_speed_;
+  long target_position_;
   float max_speed_;
   float acceleration_;
-
   bool is_moving_;
-  
-  /**
-   * @brief Set the speed for the motor
-   * 
-   * @param speed The speed
-   */
-  void setSpeed(float speed);
+  AccelStepper stepper_;
 };
