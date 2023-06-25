@@ -3,8 +3,8 @@
 WifiAPConfigServer::WifiAPConfigServer()
 {
     m_ssid = "PhakIu";
-    m_password = "1234";
-    m_apIP = IPAddress(192, 168, 1, 1);
+    m_password = "start1234";
+    m_apIP = IPAddress(192, 168, 4, 1);
     m_dmxRootChannel = 1; // default DMX channel
     m_mode = 1;           // default mode
     m_lastActivityTime = 0;
