@@ -7,72 +7,63 @@
 #include <SPIFFS.h>
 
 /**
- * @brief Class for configuring and managing a WiFi access point with a configuration server.
+ * @brief WiFiAPConfigServer class provides a configurable access point for web-based configuration.
  */
-class WiFiAPConfigServer {
+class WifiAPConfigServer {
 public:
     /**
-     * @brief Constructs a WiFiAPConfigServer object.
-     *
-     * @param ssid The SSID of the access point.
-     * @param password The password of the access point.
-     * @param ip The IP address of the access point (default: 192.168.1.1).
+     * @brief Constructs a WiFiAPConfigServer object with default configuration.
      */
-    WiFiAPConfigServer(const String& ssid, const String& password, const IPAddress& ip = IPAddress(192, 168, 1, 1));
+    WifiAPConfigServer();
 
     /**
-     * @brief Begins the WiFi access point and starts the configuration server.
+     * @brief Initializes the WiFiAPConfigServer and starts the access point.
      */
     void begin();
 
     /**
-     * @brief Stops the configuration server and disconnects the WiFi access point.
+     * @brief Stops the WiFiAPConfigServer and disconnects the access point.
      */
     void stop();
 
     /**
-     * @brief Gets the root DMX channel.
-     *
-     * @return The root DMX channel.
+     * @brief Gets the configured DMX root channel.
+     * @return The DMX root channel.
      */
     int getDmxRootChannel() const;
 
     /**
-     * @brief Gets the current mode.
-     *
-     * @return The current mode.
+     * @brief Gets the configured mode.
+     * @return The mode.
      */
     int getMode() const;
 
     /**
      * @brief Gets the idle time since the last activity.
-     *
      * @return The idle time in milliseconds.
      */
     unsigned long getIdleTime() const;
 
 private:
-    AsyncWebServer m_server{80}; /**< The configuration server. */
-    String m_ssid; /**< The SSID of the access point. */
-    String m_password; /**< The password of the access point. */
-    IPAddress m_apIP; /**< The IP address of the access point. */
-    int m_dmxRootChannel; /**< The root DMX channel. */
-    int m_mode; /**< The current mode. */
-    unsigned long m_lastActivityTime; /**< The timestamp of the last activity. */
+    AsyncWebServer m_server{80};
+    String m_ssid;
+    String m_password;
+    IPAddress m_apIP;
+    int m_dmxRootChannel;
+    int m_mode;
+    unsigned long m_lastActivityTime;
 
     /**
-     * @brief Handles the root request.
-     *
-     * @param request The AsyncWebServerRequest object.
+     * @brief Handles the root request and serves the configuration HTML page.
+     * @param request Pointer to the incoming request.
      */
-    void handleRoot(AsyncWebServerRequest* request);
+    void handleRoot(AsyncWebServerRequest *request);
 
     /**
      * @brief Handles the configuration update request.
-     *
-     * @param request The AsyncWebServerRequest object.
+     * @param request Pointer to the incoming request.
      */
-    void handleConfigUpdate(AsyncWebServerRequest* request);
+    void handleConfigUpdate(AsyncWebServerRequest *request);
 };
 
-#endif // WIFIAPCONFIGSERVER_H
+#endif  // WIFIAPCONFIGSERVER_H
