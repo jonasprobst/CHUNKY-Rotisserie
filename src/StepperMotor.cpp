@@ -1,3 +1,4 @@
+/**
 #include "StepperMotor.h"
 
 StepperMotor::StepperMotor(int enable_pin, int forward_pin, int backward_pin)
@@ -99,3 +100,4 @@ void StepperMotor::update()
     int duty_cycle = map(speed_, 0, max_speed_, 0, 255);
     analogWrite(enable_pin_, duty_cycle);
 }
+*/

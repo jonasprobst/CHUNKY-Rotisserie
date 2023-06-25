@@ -1,15 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ESP32 Web Server</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Configuration</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>ESP32 Web Server</h1>
-  <p>GPIO state: <strong> %STATE%</strong></p>
-  <p><a href="/on"><button class="button">ON</button></a></p>
-  <p><a href="/off"><button class="button button2">OFF</button></a></p>
+  <div class="container">
+    <h1>Configuration</h1>
+    <form action="/post-config" method="post">
+      <div class="form-group">
+        <label for="dmxRootChannel">DMX Root Channel:</label>
+        <input type="number" id="dmxRootChannel" name="dmxRootChannel" value="{dmxRootChannel}" min="1" max="512">
+      </div>
+      
+      <div class="form-group">
+        <label for="mode">Mode:</label>
+        <select id="mode" name="mode" class="form-control">
+          <option value="1" {selected1}>Mode 1</option>
+          <option value="2" {selected2}>Mode 2</option>
+          <option value="3" {selected3}>Mode 3</option>
+          <option value="4" {selected4}>Mode 4</option>
+          <option value="5" {selected5}>Mode 5</option>
+        </select>
+      </div>
+      
+      <input type="submit" value="Submit" class="btn btn-primary">
+    </form>
+    
+    <div class="message-box">
+      <div class="message alert {messageClass}">
+        <p>{message}</p>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
