@@ -1,14 +1,10 @@
 #include "WifiAPConfigServer.h"
+#include "NVSSettings.h"
 
-WifiAPConfigServer::WifiAPConfigServer()
-{
-    m_ssid = "PhakIu";
-    m_password = "start1234";
-    m_apIP = IPAddress(192, 168, 4, 1);
-    m_dmxRootChannel = 1; // default DMX channel
-    m_mode = 1;           // default mode
-    m_lastActivityTime = 0;
-}
+#define SSID "phak_iu"
+#define PASSWORD "phak1uT00"
+
+WifiAPConfigServer::WifiAPConfigServer(NVSSettings& settings) : dmxSettings(settings){}
 
 void WifiAPConfigServer::begin()
 {
@@ -20,56 +16,56 @@ void WifiAPConfigServer::begin()
     }
 
     // Set up access point
-    WiFi.softAPConfig(m_apIP, m_apIP, IPAddress(255, 255, 255, 0));
-    WiFi.softAP(m_ssid.c_str(), m_password.c_str());
+    WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
+    WiFi.softAP(SSID, PASSWORD);
 
     // Serve preloaded HTML page stored in SPIFFS
-    m_server.on("/", HTTP_GET, [this](AsyncWebServerRequest *request)
+    server.on("/", HTTP_GET, [this](AsyncWebServerRequest *request)
                 { handleRoot(request); });
 
-    m_server.on("/post-config", HTTP_POST, [this](AsyncWebServerRequest *request)
+    server.on("/post-config", HTTP_POST, [this](AsyncWebServerRequest *request)
                 { handleConfigUpdate(request); });
 
-    m_server.begin();
+    server.begin();
 }
 
 void WifiAPConfigServer::stop()
 {
-    m_server.end();
+    server.end();
     WiFi.softAPdisconnect(true);
 }
 
 int WifiAPConfigServer::getDmxRootChannel() const
 {
-    return m_dmxRootChannel;
+    return dmxRootChannel;
 }
 
 int WifiAPConfigServer::getMode() const
 {
-    return m_mode;
+    return mode;
 }
 
 unsigned long WifiAPConfigServer::getIdleTime() const
 {
-    return millis() - m_lastActivityTime;
+    return millis() - lastActivityTime;
 }
 
 void WifiAPConfigServer::handleRoot(AsyncWebServerRequest *request)
 {
-    m_lastActivityTime = millis(); // update the last activity time
+    lastActivityTime = millis(); // update the last activity time
     String html = SPIFFS.open("/config.html", "r").readString();
-    html.replace("{dmxRootChannel}", String(m_dmxRootChannel));
+    html.replace("{dmxRootChannel}", String(dmxRootChannel));
 
     // Replace the "selectedX" placeholder according to the current mode
     for (int i = 1; i <= 5; i++)
     {
-        html.replace("{selected" + String(i) + "}", (i == m_mode) ? "selected" : "");
+        html.replace("{selected" + String(i) + "}", (i == mode) ? "selected" : "");
     }
 
     // Replace the "{message}" placeholder according to the query parameter
-    if (request->hasParam("saveStatus"))
+    if (request->hasParam("save"))
     {
-        String saveStatus = request->getParam("saveStatus")->value();
+        String saveStatus = request->getParam("save")->value();
         html.replace("{message}", (saveStatus == "success") ? "Values saved successfully!" : "Error saving values. Please try again.");
     }
     else
@@ -82,16 +78,17 @@ void WifiAPConfigServer::handleRoot(AsyncWebServerRequest *request)
 
 void WifiAPConfigServer::handleConfigUpdate(AsyncWebServerRequest *request)
 {
-    m_lastActivityTime = millis(); // update the last activity time
+    lastActivityTime = millis(); // update the last activity time
 
     if (request->hasParam("dmxRootChannel", true) && request->hasParam("mode", true))
     {
-        m_dmxRootChannel = request->getParam("dmxRootChannel", true)->value().toInt();
-        m_mode = request->getParam("mode", true)->value().toInt();
-        request->redirect("/?saveStatus=success");
+        this->dmxRootChannel = request->getParam("dmxRootChannel", true)->value().toInt();
+        this->mode = request->getParam("mode", true)->value().toInt();
+        dmxSettings.save(dmxRootChannel, mode);
+        request->redirect("/?save=success");
     }
     else
     {
-        request->redirect("/?saveStatus=failure");
+        request->redirect("/?save=failure");
     }
 }

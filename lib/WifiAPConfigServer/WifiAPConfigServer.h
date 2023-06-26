@@ -5,6 +5,7 @@
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
+#include <NVSSettings.h>
 
 /**
  * @brief WiFiAPConfigServer class provides a configurable access point for web-based configuration.
@@ -14,7 +15,7 @@ public:
     /**
      * @brief Constructs a WiFiAPConfigServer object with default configuration.
      */
-    WifiAPConfigServer();
+    WifiAPConfigServer(NVSSettings& settings);
 
     /**
      * @brief Initializes the WiFiAPConfigServer and starts the access point.
@@ -45,13 +46,12 @@ public:
     unsigned long getIdleTime() const;
 
 private:
-    AsyncWebServer m_server{80};
-    String m_ssid;
-    String m_password;
-    IPAddress m_apIP;
-    int m_dmxRootChannel;
-    int m_mode;
-    unsigned long m_lastActivityTime;
+    AsyncWebServer server{80};
+    IPAddress apIP = IPAddress(192,168,4,1);
+    unsigned int dmxRootChannel = 0;
+    unsigned int mode = 0;
+    unsigned long lastActivityTime = 0;
+    NVSSettings& dmxSettings;
 
     /**
      * @brief Handles the root request and serves the configuration HTML page.

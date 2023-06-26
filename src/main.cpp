@@ -1,9 +1,14 @@
 #include "WifiAPConfigServer.h"
+#include "NVSSettings.h"
 
-WifiAPConfigServer configServer;
+
+// If we've stored settings before, load and hand them to our Server.
+NVSSettings dmxSettings; 
+WifiAPConfigServer configServer(dmxSettings); 
 
 void setup()
 {
+    
     configServer.begin();
 
     // Rest of your setup code
