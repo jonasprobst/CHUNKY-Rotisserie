@@ -1,6 +1,7 @@
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef NVSSETTINGS_H
+#define NVSSETTINGS_H
 
+#include <Arduino.h>
 #include <Preferences.h>
 
 /**
@@ -25,34 +26,32 @@ class NVSSettings {
     /**
      * @brief Get the stored root channel value.
      * 
-     * @return unsigned int The stored root channel value.
+     * @return uint16_t The stored root channel value.
      */
-    unsigned int getRootChannel() const;
+   uint16_t getBaseChannel() const;
 
     /**
      * @brief Get the stored mode value.
      * 
-     * @return unsigned int The stored mode value.
+     * @return uint16_t The stored mode value.
      */
-    unsigned int getMode() const;
+   uint16_t getMode() const;
 
     /**
-     * @brief Save root channel and mode settings.
+     * @brief Save base channel and mode settings.
      * 
      * This method saves the given values both in memory and in NVS for persistent storage.
      * 
-     * @param rootChannel The root channel value to save.
+     * @param baseChannel The base channel value to save.
      * @param mode The mode value to save.
      */
-    void save(unsigned int rootChannel, unsigned int mode);
+    void save( uint16_t baseChannel, uint16_t mode);
 
   private:
-    Preferences preferences;
-    const uint32_t validKeyValue = 123456789; // A value to check for valid settings in EEPROM
-    static const unsigned int DEFAULT_ROOT_CHANNEL = 1;
-    static const unsigned int DEFAULT_MODE = 0;
-    unsigned int rootChannel = DEFAULT_ROOT_CHANNEL;
-    unsigned int mode = DEFAULT_MODE;
+    Preferences _preferences;
+    const uint32_t _validKeyValue = 123456789; // A value to check for valid settings in EEPROM
+    uint16_t _baseChannel = 1;
+    uint16_t _mode = 1;
 };
 
-#endif  // SETTINGS_H
+#endif  // NVSSETTINGS_H

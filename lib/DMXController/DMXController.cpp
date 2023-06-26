@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "DMXController.h"
 
 #define NUM_CHANNELS 4 //Number of Channels used 

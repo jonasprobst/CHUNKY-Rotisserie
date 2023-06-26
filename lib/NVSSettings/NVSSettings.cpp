@@ -1,31 +1,39 @@
 #include "NVSSettings.h"
 
+#define DEFAULT_BASE_CHANNEL 1
+#define DEFAULT_MODE 1
 
-NVSSettings::NVSSettings() {
-  preferences.begin("my-app", false);
+NVSSettings::NVSSettings()
+{
+  _preferences.begin("my-app", false);
   // If we've stored settings before, load them.
-  if (preferences.getUInt("validKey", 0) == validKeyValue) {
-      rootChannel = preferences.getUInt("rootChannel", DEFAULT_ROOT_CHANNEL);
-      mode = preferences.getUInt("mode", DEFAULT_MODE);
+  if (_preferences.getUInt("validKey", 0) == _validKeyValue)
+  {
+    _baseChannel = _preferences.getUInt("baseChannel", DEFAULT_BASE_CHANNEL);
+    _mode = _preferences.getUInt("mode", DEFAULT_MODE);
   }
 }
 
-NVSSettings::~NVSSettings() {
-  preferences.end();
+NVSSettings::~NVSSettings()
+{
+  _preferences.end();
 }
 
-unsigned int NVSSettings::getRootChannel() const {
-  return rootChannel;
+uint16_t NVSSettings::getBaseChannel() const
+{
+  return _baseChannel;
 }
 
-unsigned int NVSSettings::getMode() const {
-  return mode;
+uint16_t NVSSettings::getMode() const
+{
+  return _mode;
 }
 
-void NVSSettings::save(unsigned int rootChannel, unsigned int mode) {
-  this->rootChannel = rootChannel;
-  this->mode = mode;
-  preferences.putUInt("rootChannel", rootChannel);
-  preferences.putUInt("mode", mode);
-  preferences.putUInt("validKey", validKeyValue);
+void NVSSettings::save( uint16_t baseChannel, uint16_t mode)
+{
+  _baseChannel = baseChannel;
+  _mode = mode;
+  _preferences.putUInt("baseChannelIndex", baseChannel);
+  _preferences.putUInt("mode", mode);
+  _preferences.putUInt("validKey", _validKeyValue);
 }

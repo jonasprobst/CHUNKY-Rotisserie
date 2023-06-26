@@ -31,7 +31,7 @@ public:
      * @brief Gets the configured DMX root channel.
      * @return The DMX root channel.
      */
-    int getDmxRootChannel() const;
+    int getDmxBaseChannel() const;
 
     /**
      * @brief Gets the configured mode.
@@ -43,15 +43,15 @@ public:
      * @brief Gets the idle time since the last activity.
      * @return The idle time in milliseconds.
      */
-    unsigned long getIdleTime() const;
+    uint32_t getIdleTime() const;
 
 private:
-    AsyncWebServer server{80};
-    IPAddress apIP = IPAddress(192,168,4,1);
-    unsigned int dmxRootChannel = 0;
-    unsigned int mode = 0;
-    unsigned long lastActivityTime = 0;
-    NVSSettings& dmxSettings;
+    AsyncWebServer _server{80};
+    IPAddress _apIP = IPAddress(192,168,4,1);
+    uint16_t _dmxBaseChannel = 0;
+    uint16_t _mode = 0;
+    uint32_t _lastActivityTime = 0;
+    NVSSettings& _dmxSettings;
 
     /**
      * @brief Handles the root request and serves the configuration HTML page.
