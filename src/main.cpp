@@ -1,9 +1,11 @@
 #include "WifiAPConfigServer.h"
 #include "NVSSettings.h"
+#include "DMXController.h"
 
 
-// If we've stored settings before, load and hand them to our Server.
-NVSSettings dmxSettings; 
+// Load stored dmxSettings and populate our Server
+NVSSettings dmxSettings;
+DMXController dmxController(dmxSettings.getBaseChannel());
 WifiAPConfigServer configServer(dmxSettings); 
 
 void setup()
@@ -16,5 +18,11 @@ void setup()
 
 void loop()
 {
-    // Your main loop code
+    If(dmxController.isConnected()){
+        uint16_t position = dmxController.getPosition();
+        int direction = dmxController.getDirection();
+        int speed = dmxController.getSpeed();
+    } else {
+        // Emergency Stop!!
+    }
 }
