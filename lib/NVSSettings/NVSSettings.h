@@ -2,6 +2,7 @@
 #define NVSSETTINGS_H
 
 #include "NVSSettingsInterface.h"
+#include <Arduino.h>
 #include <Preferences.h>
 
 /**

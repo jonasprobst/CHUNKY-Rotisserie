@@ -1,5 +1,5 @@
 #include "WifiAPConfigServer.h"
-#include "NVSSettings.h"
+#include "MockSettings.h"
 #include "DMXController.h"
 #include "UIController.h"
 
@@ -8,7 +8,7 @@
 
 
 // Load stored dmxSettings and pass them to DMXController and Webserver
-NVSSettings dmxSettings;
+MockSettings dmxSettings; //TODO change back to NVSSettings!
 DMXController dmxController(dmxSettings.getBaseChannel());
 WifiAPConfigServer configServer(dmxSettings);
 
