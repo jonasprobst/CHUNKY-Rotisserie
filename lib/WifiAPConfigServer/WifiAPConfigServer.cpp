@@ -1,10 +1,15 @@
 #include "WifiAPConfigServer.h"
-#include "NVSSettings.h"
+#include <Arduino.h>
 
-#define SSID "phak_iu"
-#define PASSWORD "phak1uT00"
+//INFO: See this library for more advance wifi management and captive portal: https://github.com/tzapu/WiFiManager
 
-WifiAPConfigServer::WifiAPConfigServer(NVSSettings& settings) : _dmxSettings(settings){}
+
+//Default SSID and Password for AP
+#define AP_SSID "phak_iu"
+#define AP_PASSWORD "phak1uT00"
+
+
+WifiAPConfigServer::WifiAPConfigServer(NVSSettingsInterface& settings) : _dmxSettings(settings){}
 
 void WifiAPConfigServer::begin()
 {
@@ -17,7 +22,7 @@ void WifiAPConfigServer::begin()
 
     // Set up access point
     WiFi.softAPConfig(_apIP, _apIP, IPAddress(255, 255, 255, 0));
-    WiFi.softAP(SSID, PASSWORD);
+    WiFi.softAP(AP_SSID, AP_PASSWORD);
 
     // Serve preloaded HTML page stored in SPIFFS
     _server.on("/", HTTP_GET, [this](AsyncWebServerRequest *request)
@@ -35,7 +40,7 @@ void WifiAPConfigServer::stop()
     WiFi.softAPdisconnect(true);
 }
 
-int WifiAPConfigServer::getDmxBaseChannel() const
+int WifiAPConfigServer::getBaseChannel() const
 {
     return _dmxBaseChannel;
 }
@@ -43,6 +48,23 @@ int WifiAPConfigServer::getDmxBaseChannel() const
 int WifiAPConfigServer::getMode() const
 {
     return _mode;
+}
+
+
+bool WifiAPConfigServer::isAPRunning() const
+{
+    // Returns true if AP is running
+    return (WiFi.getMode() == WIFI_MODE_AP);
+}
+
+String WifiAPConfigServer::getSSID() const
+{
+    return String(AP_SSID);
+}
+
+String WifiAPConfigServer::getIPAsString() const
+{
+    return _apIP.toString();
 }
 
 uint32_t WifiAPConfigServer::getIdleTime() const

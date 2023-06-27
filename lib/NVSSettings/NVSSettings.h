@@ -1,15 +1,16 @@
 #ifndef NVSSETTINGS_H
 #define NVSSETTINGS_H
 
-#include <Arduino.h>
+#include "NVSSettingsInterface.h"
 #include <Preferences.h>
 
 /**
- * @class Settings
+ * @class NVSSettings
  *
  * @brief Manages application settings, providing persistent storage in the ESP32's NVS.
+ * Implements NCVSSettingsInterface.
  */
-class NVSSettings {
+class NVSSettings : public NVSSettingsInterface {
   public:
     /**
      * @brief Construct a new Settings object.
@@ -28,14 +29,14 @@ class NVSSettings {
      * 
      * @return uint16_t The stored root channel value.
      */
-   uint16_t getBaseChannel() const;
+   uint16_t getBaseChannel() const override;
 
     /**
      * @brief Get the stored mode value.
      * 
      * @return uint16_t The stored mode value.
      */
-   uint16_t getMode() const;
+   uint16_t getMode() const override;
 
     /**
      * @brief Save base channel and mode settings.
@@ -45,7 +46,7 @@ class NVSSettings {
      * @param baseChannel The base channel value to save.
      * @param mode The mode value to save.
      */
-    void save( uint16_t baseChannel, uint16_t mode);
+    void save( uint16_t baseChannel, uint16_t mode) override;
 
   private:
     Preferences _preferences;

@@ -5,17 +5,18 @@
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
-#include <NVSSettings.h>
+#include "NVSSettingsInterface.h"
 
 /**
  * @brief WiFiAPConfigServer class provides a configurable access point for web-based configuration.
+ * Implements the NVSSettingsInterface
  */
 class WifiAPConfigServer {
 public:
     /**
      * @brief Constructs a WiFiAPConfigServer object with default configuration.
      */
-    WifiAPConfigServer(NVSSettings& settings);
+    WifiAPConfigServer(NVSSettingsInterface& settings);
 
     /**
      * @brief Initializes the WiFiAPConfigServer and starts the access point.
@@ -31,13 +32,22 @@ public:
      * @brief Gets the configured DMX root channel.
      * @return The DMX root channel.
      */
-    int getDmxBaseChannel() const;
+    int getBaseChannel() const;
 
     /**
      * @brief Gets the configured mode.
      * @return The mode.
      */
     int getMode() const;
+
+
+    //TODO implement and document methods
+    bool isAPRunning() const;
+
+    String getSSID() const;
+
+    String getIPAsString() const;
+
 
     /**
      * @brief Gets the idle time since the last activity.
@@ -51,7 +61,7 @@ private:
     uint16_t _dmxBaseChannel = 0;
     uint16_t _mode = 0;
     uint32_t _lastActivityTime = 0;
-    NVSSettings& _dmxSettings;
+    NVSSettingsInterface& _dmxSettings;
 
     /**
      * @brief Handles the root request and serves the configuration HTML page.
