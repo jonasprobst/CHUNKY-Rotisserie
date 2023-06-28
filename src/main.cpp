@@ -4,7 +4,7 @@
 #include "UIController.h"
 
 // gpio config
-#define BTN_AP 2
+#define BTN_AP 5
 
 
 // Load stored dmxSettings and pass them to DMXController and Webserver
