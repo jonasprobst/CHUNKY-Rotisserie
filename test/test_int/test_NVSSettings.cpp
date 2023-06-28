@@ -16,13 +16,13 @@ void test_load_values() {
     Preferences preferences;
     preferences.begin("my-app", false);
     preferences.putUInt("validKey", 123456789);
-    preferences.putUInt("rootChannel", 123);
+    preferences.putUInt("baseChannel", 123);
     preferences.putUInt("mode", 456);
     preferences.end();
 
     // Check that the settings class loads these values correctly
     NVSSettings settings;
-    TEST_ASSERT_EQUAL_INT(123, settings.getRootChannel());
+    TEST_ASSERT_EQUAL_INT(123, settings.getBaseChannel());
     TEST_ASSERT_EQUAL_INT(456, settings.getMode());
 }
 
@@ -33,11 +33,11 @@ void test_save_values() {
     // Check that the values were saved correctly to preferences
     Preferences preferences;
     preferences.begin("my-app", false);
-    unsigned int rootChannel = preferences.getUInt("rootChannel", 0);
+    unsigned int baseChannel = preferences.getUInt("baseChannel", 0);
     unsigned int mode = preferences.getUInt("mode", 0);
     preferences.end();
 
-    TEST_ASSERT_EQUAL_INT(123, rootChannel);
+    TEST_ASSERT_EQUAL_INT(123, baseChannel);
     TEST_ASSERT_EQUAL_INT(456, mode);
 }
 
