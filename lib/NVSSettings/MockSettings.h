@@ -8,6 +8,8 @@ private:
     uint16_t _mode = 1;
 
 public:
+    void initialize() override {}
+
     uint16_t getBaseChannel() const override {
         return _baseChannel;
     }

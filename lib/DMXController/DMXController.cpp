@@ -6,37 +6,37 @@
 
 #define NUM_CHANNELS 4 //Number of Channels used 
 
-DMXController::DMXController(uint16_t baseChannel)
-  : _baseChannel(baseChannel), 
-    _lastPacketReceivedTimestamp(millis()) 
+void DMXController::setBaseChannel(uint16_t base_channel)
 {
-  _dmxInterface.initRead(NUM_CHANNELS);  
+  dmx_interface_.initRead(NUM_CHANNELS);
+  base_channel_ = base_channel;
+  last_packet_recieved_timestamp_ = millis();
 }
 
 uint16_t DMXController::getPosition() {
-  byte lowerByte = _dmxInterface.read(_baseChannel + 1);
-  byte upperByte = _dmxInterface.read(_baseChannel + 2);
+  byte lowerByte = dmx_interface_.read(base_channel_ + 1);
+  byte upperByte = dmx_interface_.read(base_channel_ + 2);
   uint16_t position = ((upperByte << 8) | lowerByte);
   return position;
 }
 
 int DMXController::getDirection() {
-  return _dmxInterface.read(_baseChannel + 3);
+  return dmx_interface_.read(base_channel_ + 3);
 }
 
 int DMXController::getSpeed() {
-  return _dmxInterface.read(_baseChannel + 4);
+  return dmx_interface_.read(base_channel_ + 4);
 }
 
 bool DMXController::isConnected() {
   uint32_t currentTimestamp = millis();
   //FIXME: this won't work as SparFunkDMX return the stored values and is not interrupt triggered!
-  if(_dmxInterface.read(NUM_CHANNELS) > 0){
-      _lastPacketReceivedTimestamp = currentTimestamp;
+  if(dmx_interface_.read(NUM_CHANNELS) > 0){
+      last_packet_recieved_timestamp_ = currentTimestamp;
   }
-  return (currentTimestamp - _lastPacketReceivedTimestamp) <= 1000;
+  return (currentTimestamp - last_packet_recieved_timestamp_) <= 1000;
 }
 
 void DMXController::refreshDMXData() {
-  _dmxInterface.update();
+  dmx_interface_.update();
 }

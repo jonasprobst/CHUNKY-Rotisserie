@@ -19,7 +19,7 @@ public:
    *
    * @param baseChannel The base DMX channel (1-512).
    */
-  DMXController(uint16_t baseChannel);
+  void setBaseChannel(uint16_t baseChannel);
 
   /**
    * @brief Retrieve the position value from the DMX data.
@@ -55,9 +55,9 @@ public:
   void refreshDMXData();
 
 private:
-  SparkFunDMX _dmxInterface; 
-  uint16_t _baseChannel; 
-  uint32_t _lastPacketReceivedTimestamp; 
+  SparkFunDMX dmx_interface_; 
+  uint16_t base_channel_ = 0; 
+  uint32_t last_packet_recieved_timestamp_; 
 };
 
 #endif

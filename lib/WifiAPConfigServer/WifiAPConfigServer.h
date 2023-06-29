@@ -11,20 +11,22 @@
  * @brief WiFiAPConfigServer class provides a configurable access point for web-based configuration.
  * Implements the NVSSettingsInterface
  */
-class WifiAPConfigServer {
+class WifiAPConfigServer
+{
 public:
     /**
-     * @brief Constructs a WiFiAPConfigServer object with default configuration.
+     * @brief Constructor of WiFiAPConfigServer
+     * @param settings Reference to the settings object
      */
     WifiAPConfigServer(NVSSettingsInterface& settings);
 
     /**
-     * @brief Initializes the WiFiAPConfigServer and starts the access point.
+     * @brief Starts the WiFiAPConfigServer, acess point and webserver
      */
-    void begin();
+    void start();
 
     /**
-     * @brief Stops the WiFiAPConfigServer and disconnects the access point.
+     * @brief Stops the WiFiAPConfigServer, acces point and webserver
      */
     void stop();
 
@@ -40,14 +42,12 @@ public:
      */
     int getMode() const;
 
-
-    //TODO implement and document methods
+    // TODO implement and document methods
     bool isAPRunning() const;
 
     String getSSID() const;
 
     String getIPAsString() const;
-
 
     /**
      * @brief Gets the idle time since the last activity.
@@ -57,11 +57,11 @@ public:
 
 private:
     AsyncWebServer server_{80};
-    IPAddress apIP_ = IPAddress(192,168,4,1);
+    IPAddress apIP_ = IPAddress(192, 168, 4, 1);
     uint16_t base_channel_ = 0;
     uint16_t mode_ = 0;
     uint32_t last_activity_ = 0;
-    NVSSettingsInterface& dmx_settings_;
+    NVSSettingsInterface &dmx_settings_;
 
     /**
      * @brief Handles the root request and serves the configuration HTML page.
@@ -76,4 +76,4 @@ private:
     void handleConfigUpdate(AsyncWebServerRequest *request);
 };
 
-#endif  // WIFIAPCONFIGSERVER_H
+#endif // WIFIAPCONFIGSERVER_H

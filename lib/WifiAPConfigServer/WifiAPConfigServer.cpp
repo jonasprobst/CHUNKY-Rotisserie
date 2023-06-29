@@ -8,9 +8,11 @@
 #define AP_SSID "phak_iu"
 #define AP_PASSWORD "phak1uT00"
 
-WifiAPConfigServer::WifiAPConfigServer(NVSSettingsInterface &settings) : dmx_settings_(settings) {}
+WifiAPConfigServer::WifiAPConfigServer(NVSSettingsInterface& dmx_settings)
+    : dmx_settings_(dmx_settings) {
+  }
 
-void WifiAPConfigServer::begin()
+void WifiAPConfigServer::start()
 {
     // Initialize SPIFFS
     if (!SPIFFS.begin(true))
@@ -18,7 +20,7 @@ void WifiAPConfigServer::begin()
         ESP_LOGE("WifiAPConfigServer:", "An error has occurred while mounting SPIFFS");
         return;
     }
-
+    
     // Set up access point
     WiFi.softAPConfig(apIP_, apIP_, IPAddress(255, 255, 255, 0));
     WiFi.softAP(AP_SSID, AP_PASSWORD);

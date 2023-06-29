@@ -8,15 +8,16 @@
 
 
 // Load stored dmxSettings and pass them to DMXController and Webserver
-NVSSettings dmxSettings; //TODO change back to NVSSettings!
-//DMXController dmxController(dmxSettings.getBaseChannel());
-WifiAPConfigServer configServer(dmxSettings);
+NVSSettings dmx_settings;
+//DMXController dmx_controller;
+WifiAPConfigServer config_server(dmx_settings);
 
 //UIController uiController(BTN_AP);
 
 void setup()
 {
-    configServer.begin();
+    //dmxController.setBaseChannel(dmx_settings.getBaseChannel());
+    config_server.start(); //TODO remove for production
 
 }
 

@@ -1,59 +1,63 @@
-#ifndef NVSSETTINGS_H
-#define NVSSETTINGS_H
+#ifndef NVS_SETTINGS_H
+#define NVS_SETTINGS_H
 
 #include "NVSSettingsInterface.h"
 #include <Arduino.h>
-#include <Preferences.h>
+#include <freertos/semphr.h>
 
 /**
- * @class NVSSettings
+ * @brief Non-Volatile Storage (NVS) settings class for ESP32.
  *
- * @brief Manages application settings, providing persistent storage in the ESP32's NVS.
- * Implements NCVSSettingsInterface.
+ * This class handles saving and loading of settings into the NVS.
  */
-class NVSSettings : public NVSSettingsInterface {
-  public:
+class NVSSettings : public NVSSettingsInterface
+{
+public:
     /**
-     * @brief Construct a new Settings object.
+     * @brief Constructor for the NVSSettings class.
      *
-     * This constructor initializes the settings from stored NVS values, if they exist.
+     * This also initializes the NVS flash storage.
      */
     NVSSettings();
 
     /**
-     * @brief Destroy the Settings object.
+     * @brief Deconstructor for the NVSSettings class.
+     * 
+     * Cleans up semaphore that gets created in the constructor
      */
     ~NVSSettings();
 
     /**
-     * @brief Get the stored root channel value.
-     * 
-     * @return uint16_t The stored root channel value.
+     * @brief Initialize the NVS.
+     *
+     * This function is called in the constructor.
      */
-   uint16_t getBaseChannel() const override;
+    void initialize() override;
 
     /**
-     * @brief Get the stored mode value.
-     * 
-     * @return uint16_t The stored mode value.
+     * @brief Get the base channel setting from NVS.
+     *
+     * @return The saved base channel as a uint16_t.
      */
-   uint16_t getMode() const override;
+    uint16_t getBaseChannel() const override;
 
     /**
-     * @brief Save base channel and mode settings.
-     * 
-     * This method saves the given values both in memory and in NVS for persistent storage.
-     * 
-     * @param baseChannel The base channel value to save.
-     * @param mode The mode value to save.
+     * @brief Get the mode setting from NVS.
+     *
+     * @return The saved mode as a uint16_t.
      */
-    void save( uint16_t baseChannel, uint16_t mode) override;
+    uint16_t getMode() const override;
 
-  private:
-    Preferences _preferences;
-    const uint32_t _validKeyValue = 123456789; // A value to check for valid settings in EEPROM
-    uint16_t _baseChannel = 1;
-    uint16_t _mode = 1;
+    /**
+     * @brief Save the base channel and mode settings into NVS.
+     *
+     * @param baseChannel The base channel to be saved.
+     * @param mode The mode to be saved.
+     */
+    void save(uint16_t baseChannel, uint16_t mode) override;
+
+private:
+    mutable SemaphoreHandle_t xSemaphore_;
 };
 
-#endif  // NVSSETTINGS_H
+#endif // NVS_SETTINGS_H
