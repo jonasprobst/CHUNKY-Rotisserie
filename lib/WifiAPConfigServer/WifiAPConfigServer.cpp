@@ -1,37 +1,44 @@
 #include "WifiAPConfigServer.h"
+#include "esp_log.h"
 #include <Arduino.h>
 
-//INFO: See this library for more advance wifi management and captive portal: https://github.com/tzapu/WiFiManager
+// INFO: See this library for more advance wifi management and captive portal: https://github.com/tzapu/WiFiManager
 
-
-//Default SSID and Password for AP
+// Default SSID and Password for AP
 #define AP_SSID "phak_iu"
 #define AP_PASSWORD "phak1uT00"
 
-
-WifiAPConfigServer::WifiAPConfigServer(NVSSettingsInterface& settings) : _dmxSettings(settings){}
+WifiAPConfigServer::WifiAPConfigServer(NVSSettingsInterface &settings) : _dmxSettings(settings) {}
 
 void WifiAPConfigServer::begin()
 {
     // Initialize SPIFFS
     if (!SPIFFS.begin(true))
     {
-        Serial.println("An error has occurred while mounting SPIFFS");
+        ESP_LOGE("WifiAPConfigServer:", "An error has occurred while mounting SPIFFS");
         return;
     }
 
     // Set up access point
     WiFi.softAPConfig(_apIP, _apIP, IPAddress(255, 255, 255, 0));
     WiFi.softAP(AP_SSID, AP_PASSWORD);
+    delay(2000); // give AP some time to start
+    if (!isAPRunning())
+    {
+        ESP_LOGE("WifiAPConfigServer:", "An error has occurred while starting AP");
+        return;
+    }
+    ESP_LOGI("WifiAPConfigServer:", "AP running: %s, pw: %s", AP_SSID, AP_PASSWORD);
 
     // Serve preloaded HTML page stored in SPIFFS
     _server.on("/", HTTP_GET, [this](AsyncWebServerRequest *request)
-                { handleRoot(request); });
+               { handleRoot(request); });
 
     _server.on("/post-config", HTTP_POST, [this](AsyncWebServerRequest *request)
-                { handleConfigUpdate(request); });
+               { handleConfigUpdate(request); });
 
     _server.begin();
+    ESP_LOGI("WifiAPConfigServer:", "Server running at %s", getIPAsString());
 }
 
 void WifiAPConfigServer::stop()
@@ -49,7 +56,6 @@ int WifiAPConfigServer::getMode() const
 {
     return _mode;
 }
-
 
 bool WifiAPConfigServer::isAPRunning() const
 {
@@ -76,7 +82,7 @@ void WifiAPConfigServer::handleRoot(AsyncWebServerRequest *request)
 {
     _lastActivityTime = millis(); // update the last activity time
     String html = SPIFFS.open("/config.html", "r").readString();
-    html.replace("{dmxBaseCHannel}", String(_dmxBaseChannel));
+    html.replace("{dmxBaseChannel}", String(_dmxBaseChannel));
 
     // Replace the "selectedX" placeholder according to the current mode
     for (int i = 1; i <= 5; i++)
@@ -108,9 +114,11 @@ void WifiAPConfigServer::handleConfigUpdate(AsyncWebServerRequest *request)
         _mode = request->getParam("mode", true)->value().toInt();
         _dmxSettings.save(_dmxBaseChannel, _mode);
         request->redirect("/?save=success");
+        ESP_LOGI("WifiAPConfigServer:", "Values saved succesfully. M: %d, BC: %d", _mode, _dmxBaseChannel);
     }
     else
     {
         request->redirect("/?save=failure");
+        ESP_LOGI("WifiAPConfigServer:", "Error saving values. POST Request missing param(s).");
     }
 }

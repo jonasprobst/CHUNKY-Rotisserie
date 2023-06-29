@@ -1,37 +1,119 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Configuration</title>
-  <link rel="stylesheet" href="./styles.css">
-</head>
-<body>
-  <div class="container">
-    <h1>Configuration</h1>
-    <form action="/post-config" method="post">
-      <div class="form-group">
-        <label for="dmxBaseChannel">DMX Root Channel:</label>
-        <input type="number" id="dmxBaseChannel" name="dmxBaseChannel" value="{dmxBaseChannel}" min="1" max="512">
-      </div>
-      
-      <div class="form-group">
-        <label for="mode">Mode:</label>
-        <select id="mode" name="mode" class="form-control">
-          <option value="1" {selected1}>Mode 1</option>
-          <option value="2" {selected2}>Mode 2</option>
-          <option value="3" {selected3}>Mode 3</option>
-          <option value="4" {selected4}>Mode 4</option>
-          <option value="5" {selected5}>Mode 5</option>
-        </select>
-      </div>
-      
-      <input type="submit" value="Save" class="btn btn-primary">
-    </form>
-    
-    <div class="message-box">
-      <div class="message alert {messageClass}">
-        <p>{message}</p>
+  <head>
+    <title>Configuration</title>
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      .form-group {
+        margin-top: 10px;
+      }
+
+      label {
+        display: block;
+      }
+
+      input[type="number"],
+      select {
+        width: 100%;
+        padding: 5px;
+        margin-top: 5px;
+      }
+
+      input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      .message-box {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .message {
+        padding: 10px;
+        text-align: center;
+        width: 100%;
+        margin: 0;
+      }
+
+      .message p {
+        margin-bottom: 0;
+      }
+
+      .message.alert {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .message.success {
+        background-color: #dff0d8;
+        color: #4f8a10;
+        border: 1px solid #4f8a10;
+      }
+
+      .message.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Configuration</h1>
+      <form action="/post-config" method="post">
+        <div class="form-group">
+          <label for="dmxBaseChannel">DMX Base Channel:</label>
+          <input
+            type="number"
+            id="dmxBaseChannel"
+            name="dmxBaseChannel"
+            value="{dmxBaseChannel}"
+            min="1"
+            max="512"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="mode">Mode:</label>
+          <select id="mode" name="mode" class="form-control">
+            <option value="1" {selected1}>Mode 1</option>
+            <option value="2" {selected2}>Mode 2</option>
+            <option value="3" {selected3}>Mode 3</option>
+            <option value="4" {selected4}>Mode 4</option>
+            <option value="5" {selected5}>Mode 5</option>
+          </select>
+        </div>
+
+        <input type="submit" value="Save" class="btn btn-primary" />
+      </form>
+
+      <div class="message-box">
+        <div class="message alert {messageClass}">
+          <p>{message}</p>
+        </div>
       </div>
     </div>
-  </div>
-</body>
+  </body>
 </html>

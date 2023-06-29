@@ -1,4 +1,5 @@
 #include "NVSSettings.h"
+#include <esp_log.h>
 
 #define DEFAULT_BASE_CHANNEL 1
 #define DEFAULT_MODE 1
@@ -11,6 +12,7 @@ NVSSettings::NVSSettings()
   {
     _baseChannel = _preferences.getUInt("baseChannel", DEFAULT_BASE_CHANNEL);
     _mode = _preferences.getUInt("mode", DEFAULT_MODE);
+    ESP_LOGD("NVSSettings:", "loaded: M: %d, BC: %d", _mode, _baseChannel);
   }
 }
 
@@ -33,7 +35,8 @@ void NVSSettings::save( uint16_t baseChannel, uint16_t mode)
 {
   _baseChannel = baseChannel;
   _mode = mode;
-  _preferences.putUInt("baseChannelIndex", baseChannel);
+  _preferences.putUInt("baseChannel", baseChannel);
   _preferences.putUInt("mode", mode);
   _preferences.putUInt("validKey", _validKeyValue);
+  ESP_LOGD("NVSSettings:", "Saved M: %d, BC: %d", _mode, _baseChannel);
 }

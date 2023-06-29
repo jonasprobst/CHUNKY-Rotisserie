@@ -1,4 +1,5 @@
 #include "StepperMotorController.h"
+#include "esp_log.h"
 
 StepperMotorController::StepperMotorController(int8_t enablePin, int8_t directionPin, int8_t stepPin) :
     stepper_(AccelStepper::DRIVER, stepPin, directionPin) {

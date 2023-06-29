@@ -1,6 +1,6 @@
 #include "WifiAPConfigServer.h"
-#include "MockSettings.h"
-#include "DMXController.h"
+#include "NVSSettings.h"
+//#include "DMXController.h"
 #include "UIController.h"
 
 // gpio config
@@ -8,11 +8,11 @@
 
 
 // Load stored dmxSettings and pass them to DMXController and Webserver
-MockSettings dmxSettings; //TODO change back to NVSSettings!
-DMXController dmxController(dmxSettings.getBaseChannel());
+NVSSettings dmxSettings; //TODO change back to NVSSettings!
+//DMXController dmxController(dmxSettings.getBaseChannel());
 WifiAPConfigServer configServer(dmxSettings);
 
-UIController uiController(BTN_AP);
+//UIController uiController(BTN_AP);
 
 void setup()
 {

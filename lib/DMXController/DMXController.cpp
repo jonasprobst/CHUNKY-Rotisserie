@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "DMXController.h"
+#include "esp_log.h"
 
 //TODO: Use a diffrent dmx library (make sure its compatible with the shield tho) that uses interrupts to revieve dmx data.
 

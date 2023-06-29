@@ -1,6 +1,9 @@
 #include "UIController.h"
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
+#include "esp_log.h"
+
+
 
 // Configuration for SSD1306 OLED display (I2C)
 #define SCREEN_WIDTH 128
