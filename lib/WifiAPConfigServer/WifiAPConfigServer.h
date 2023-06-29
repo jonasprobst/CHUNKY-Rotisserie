@@ -56,12 +56,12 @@ public:
     uint32_t getIdleTime() const;
 
 private:
-    AsyncWebServer _server{80};
-    IPAddress _apIP = IPAddress(192,168,4,1);
-    uint16_t _dmxBaseChannel = 0;
-    uint16_t _mode = 0;
-    uint32_t _lastActivityTime = 0;
-    NVSSettingsInterface& _dmxSettings;
+    AsyncWebServer server_{80};
+    IPAddress apIP_ = IPAddress(192,168,4,1);
+    uint16_t base_channel_ = 0;
+    uint16_t mode_ = 0;
+    uint32_t last_activity_ = 0;
+    NVSSettingsInterface& dmx_settings_;
 
     /**
      * @brief Handles the root request and serves the configuration HTML page.
