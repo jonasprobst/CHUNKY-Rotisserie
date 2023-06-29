@@ -49,7 +49,8 @@ void WifiAPConfigServer::stop()
 
 int WifiAPConfigServer::getBaseChannel() const
 {
-    return base_channel_;}
+    return base_channel_;
+}
 
 int WifiAPConfigServer::getMode() const
 {
@@ -80,7 +81,7 @@ uint32_t WifiAPConfigServer::getIdleTime() const
 void WifiAPConfigServer::handleRoot(AsyncWebServerRequest *request)
 {
     last_activity_ = millis(); // update the last activity time
-    mode_ = dmx_settings_.getMode(); 
+    mode_ = dmx_settings_.getMode();
     base_channel_ = dmx_settings_.getBaseChannel();
     ESP_LOGI("WifiAPConfigServer:", "Settings loaded. M: %d, BC: %d", mode_, base_channel_);
 
