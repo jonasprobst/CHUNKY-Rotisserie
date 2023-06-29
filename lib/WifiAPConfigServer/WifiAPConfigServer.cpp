@@ -28,7 +28,7 @@ void WifiAPConfigServer::begin()
         ESP_LOGE("WifiAPConfigServer:", "An error has occurred while starting AP");
         return;
     }
-    ESP_LOGI("WifiAPConfigServer:", "AP running: %s, pw: %s", AP_SSID, AP_PASSWORD);
+    ESP_LOGI("WifiAPConfigServer:", "AP running. SSID: %s, pw: %s", AP_SSID, AP_PASSWORD);
 
     // Serve preloaded HTML page stored in SPIFFS
     server_.on("/", HTTP_GET, [this](AsyncWebServerRequest *request)
