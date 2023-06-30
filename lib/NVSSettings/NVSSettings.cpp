@@ -29,7 +29,7 @@ uint16_t NVSSettings::getBaseChannel() const {
         int32_t base_channel32;
         if (nvs_get_i32(my_handle, "baseChannel", &base_channel32) == ESP_OK) {
             base_channel = static_cast<uint16_t>(base_channel32);
-            ESP_LOGD("NVSSettings:", "read NVS succesful. BC: %d", base_channel);
+            ESP_LOGD("NVSSettings:", "read NVS baseChannel succesful. BC: %d", base_channel);
         }
         nvs_close(my_handle);
     }
@@ -45,7 +45,7 @@ uint16_t NVSSettings::getMode() const {
         int32_t mode32;
         if (nvs_get_i32(my_handle, "mode", &mode32) == ESP_OK) {
             mode = static_cast<uint16_t>(mode32);
-            ESP_LOGD("NVSSettings:", "read NVS sucessfull. M: %d", mode);
+            ESP_LOGD("NVSSettings:", "read NVS mode sucessfull. M: %d", mode);
         }
         nvs_close(my_handle);
     }
