@@ -1,13 +1,13 @@
 #include "WifiAPConfigServer.h"
 #include "NVSSettings.h"
 #include "DMXController.h"
-#include "UIController.h"
+//#include "UIController.h"
 
 // gpio config
 #define BTN_AP 5
 
 // Setup the User Interface Hardware
-UIController uiController(BTN_AP);
+// UIController uiController(BTN_AP);
 
 // Load dmxSettings from NVS and pass them to the DMXController and ConfigWebserver
 NVSSettings dmx_settings;
