@@ -21,7 +21,7 @@ DMXController dmx_controller(dmx_settings.getBaseChannel());
 
 void setup()
 {
-    config_server.start(); // TODO remove for production
+    config_server.toggleAP(); // TODO remove for production
 }
 
 void loop()

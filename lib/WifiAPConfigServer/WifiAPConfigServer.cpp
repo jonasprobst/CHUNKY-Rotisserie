@@ -2,16 +2,49 @@
 #include "esp_log.h"
 #include <Arduino.h>
 
-// INFO: See this library for more advance wifi management and captive portal: https://github.com/tzapu/WiFiManager
 
-// Default SSID and Password for AP
-#define AP_SSID "phak_iu"
-#define AP_PASSWORD "phak1uT00"
+const char* WifiAPConfigServer::ssid_ = "Your_SSID";
+const char* WifiAPConfigServer::password_ = "Your_Password";
+const char* WifiAPConfigServer::ip_ = "192.168.4.1";
 
-WifiAPConfigServer::WifiAPConfigServer(NVSSettingsInterface& dmx_settings)
-    : dmx_settings_(dmx_settings) {
-  }
+// Public functions
+WifiAPConfigServer::WifiAPConfigServer(NVSSettingsInterface &dmx_settings)
+    : dmx_settings_(dmx_settings)
+{}
 
+void WifiAPConfigServer::toggleAP()
+{
+    if (isRunning())
+    {
+        stop();
+    }
+    else
+    {
+        start();
+    }
+}
+
+
+const char* WifiAPConfigServer::getSSID()
+{
+    return ssid_;
+}
+
+const char* WifiAPConfigServer::getPassword()
+{
+    return password_;
+}
+
+const char* WifiAPConfigServer::getIP()
+{
+    return ip_;
+}
+
+uint32_t WifiAPConfigServer::getIdleTime() const
+{
+    return millis() - last_activity_;
+}
+// Private functions
 void WifiAPConfigServer::start()
 {
     // Initialize SPIFFS
@@ -20,17 +53,19 @@ void WifiAPConfigServer::start()
         ESP_LOGE("WifiAPConfigServer:", "An error has occurred while mounting SPIFFS");
         return;
     }
-    
+
     // Set up access point
-    WiFi.softAPConfig(apIP_, apIP_, IPAddress(255, 255, 255, 0));
-    WiFi.softAP(AP_SSID, AP_PASSWORD);
-    delay(2000); // give AP some time to start
-    if (!isAPRunning())
+    IPAddress ip;
+    ip.fromString(ip_);
+    WiFi.softAPConfig(ip, ip, IPAddress(255, 255, 255, 0));
+    WiFi.softAP(getSSID(), getPassword());
+    delay(2000); // give the AP some time to start
+    if (!isRunning())
     {
         ESP_LOGE("WifiAPConfigServer:", "An error has occurred while starting AP");
         return;
     }
-    ESP_LOGI("WifiAPConfigServer:", "AP running. SSID: %s, pw: %s", AP_SSID, AP_PASSWORD);
+    ESP_LOGI("WifiAPConfigServer:", "AP running. SSID: %s, pw: %s", ssid_, password_);
 
     // Serve preloaded HTML page stored in SPIFFS
     server_.on("/", HTTP_GET, [this](AsyncWebServerRequest *request)
@@ -40,7 +75,7 @@ void WifiAPConfigServer::start()
                { handleConfigUpdate(request); });
 
     server_.begin();
-    ESP_LOGI("WifiAPConfigServer:", "Server running at %s", getIPAsString());
+    ESP_LOGI("WifiAPConfigServer:", "Server running at %s", ip_);
 }
 
 void WifiAPConfigServer::stop()
@@ -49,51 +84,26 @@ void WifiAPConfigServer::stop()
     WiFi.softAPdisconnect(true);
 }
 
-int WifiAPConfigServer::getBaseChannel() const
-{
-    return base_channel_;
-}
-
-int WifiAPConfigServer::getMode() const
-{
-    return mode_;
-}
-
-bool WifiAPConfigServer::isAPRunning() const
+bool WifiAPConfigServer::isRunning() const
 {
     // Returns true if AP is running
     return (WiFi.getMode() == WIFI_MODE_AP);
 }
 
-String WifiAPConfigServer::getSSID() const
-{
-    return String(AP_SSID);
-}
-
-String WifiAPConfigServer::getIPAsString() const
-{
-    return apIP_.toString();
-}
-
-uint32_t WifiAPConfigServer::getIdleTime() const
-{
-    return millis() - last_activity_;
-}
-
 void WifiAPConfigServer::handleRoot(AsyncWebServerRequest *request)
 {
     last_activity_ = millis(); // update the last activity time
-    mode_ = dmx_settings_.getMode();
-    base_channel_ = dmx_settings_.getBaseChannel();
-    ESP_LOGI("WifiAPConfigServer:", "Settings loaded. M: %d, BC: %d", mode_, base_channel_);
+    uint8_t mode = dmx_settings_.getMode();
+    uint8_t base_channel = dmx_settings_.getBaseChannel();
+    ESP_LOGI("WifiAPConfigServer:", "Settings loaded. M: %d, BC: %d", mode, base_channel);
 
     String html = SPIFFS.open("/config.html", "r").readString();
-    html.replace("{dmxBaseChannel}", String(base_channel_));
+    html.replace("{dmxBaseChannel}", String(base_channel));
 
     // Replace the "selectedX" placeholder according to the current mode
     for (int i = 1; i <= 5; i++)
     {
-        html.replace("{selected" + String(i) + "}", (i == mode_) ? "selected" : "");
+        html.replace("{selected" + String(i) + "}", (i == mode) ? "selected" : "");
     }
 
     // Replace the "{message}" placeholder according to the query parameter
@@ -116,11 +126,11 @@ void WifiAPConfigServer::handleConfigUpdate(AsyncWebServerRequest *request)
 
     if (request->hasParam("dmxBaseChannel", true) && request->hasParam("mode", true))
     {
-        base_channel_ = request->getParam("dmxBaseChannel", true)->value().toInt();
-        mode_ = request->getParam("mode", true)->value().toInt();
-        dmx_settings_.save(base_channel_, mode_);
+        uint8_t base_channel = request->getParam("dmxBaseChannel", true)->value().toInt();
+        uint8_t mode = request->getParam("mode", true)->value().toInt();
+        dmx_settings_.save(base_channel, mode);
         request->redirect("/?save=success");
-        ESP_LOGI("WifiAPConfigServer:", "Values saved succesfully. M: %d, BC: %d", mode_, base_channel_);
+        ESP_LOGI("WifiAPConfigServer:", "Values saved succesfully. M: %d, BC: %d", mode, base_channel);
     }
     else
     {

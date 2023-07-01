@@ -18,36 +18,12 @@ public:
      * @brief Constructor of WiFiAPConfigServer
      * @param settings Reference to the settings object
      */
-    WifiAPConfigServer(NVSSettingsInterface& settings);
+    WifiAPConfigServer(NVSSettingsInterface &settings);
 
     /**
-     * @brief Starts the WiFiAPConfigServer, acess point and webserver
+     * @brief Toggle (on/off) the acess point and webserver
      */
-    void start();
-
-    /**
-     * @brief Stops the WiFiAPConfigServer, acces point and webserver
-     */
-    void stop();
-
-    /**
-     * @brief Gets the configured DMX root channel.
-     * @return The DMX root channel.
-     */
-    int getBaseChannel() const;
-
-    /**
-     * @brief Gets the configured mode.
-     * @return The mode.
-     */
-    int getMode() const;
-
-    // TODO implement and document methods
-    bool isAPRunning() const;
-
-    String getSSID() const;
-
-    String getIPAsString() const;
+    void toggleAP();
 
     /**
      * @brief Gets the idle time since the last activity.
@@ -55,13 +31,34 @@ public:
      */
     uint32_t getIdleTime() const;
 
+
+    static const char* getSSID();
+    static const char* getIP();
+    static const char* getPassword();
+
 private:
-    AsyncWebServer server_{80};
-    IPAddress apIP_ = IPAddress(192, 168, 4, 1);
-    uint16_t base_channel_ = 0;
-    uint16_t mode_ = 0;
-    uint32_t last_activity_ = 0;
-    NVSSettingsInterface &dmx_settings_;
+    static const char* ssid_ ;       // access point name
+    static const char* password_; // access point password
+    static const char* ip_;     // webserver IP address
+    AsyncWebServer server_{80};                     // use port 80 for the webserver
+    NVSSettingsInterface &dmx_settings_;            // reference to the settings object
+    uint32_t last_activity_ = 0;                    // time of the last activity
+
+    /**
+     * @brief Checks if the access point is running.
+     * @return True if the access point is running.
+     */
+    bool isRunning() const;
+
+    /**
+     * @brief Starts the access point and webserver.
+     */
+    void start();
+
+    /**
+     * @brief Stops the access point and webserver.
+     */
+    void stop();
 
     /**
      * @brief Handles the root request and serves the configuration HTML page.
