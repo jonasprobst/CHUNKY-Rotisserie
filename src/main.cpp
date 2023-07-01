@@ -21,6 +21,7 @@ void setup()
 
 void loop()
 {
+    // TODO: Mock a DMX connection and signal, setup Hardware (shield, USB to DMX, etc).
     if (dmx_controller.isConnected() && dmx_controller.recieveNewMessage())
     {
         uint16_t position = dmx_controller.getPosition();
