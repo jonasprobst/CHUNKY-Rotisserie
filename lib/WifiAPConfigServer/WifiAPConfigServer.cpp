@@ -2,40 +2,32 @@
 #include "esp_log.h"
 #include <Arduino.h>
 
-
-const char* WifiAPConfigServer::ssid_ = "Your_SSID";
-const char* WifiAPConfigServer::password_ = "Your_Password";
-const char* WifiAPConfigServer::ip_ = "192.168.4.1";
+const char *WifiAPConfigServer::ssid_ = "phak_iu";
+const char *WifiAPConfigServer::password_ = "phak1uT00";
+const char *WifiAPConfigServer::ip_ = "192.168.4.1";
 
 // Public functions
 WifiAPConfigServer::WifiAPConfigServer(NVSSettingsInterface &dmx_settings)
     : dmx_settings_(dmx_settings)
-{}
+{
+}
 
 void WifiAPConfigServer::toggleAP()
 {
-    if (isRunning())
-    {
-        stop();
-    }
-    else
-    {
-        start();
-    }
+    if (isRunning()) stop(); else start();
 }
 
-
-const char* WifiAPConfigServer::getSSID()
+const char *WifiAPConfigServer::getSSID()
 {
     return ssid_;
 }
 
-const char* WifiAPConfigServer::getPassword()
+const char *WifiAPConfigServer::getPassword()
 {
     return password_;
 }
 
-const char* WifiAPConfigServer::getIP()
+const char *WifiAPConfigServer::getIP()
 {
     return ip_;
 }
