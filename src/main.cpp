@@ -4,15 +4,20 @@
 //#include "UIController.h"
 
 // gpio config
-#define BTN_AP 5
+#define UI_APTOGGLE_BTN_PIN 5 
+#define MOTOR_ENABLE_PIN 4
+#define MOTOR_DIRECTION_PIN 2
+#define MOTOR_STEP_PIN 0
+
 
 // Setup the User Interface Hardware
-// UIController uiController(BTN_AP);
+// UIController UIController(UI_APTOGGLE_BTN_PIN);
 
 // Load dmxSettings from NVS and pass them to the DMXController and ConfigWebserver
 NVSSettings dmx_settings;
 WifiAPConfigServer config_server(dmx_settings);
 DMXController dmx_controller(dmx_settings.getBaseChannel());
+//TODO: StepperMotorController motor_controller( MOTOR_ENABLE_PIN, MOTOR_DIRECTION_PIN, MOTOR_STEP_PIN);    
 
 void setup()
 {
