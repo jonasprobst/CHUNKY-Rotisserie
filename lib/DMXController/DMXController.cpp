@@ -2,41 +2,91 @@
 #include "DMXController.h"
 #include "esp_log.h"
 
-//TODO: Use a diffrent dmx library (make sure its compatible with the shield tho) that uses interrupts to revieve dmx data.
-
-#define NUM_CHANNELS 4 //Number of Channels used 
-
-void DMXController::setBaseChannel(uint16_t base_channel)
+DMXController::DMXController(uint8_t offset) : offset_(offset)
 {
-  dmx_interface_.initRead(NUM_CHANNELS);
-  base_channel_ = base_channel;
-  last_packet_recieved_timestamp_ = millis();
+  // Initialize the DMX driver.
+  dmx_set_pin(dmx_port_, TRANSMIT_PIN, RECEIVE_PIN, ENABLE_PIN);
+  dmx_driver_install(dmx_port_, &config_, DMX_INTR_FLAGS_DEFAULT);
 }
 
-uint16_t DMXController::getPosition() {
-  byte lowerByte = dmx_interface_.read(base_channel_ + 1);
-  byte upperByte = dmx_interface_.read(base_channel_ + 2);
-  uint16_t position = ((upperByte << 8) | lowerByte);
-  return position;
+DMXController::~DMXController()
+{
+  dmx_driver_delete(dmx_port_);
 }
 
-int DMXController::getDirection() {
-  return dmx_interface_.read(base_channel_ + 3);
-}
+bool DMXController::recieveNewMessage()
+{
+  // wait for a new packet to be received.
+  // If it takes longer than DMX_TIMEOUT_TICK (1250ms) it will return false.
+  dmx_packet_t packet;
+  if (dmx_receive(dmx_port_, &packet, DMX_TIMEOUT_TICK))
+  {
+    unsigned long now = millis();
 
-int DMXController::getSpeed() {
-  return dmx_interface_.read(base_channel_ + 4);
-}
+    // check for DMX errors
+    if (!packet.err)
+    {
+      // first connection
+      if (!dmx_is_connected_)
+      {
+        dmx_is_connected_ = true;
+        ESP_LOGI("DMXController", "DMX connected");
+      }
 
-bool DMXController::isConnected() {
-  uint32_t currentTimestamp = millis();
-  //FIXME: this won't work as SparFunkDMX return the stored values and is not interrupt triggered!
-  if(dmx_interface_.read(NUM_CHANNELS) > 0){
-      last_packet_recieved_timestamp_ = currentTimestamp;
+      // Read the DMX data.
+      position_ = dmx_read_slot(dmx_port_, offset_ + 1);
+      direction_ = dmx_read_slot(dmx_port_, offset_ + 2);
+      speed_ = dmx_read_slot(dmx_port_, offset_ + 3);
+      ESP_LOGI("DMXController", "DMX data received");
+      ESP_LOGI("DMXController", "Position: %d, Direction: %d, Speed: %d",
+               position_, direction_, speed_);
+
+      last_update_ = now;
+      return true;
+    }
+    else
+    {
+      // A DMX error occurred. If it keeps happening repeatedly,
+      // something is wrong with the code or the DMX transmitter.
+      // For now, just log the error and keep going.
+      ESP_LOGE("DMXController", "DMX error: %d", packet.err);
+      return false;
+    }
   }
-  return (currentTimestamp - last_packet_recieved_timestamp_) <= 1000;
+  else if (dmx_is_connected_)
+  {
+    // It's been a while since the last update (DMX_TIMEOUT_TICK),
+    // assume the DMX cable has been unplugged.
+    // TODO: Emergency stop in case the motor is still running!
+    // TODO: maybe wait longer? check for a few more packets? personel safety?
+    ESP_LOGE("DMXController", "DMX disconnected");
+    dmx_is_connected_ = false;
+    return false;
+   
+  }
+  else
+  {
+    // No DMX data received, but we're not connected yet. Just keep going.
+    return false;
+  }
 }
 
-void DMXController::refreshDMXData() {
-  dmx_interface_.update();
+uint16_t DMXController::getPosition()
+{
+  return position_;
+}
+
+int DMXController::getDirection()
+{
+  return direction_;
+}
+
+int DMXController::getSpeed()
+{
+  return speed_;
+}
+
+bool DMXController::isConnected()
+{
+  return dmx_is_connected_;
 }

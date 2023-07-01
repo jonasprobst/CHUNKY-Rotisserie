@@ -1,57 +1,74 @@
 #include "WifiAPConfigServer.h"
 #include "NVSSettings.h"
-//#include "DMXController.h"
+#include "DMXController.h"
 #include "UIController.h"
 
 // gpio config
 #define BTN_AP 5
 
+// Setup the User Interface Hardware
+UIController uiController(BTN_AP);
 
-// Load stored dmxSettings and pass them to DMXController and Webserver
+// Load dmxSettings from NVS and pass them to the DMXController and ConfigWebserver
 NVSSettings dmx_settings;
-//DMXController dmx_controller;
 WifiAPConfigServer config_server(dmx_settings);
-
-//UIController uiController(BTN_AP);
+DMXController dmx_controller(dmx_settings.getBaseChannel());
 
 void setup()
 {
-    //dmxController.setBaseChannel(dmx_settings.getBaseChannel());
-    config_server.start(); //TODO remove for production
-
+    config_server.start(); // TODO remove for production
 }
 
 void loop()
 {
-   /* if (dmxController.isConnected())
+    if (dmx_controller.isConnected() && dmx_controller.recieveNewMessage())
     {
-        uint16_t position = dmxController.getPosition();
-        int direction = dmxController.getDirection();
-        int speed = dmxController.getSpeed();
+        uint16_t position = dmx_controller.getPosition();
+        uint8_t direction = dmx_controller.getDirection(); // TODO: implement this with an enum
+        uint8_t speed = dmx_controller.getSpeed();
 
-        //Work the motor
+        // Work the motor according to the mode
+        uint8_t mode = dmx_settings.getMode();
+        switch (mode)
+        { // TODO: Implement this with an enum
+        case 0:
+            // Manual Mode
+            ESP_LOGI("main", "Mode: %d - Manual", mode);
+            break;
+        case 1:
+            // Other mode
+            ESP_LOGI("main", "Mode: %d - Auto", mode);
+            break;
+        case 2:
+            // Yet another mode
+            ESP_LOGI("main", "Mode: %d - Custom", mode);
+            break;
+        default:
+            // Invalid mode -  this should never happen
+            // TODO: Emergency Stop??
+            // TODO: Display Error
+            ESP_LOGE("main", "Invalid mode: %d", mode);
+            break;
+        }
     }
     else
     {
         // Emergency Stop!!
         // Display Error uiController.displayError("no DMX signal")
     }
-*/
 
-    // Update the UI based on the AP's status, which would be checked with a function in your WifiAPConfigServer class.
-    // For this example, let's assume your WifiAPConfigServer class has the following functions:
-    // getBaseChannel(), getMode(), isAPOn(), getSSID(), getIP()
+    // TODO: start AP and Update Display
+    /*
+    if (uiController.buttonStateChanged())
+    {
+        // start AP
+        config_server.start();
 
-    // Check if the button state has changed
-    //if (uiController.buttonStateChanged()) {
-        // Toggle the AP state and update the display
-        // This would likely involve calling functions on your configServer object
-        // e.g., configServer.toggleAP()
-        // For this example, let's assume that your WifiAPConfigServer class has a toggleAP() function
-        // configServer.toggleAP();
-   // }
-
-    // Display the current status on the OLED display
-    // uiController.displayStatus(configServer.getBaseChannel(), configServer.getMode(), configServer.isAPRunning(), configServer.getSSID(), configServer.getIPAsString());
-
+        // update display with new Settings
+        uiController.displayStatus(dmx_settings.getBaseChannel(), 
+                                    dmx_settings.getMode(), 
+                                    true, 
+                                    config_server.getSSID(),
+                                    config_server.getIPAsString());
+    }*/
 }

@@ -51,10 +51,10 @@ public:
     /**
      * @brief Save the base channel and mode settings into NVS.
      *
-     * @param baseChannel The base channel to be saved.
+     * @param base_channel The base channel to be saved.
      * @param mode The mode to be saved.
      */
-    void save(uint16_t baseChannel, uint16_t mode) override;
+    void save(uint16_t base_channel, uint16_t mode) override;
 
 private:
     mutable SemaphoreHandle_t xSemaphore_;

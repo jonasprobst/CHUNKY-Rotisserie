@@ -11,6 +11,7 @@
 #define OLED_RESET -1
 
 // Initialize the OLED display using Wire library
+// TODO: is this library non-blocking?!
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 UIController::UIController(int buttonPin) : _buttonPin(buttonPin)
