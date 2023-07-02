@@ -2,5 +2,9 @@
     "cmake.configureOnOpen": false,
     "C_Cpp.codeAnalysis.clangTidy.checks.disabled": [
         "clang-diagnostic-error"
+    ],
+    "cSpell.words": [
+        "DMXCONTROLLER",
+        "SWITCHCAPVCC"
     ]
 }

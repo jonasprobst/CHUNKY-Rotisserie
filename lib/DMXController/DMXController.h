@@ -33,11 +33,11 @@ public:
   ~DMXController();
 
   /**
-   * @brief Recieve the DMX data.
+   * @brief Receive the DMX data.
    *
-   *  @return true if data was recieved, false otherwise.
+   *  @return true if data was received, false otherwise.
    */
-  bool recieveNewMessage();
+  bool receiveNewMessage();
 
   /**
    * @brief Retrieve the position value from the DMX data.
