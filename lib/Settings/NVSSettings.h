@@ -61,3 +61,9 @@ private:
 };
 
 #endif // NVS_SETTINGS_H
+
+/**class NVSSettings {
+    public:
+        void saveSettings(Settings& settings);
+        Settings loadSettings();
+};*/
