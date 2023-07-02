@@ -2,6 +2,8 @@
 #include "esp_log.h"
 #include <Arduino.h>
 
+static const char *TAG = "WifiAPConfigServer";
+
 const char *WifiAPConfigServer::ssid_ = "phak_iu";
 const char *WifiAPConfigServer::password_ = "phak1uT00";
 const char *WifiAPConfigServer::ip_ = "192.168.4.1";
@@ -42,7 +44,7 @@ void WifiAPConfigServer::start()
     // Initialize SPIFFS
     if (!SPIFFS.begin(true))
     {
-        ESP_LOGE("WifiAPConfigServer:", "An error has occurred while mounting SPIFFS");
+        ESP_LOGE(TAG, "An error has occurred while mounting SPIFFS");
         return;
     }
 
@@ -54,10 +56,10 @@ void WifiAPConfigServer::start()
     delay(2000); // give the AP some time to start
     if (!isRunning())
     {
-        ESP_LOGE("WifiAPConfigServer:", "An error has occurred while starting AP");
+        ESP_LOGE(TAG, "An error has occurred while starting AP");
         return;
     }
-    ESP_LOGI("WifiAPConfigServer:", "AP running. SSID: %s, pw: %s", ssid_, password_);
+    ESP_LOGI(TAG, "AP running. SSID: %s, pw: %s", ssid_, password_);
 
     // Serve preloaded HTML page stored in SPIFFS
     server_.on("/", HTTP_GET, [this](AsyncWebServerRequest *request)
@@ -67,7 +69,7 @@ void WifiAPConfigServer::start()
                { handleConfigUpdate(request); });
 
     server_.begin();
-    ESP_LOGI("WifiAPConfigServer:", "Server running at %s", ip_);
+    ESP_LOGI(TAG, "Server running at %s", ip_);
 }
 
 void WifiAPConfigServer::stop()
@@ -87,7 +89,7 @@ void WifiAPConfigServer::handleRoot(AsyncWebServerRequest *request)
     last_activity_ = millis(); // update the last activity time
     uint8_t mode = dmx_settings_.getMode();
     uint8_t base_channel = dmx_settings_.getBaseChannel();
-    ESP_LOGI("WifiAPConfigServer:", "Settings loaded. M: %d, BC: %d", mode, base_channel);
+    ESP_LOGI(TAG, "Settings loaded. M: %d, BC: %d", mode, base_channel);
 
     String html = SPIFFS.open("/config.html", "r").readString();
     html.replace("{dmxBaseChannel}", String(base_channel));
@@ -122,11 +124,11 @@ void WifiAPConfigServer::handleConfigUpdate(AsyncWebServerRequest *request)
         uint8_t mode = request->getParam("mode", true)->value().toInt();
         dmx_settings_.save(base_channel, mode);
         request->redirect("/?save=success");
-        ESP_LOGI("WifiAPConfigServer:", "Values saved succesfully. M: %d, BC: %d", mode, base_channel);
+        ESP_LOGI(TAG, "Values saved successfully. M: %d, BC: %d", mode, base_channel);
     }
     else
     {
         request->redirect("/?save=failure");
-        ESP_LOGI("WifiAPConfigServer:", "Error saving values. POST Request missing param(s).");
+        ESP_LOGI(TAG, "Error saving values. POST Request missing param(s).");
     }
 }

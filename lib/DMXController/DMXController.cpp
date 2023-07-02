@@ -2,6 +2,8 @@
 #include "DMXController.h"
 #include "esp_log.h"
 
+static const char* TAG = "DMXController";
+
 DMXController::DMXController(uint8_t offset) : offset_(offset)
 {
   // Initialize the DMX driver.
@@ -14,7 +16,7 @@ DMXController::~DMXController()
   dmx_driver_delete(dmx_port_);
 }
 
-bool DMXController::recieveNewMessage()
+bool DMXController::receiveNewMessage()
 {
   // wait for a new packet to be received.
   // If it takes longer than DMX_TIMEOUT_TICK (1250ms) it will return false.
@@ -30,15 +32,15 @@ bool DMXController::recieveNewMessage()
       if (!dmx_is_connected_)
       {
         dmx_is_connected_ = true;
-        ESP_LOGI("DMXController", "DMX connected");
+        ESP_LOGI(TAG, "DMX connected");
       }
 
       // Read the DMX data.
       position_ = dmx_read_slot(dmx_port_, offset_ + 1);
       direction_ = dmx_read_slot(dmx_port_, offset_ + 2);
       speed_ = dmx_read_slot(dmx_port_, offset_ + 3);
-      ESP_LOGI("DMXController", "DMX data received");
-      ESP_LOGI("DMXController", "Position: %d, Direction: %d, Speed: %d",
+      ESP_LOGI(TAG, "DMX data received");
+      ESP_LOGI(TAG, "Position: %d, Direction: %d, Speed: %d",
                position_, direction_, speed_);
 
       last_update_ = now;
@@ -49,7 +51,7 @@ bool DMXController::recieveNewMessage()
       // A DMX error occurred. If it keeps happening repeatedly,
       // something is wrong with the code or the DMX transmitter.
       // For now, just log the error and keep going.
-      ESP_LOGE("DMXController", "DMX error: %d", packet.err);
+      ESP_LOGE(TAG, "DMX error: %d", packet.err);
       return false;
     }
   }
@@ -58,8 +60,8 @@ bool DMXController::recieveNewMessage()
     // It's been a while since the last update (DMX_TIMEOUT_TICK),
     // assume the DMX cable has been unplugged.
     // TODO: Emergency stop in case the motor is still running!
-    // TODO: maybe wait longer? check for a few more packets? personel safety?
-    ESP_LOGE("DMXController", "DMX disconnected");
+    // TODO: maybe wait longer? check for a few more packets? personnel safety?
+    ESP_LOGE(TAG, "DMX disconnected");
     dmx_is_connected_ = false;
     return false;
    
