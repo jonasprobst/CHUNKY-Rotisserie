@@ -14,7 +14,7 @@ void Settings::setBaseChannel(int base_channel) {
     }
 }
 
-int Settings::getBaseChannel() const {
+uint16_t Settings::getBaseChannel() const {
     return base_channel_;
 }
 
@@ -23,6 +23,6 @@ void Settings::setMode(int mode) {
     mode_ = mode;
 }
 
-int Settings::getMode() const {
+uint8_t Settings::getMode() const {
     return mode_;
 }

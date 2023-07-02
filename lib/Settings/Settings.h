@@ -19,7 +19,7 @@ public:
      *
      * @return The current base channel value.
      */
-    int getBaseChannel() const;
+    uint16_t getBaseChannel() const;
 
     /**
      * @brief Sets the mode.
@@ -33,11 +33,11 @@ public:
      *
      * @return The current mode value.
      */
-    int getMode() const;
+    uint8_t getMode() const;
 
 private:
-    int base_channel_; ///< The base channel.
-    int mode_; ///< The mode.
+    uint16_t base_channel_; ///< The base channel.
+    uint8_t mode_; ///< The mode.
 
 };
 
