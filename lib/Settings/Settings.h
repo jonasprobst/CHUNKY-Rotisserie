@@ -1,6 +1,8 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include <arduino.h>
+
 /**
  * @brief The Settings class encapsulates the runtime settings of the application.
  *

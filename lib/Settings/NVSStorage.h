@@ -25,6 +25,11 @@ public:
     NVSStorage(const String& nvs_namespace);
 
     /**
+     * @brief Destroys the NVSStorage object.
+     */
+    ~NVSStorage();
+
+    /**
      * @brief Saves the settings to NVS.
      *
      * @param settings The settings object implementing the SettingsInterface.
