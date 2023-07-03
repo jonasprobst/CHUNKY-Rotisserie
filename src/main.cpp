@@ -4,14 +4,14 @@
 //#include "UIController.h"
 
 // gpio config
-#define UI_APTOGGLE_BTN_PIN 5 
+#define UI_AP_BTN_PIN 5 
 #define MOTOR_ENABLE_PIN 4
 #define MOTOR_DIRECTION_PIN 2
 #define MOTOR_STEP_PIN 0
 
 
 // Setup the User Interface Hardware
-// UIController UIController(UI_APTOGGLE_BTN_PIN);
+// UIController UIController(UI_AP_BTN_PIN);
 
 // Load dmxSettings from NVS and pass them to the DMXController and ConfigWebserver
 NVSSettings dmx_settings;
@@ -27,7 +27,7 @@ void setup()
 void loop()
 {
     // TODO: Mock a DMX connection and signal, setup Hardware (shield, USB to DMX, etc).
-    if (dmx_controller.isConnected() && dmx_controller.recieveNewMessage())
+    if (dmx_controller.isConnected() && dmx_controller.receiveNewMessage())
     {
         uint16_t position = dmx_controller.getPosition();
         uint8_t direction = dmx_controller.getDirection(); // TODO: implement this with an enum
