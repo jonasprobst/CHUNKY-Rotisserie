@@ -3,26 +3,31 @@
 
 static const char* TAG = "Settings";
 
-void Settings::setBaseChannel(int base_channel) {
+void Settings::SetBaseChannel(uint16_t base_channel) {
     // Ensure the base channel is within the valid range
-    if (base_channel >= 1 && base_channel <= 513) {
+    if (base_channel >= 1 && base_channel <= 512) {
         base_channel_ = base_channel;
     } else {
         // Log an error
-        ESP_LOGE(TAG, "Invalid base channel value: %d. (set to default)", base_channel);
-        base_channel_ = 1; // Set to default value
+        ESP_LOGE(TAG, "Invalid base channel value: %d. Not saved.", base_channel);
     }
 }
 
-uint16_t Settings::getBaseChannel() const {
+uint16_t Settings::GetBaseChannel() const {
     return base_channel_;
 }
 
-void Settings::setMode(int mode) {
-    // Perform any necessary validation or logic
+void Settings::SetMode(uint8_t mode) {
+    // Ensure mode is within the valid range
+    if (mode >= 1 && mode <= 5) { //TODO: Set this to correct value!
+        mode_ = mode;
+    } else {
+        // Log an error
+        ESP_LOGE(TAG, "Invalid base channel: value %d. Not saved.", mode);
+    }
     mode_ = mode;
 }
 
-uint8_t Settings::getMode() const {
+uint8_t Settings::GetMode() const {
     return mode_;
 }

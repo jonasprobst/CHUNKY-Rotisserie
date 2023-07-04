@@ -46,8 +46,8 @@ public:
     bool LoadSettings(SettingsInterface& settings);
 
 private:
-    String nvs_namespace_;       ///< The namespace for NVS storage.
-    nvs_handle_t nvs_handle_;    ///< The NVS handle.
+    String nvs_namespace_;       // The namespace for NVS storage.
+    nvs_handle_t nvs_handle_;    // The NVS handle.
 
     /**
      * @brief Opens the NVS storage.

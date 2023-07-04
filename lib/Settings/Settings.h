@@ -14,32 +14,32 @@ public:
      *
      * @param base_channel The base channel value to set.
      */
-    void setBaseChannel(int base_channel);
+    void SetBaseChannel(uint16_t base_channel);
 
     /**
      * @brief Gets the current base channel.
      *
      * @return The current base channel value.
      */
-    uint16_t getBaseChannel() const;
+    uint16_t GetBaseChannel() const;
 
     /**
      * @brief Sets the mode.
      *
      * @param mode The mode value to set.
      */
-    void setMode(int mode);
+    void SetMode(uint8_t mode);
 
     /**
      * @brief Gets the current mode.
      *
      * @return The current mode value.
      */
-    uint8_t getMode() const;
+    uint8_t GetMode() const;
 
 private:
-    uint16_t base_channel_; ///< The base channel.
-    uint8_t mode_; ///< The mode.
+    uint16_t base_channel_ = 1; // base channel: DMX Start Address.
+    uint8_t mode_ = 1; // mode: operation mode of this device.
 
 };
 
