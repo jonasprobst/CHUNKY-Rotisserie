@@ -29,6 +29,7 @@
       input[type="number"],
       select {
         width: 100%;
+        box-sizing: border-box;
         padding: 5px;
         margin-top: 5px;
       }
@@ -36,7 +37,7 @@
       input[type="submit"] {
         width: 100%;
         padding: 10px;
-        margin-top: 10px;
+        margin-top: 15px;
         background-color: #007bff;
         color: white;
         border: none;
@@ -44,20 +45,16 @@
       }
 
       .message-box {
-        margin-top: 20px;
+        margin-top: 10px;
         display: flex;
         justify-content: center;
       }
 
       .message {
-        padding: 10px;
+        padding: 0;
         text-align: center;
         width: 100%;
         margin: 0;
-      }
-
-      .message p {
-        margin-bottom: 0;
       }
 
       .message.alert {

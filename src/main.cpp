@@ -1,5 +1,5 @@
 #include "WifiAPConfigServer.h"
-#include "NVSSettings.h"
+#include "Settings.h"
 #include "DMXController.h"
 //#include "UIController.h"
 
@@ -13,15 +13,14 @@
 // Setup the User Interface Hardware
 // UIController UIController(UI_AP_BTN_PIN);
 
-// Load dmxSettings from NVS and pass them to the DMXController and ConfigWebserver
-NVSSettings dmx_settings;
+Settings dmx_settings;
 WifiAPConfigServer config_server(dmx_settings);
-DMXController dmx_controller(dmx_settings.getBaseChannel());
+DMXController dmx_controller(dmx_settings.GetBaseChannel());
 //TODO: StepperMotorController motor_controller( MOTOR_ENABLE_PIN, MOTOR_DIRECTION_PIN, MOTOR_STEP_PIN);    
 
 void setup()
 {
-    config_server.toggleAP(); // TODO remove for production
+    config_server.ToggleAP(); // TODO remove for production
 }
 
 void loop()
@@ -34,7 +33,7 @@ void loop()
         uint8_t speed = dmx_controller.getSpeed();
 
         // Work the motor according to the mode
-        uint8_t mode = dmx_settings.getMode();
+        uint8_t mode = dmx_settings.GetMode();
         switch (mode)
         { // TODO: Implement this with an enum
         case 0:
