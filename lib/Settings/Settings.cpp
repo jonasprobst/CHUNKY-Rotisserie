@@ -1,4 +1,4 @@
-#include "settings.h"
+#include "Settings.h"
 #include <esp_log.h>
 
 static const char* TAG = "Settings";
@@ -25,9 +25,14 @@ void Settings::SetMode(uint8_t mode) {
         // Log an error
         ESP_LOGE(TAG, "Invalid base channel: value %d. Not saved.", mode);
     }
-    mode_ = mode;
 }
 
 uint8_t Settings::GetMode() const {
     return mode_;
+}
+
+void Settings::Reset() {
+    // Set the base channel and mode to their default values
+    base_channel_ = DEFAULT_BASE_CHANNEL;
+    mode_ = DEFAULT_MODE;
 }

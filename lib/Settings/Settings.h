@@ -1,14 +1,19 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <arduino.h>
+#include "SettingsInterface.h"
 
 /**
  * @brief The Settings class encapsulates the runtime settings of the application.
  *
  */
-class Settings {
+class Settings : public SettingsInterface {
 public:
+    /**
+     * @brief Constructs a Settings object.
+     */
+    //Settings();
+
     /**
      * @brief Sets the base channel.
      *
@@ -37,10 +42,14 @@ public:
      */
     uint8_t GetMode() const;
 
-private:
-    uint16_t base_channel_ = 1; // base channel: DMX Start Address.
-    uint8_t mode_ = 1; // mode: operation mode of this device.
+    /**
+     * @brief Sets mode and base channel to default values.
+     */
+    void Reset();
 
+private:
+    uint16_t base_channel_ = DEFAULT_BASE_CHANNEL; // base_channel: DMX Start Address.
+    uint8_t mode_ = DEFAULT_MODE; // mode: operation mode of this device.
 };
 
 #endif  // SETTINGS_H

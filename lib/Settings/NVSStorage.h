@@ -18,6 +18,11 @@
 class NVSStorage {
 public:
     /**
+     * @brief Constructs an NVSStorage object with a default namespace.
+     */
+    NVSStorage();
+
+    /**
      * @brief Constructs an NVSStorage object with the specified namespace.
      *
      * @param nvs_namespace The namespace to use for NVS storage.
