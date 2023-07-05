@@ -13,10 +13,6 @@
 class SettingsInterface
 {
 public:
-    // Default values for settings
-    static constexpr uint16_t DEFAULT_BASE_CHANNEL = 1;
-    static constexpr uint8_t DEFAULT_MODE = 1;
-
     /**
      * @brief Sets the base channel.
      *

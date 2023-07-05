@@ -9,6 +9,10 @@
  */
 class Settings : public SettingsInterface {
 public:
+    // Default values
+    static constexpr uint16_t DEFAULT_BASE_CHANNEL = 1;
+    static constexpr uint8_t DEFAULT_MODE = 1;
+
     /**
      * @brief Constructs a Settings object.
      */
