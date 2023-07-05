@@ -1,9 +1,9 @@
 #include "WifiAPConfigServer.h"
 #include "Settings.h"
 #include "DMXController.h"
-//#include "UIController.h"
+#include "UIController.h"
 
-// gpio config
+// gpio config TODO: move to motor controller
 #define UI_AP_BTN_PIN 5 
 #define MOTOR_ENABLE_PIN 4
 #define MOTOR_DIRECTION_PIN 2

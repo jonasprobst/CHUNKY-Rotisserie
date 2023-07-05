@@ -1,56 +1,98 @@
 #ifndef UI_CONTROLLER_H
 #define UI_CONTROLLER_H
 
+#include "Settings.h"
+#include "WifiAPConfigServer.h"
 #include <Arduino.h>
+#include <Adafruit_SSD1306.h>
+#include <vector>
 
-/** 
+/**
  * @class UIController
- * @brief Class providing an interface to control a UI with a button and an OLED display.
- * 
- * The UIController allows the state of a button to be checked, 
- * and displays information on the OLED display including 
- * the base channel, mode, AP state, SSID, and IP address.
+ * @brief The User Interface that manages the access point and displays the current settings.
+ *
+ * @attention Update() must to be called regularly in the main loop.
  */
-class UIController {
+class UIController
+{
 public:
-    /** 
+    // Button pin to toggle the access point
+    static constexpr uint8_t AP_BUTTON_PIN = 2;
+    // Configuration for SSD1306 OLED display (vis I2C)
+    static constexpr int16_t SCREEN_WIDTH = 128; // OLED display width, in pixels
+    static constexpr int16_t SCREEN_HEIGHT = 32; // OLED display height, in pixels
+    static constexpr int8_t OLED_RESET = -1;     // Reset pin # (or -1 if sharing Arduino reset pin)
+    static constexpr int8_t CHARACTER_WIDTH = 6; // Character width of used font in pixels
+    static constexpr int8_t CHARACTERS_PER_LINE = SCREEN_WIDTH / CHARACTER_WIDTH;
+    static constexpr int8_t NUM_DISPLAY_LINES = 2; // Number of lines to display at once
+    static constexpr int8_t SCROLL_SPEED = 1000;   // Scroll speed in milliseconds
+
+    /**
      * @brief Constructor for UIController class
-     * 
+     *
      * Initializes the button pin and sets up the OLED display.
-     * @param buttonPin Arduino pin connected to the button
+     * @param config_server reference to the config server
      */
-    UIController(int buttonPin);
+    UIController(WifiAPConfigServer &config_server);
 
-    /** 
-     * @brief Check if the button state has changed since last check
-     * 
-     * @return True if button state has changed, false otherwise
+    /**
+     * @brief Update the display and manage the button.
+     * must be called regularly in the main loop.
      */
-    bool buttonStateChanged();
+    void Update();
 
-    /** 
-     * @brief Update the OLED display with the current status
-     * 
-     * Displays base channel and mode on the first line,
-     * and if AP is on, displays SSID and IP address on the second line.
-     * @param baseChannel Base channel value
-     * @param mode Mode value
-     * @param apState State of the AP (true if on, false if off)
-     * @param ssid SSID of the AP (default: empty string)
-     * @param ip IP address of the AP (default: empty string)
+    /**
+     * @brief Display an message on the OLED display
+     *
+     * @param message The message to display
      */
-    void displayStatus(int baseChannel, int mode, bool apState, String ssid = "", String ip = "");
+    void DisplayMessage(const String &message);
 
-    /** 
+    /**
      * @brief Display an error message on the OLED display
-     * 
-     * @param errorMessage The error message to display
+     *
+     * @param error_message The error message to display
      */
-    void displayError(String errorMessage);
+    void DisplayError(const String &error_message);
 
 private:
-    const int _buttonPin; ///< Arduino pin connected to the button
-    unsigned long _lastButtonPress; ///< Time when the button was last pressed
-};
+    const uint8_t button_pin_ = AP_BUTTON_PIN;
+    uint32_t last_button_press_;        // Time when the button was last pressed
+    Adafruit_SSD1306 display_;          // OLED display object
+    WifiAPConfigServer &config_server_; // Reference to the config server object
+    uint32_t last_scroll_ = 0;          // Time of the last scroll (ninja-go! :-D)
+    std::vector<String> message_lines_; // message split into lines to fit the display
+    uint16_t line_offset_ = 0;          // offset for scrolling the message lines
+    bool button_state_ = false;         // current state of the button
 
+    /**
+     * @brief Update the OLED display with the current dmx and access point settings
+     */
+    void DisplaySettings();
+
+    /**
+     * @brief Setup Display (initialize, set color etc.)
+     */
+    void SetupDisplay();
+
+    /**
+     * @brief Clear the Display
+     */
+    void ClearDisplay();
+
+    /**
+     * @brief Read the button and toggle the AP if pressed
+     */
+    void UpdateButton();
+
+    /**
+     * @brief Update the display and scroll it if necessary
+     */
+    void UpdateDisplay();
+
+    /**
+     * @brief Break the message into lines to fit the display
+     */
+    std::vector<String> BreakMessageIntoLines(const String &message);
+};
 #endif // UI_CONTROLLER_H
