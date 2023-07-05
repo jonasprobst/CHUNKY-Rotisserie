@@ -16,7 +16,7 @@
 class DMXController
 {
 public:
-  // setup UART for communication via MAX485.
+  // Setup UART for communication via MAX485.
   static constexpr uint8_t DMX_PORT = 2;      // The UART port to use. 0 is used by the console.
   static constexpr uint8_t RECEIVE_PIN = 16;  // UART2 RX Pin.
   static constexpr uint8_t TRANSMIT_PIN = 17; // UART2 TX Pin.

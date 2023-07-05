@@ -1,6 +1,6 @@
-#include <Arduino.h>
 #include "DMXController.h"
-#include "esp_log.h"
+#include <Arduino.h>
+#include <esp_log.h>
 
 static const char *TAG = "DMXController";
 
