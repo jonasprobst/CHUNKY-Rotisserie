@@ -24,8 +24,10 @@ class DMXController
 public:
   /**
    * @brief Construct a new DMX Controller object.
+   * 
+   * @param base_channel Start DMX Address of this Device (1-512)
    */
-  DMXController(uint8_t offset);
+  DMXController(uint8_t base_channel);
 
   /**
    * @brief Destroy the DMX Controller object.
@@ -69,7 +71,7 @@ public:
 
 private:
   dmx_port_t dmx_port_ = DMX_PORT;
-  const uint8_t offset_ = 0; // The start address of this device (0...(512-SIZE))
+  const uint8_t base_channel_ = 0; // The start dmx address of this device (0...(512-SIZE))
   uint16_t position_ = 0;    // ch: offset +1. The position of the motor (0...65535)
   uint8_t direction_ = 0;    // ch: offset +2. 0 = forward, 1 = reverse
   uint8_t speed_ = 0;        // ch: offset +3. 0 = slow, 512 = fast

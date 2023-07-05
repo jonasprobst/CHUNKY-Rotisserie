@@ -4,7 +4,7 @@
 
 static const char *TAG = "DMXController";
 
-DMXController::DMXController(uint8_t offset) : offset_(offset)
+DMXController::DMXController(uint8_t base_channel) : base_channel_(base_channel)
 {
   // Initialize the DMX driver.
   dmx_set_pin(dmx_port_, TRANSMIT_PIN, RECEIVE_PIN, ENABLE_PIN);
@@ -36,10 +36,10 @@ bool DMXController::ReceiveNewMessage()
       }
 
       // Read the DMX data.
-      position_ = dmx_read_slot(dmx_port_, offset_ + 1);
-      direction_ = dmx_read_slot(dmx_port_, offset_ + 2);
-      speed_ = dmx_read_slot(dmx_port_, offset_ + 3);
-      ESP_LOGI(TAG, "DMX data received");
+      position_ = dmx_read_slot(dmx_port_, base_channel_ + 1);
+      direction_ = dmx_read_slot(dmx_port_, base_channel_ + 2);
+      speed_ = dmx_read_slot(dmx_port_, base_channel_ + 3);
+      ESP_LOGI(TAG, "DMX data received.");
       ESP_LOGI(TAG, "Position: %d, Direction: %d, Speed: %d",
                position_, direction_, speed_);
 
