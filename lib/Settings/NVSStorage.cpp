@@ -54,11 +54,12 @@ bool NVSStorage::LoadSettings(SettingsInterface &settings)
   {
     settings.SetBaseChannel(base_channel);
     settings.SetMode(mode);
+    ESP_LOGI(TAG, "Successfully loaded Settings. BaseChannel: %d, Mode: %d", base_channel, mode);
   }
   else
   {
-    //This will happen if the settings have never been saved before
-    ESP_LOGE(TAG, "Failed to load settings. Using default.");
+    //This happens if the settings have never been saved before
+    ESP_LOGI(TAG, "Failed to load settings. Using default.");
     settings.Reset();
   }
 

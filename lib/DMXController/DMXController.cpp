@@ -2,7 +2,7 @@
 #include "DMXController.h"
 #include "esp_log.h"
 
-static const char* TAG = "DMXController";
+static const char *TAG = "DMXController";
 
 DMXController::DMXController(uint8_t offset) : offset_(offset)
 {
@@ -16,10 +16,10 @@ DMXController::~DMXController()
   dmx_driver_delete(dmx_port_);
 }
 
-bool DMXController::receiveNewMessage()
+bool DMXController::ReceiveNewMessage()
 {
   // wait for a new packet to be received.
-  // If it takes longer than DMX_TIMEOUT_TICK (1250ms) it will return false.
+  // If it takes longer than DMX_TIMEOUT_TICK (1250ms) return false.
   dmx_packet_t packet;
   if (dmx_receive(dmx_port_, &packet, DMX_TIMEOUT_TICK))
   {
@@ -64,7 +64,6 @@ bool DMXController::receiveNewMessage()
     ESP_LOGE(TAG, "DMX disconnected");
     dmx_is_connected_ = false;
     return false;
-   
   }
   else
   {
@@ -73,22 +72,22 @@ bool DMXController::receiveNewMessage()
   }
 }
 
-uint16_t DMXController::getPosition()
+uint16_t DMXController::GetPosition()
 {
   return position_;
 }
 
-int DMXController::getDirection()
+int DMXController::GetDirection()
 {
   return direction_;
 }
 
-int DMXController::getSpeed()
+int DMXController::GetSpeed()
 {
   return speed_;
 }
 
-bool DMXController::isConnected()
+bool DMXController::IsConnected()
 {
   return dmx_is_connected_;
 }

@@ -37,35 +37,35 @@ public:
    *
    *  @return true if data was received, false otherwise.
    */
-  bool receiveNewMessage();
+  bool ReceiveNewMessage();
 
   /**
    * @brief Retrieve the position value from the DMX data.
    *
    * @return The position value.
    */
-  uint16_t getPosition();
+  uint16_t GetPosition();
 
   /**
    * @brief Retrieve the direction value from the DMX data.
    *
    * @return The direction value.
    */
-  int getDirection();
+  int GetDirection();
 
   /**
    * @brief Retrieve the speed value from the DMX data.
    *
    * @return The speed value.
    */
-  int getSpeed();
+  int GetSpeed();
 
   /**
    * @brief Check if the DMX connection is active.
    *
    * @return true if the connection is active, false otherwise.
    */
-  bool isConnected();
+  bool IsConnected();
 
 private:
   dmx_port_t dmx_port_ = DMX_PORT;
@@ -76,7 +76,7 @@ private:
   uint8_t num_channels_ = 3; // Number of (consecutive) channels used, see above.
   dmx_config_t config_ = DMX_CONFIG_DEFAULT;
   // TODO: check if a man config is needed. Personalities = modes? start address static(!)? 
-  dmx_config_t config_man_ = {
+  /* dmx_config_t config_man_ = {
       .model_id = 0x0500,
       .product_category = 0x0700,
       .software_version_id = 0x0001,
@@ -84,7 +84,7 @@ private:
       .personalities = {{1, "Default Personality"}},
       .personality_count = 1,
       .dmx_start_address = 1,
-  };
+  };*/
   bool dmx_is_connected_ = false;
   unsigned long last_update_ = millis();
 };
