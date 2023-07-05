@@ -15,6 +15,10 @@
 class WifiAPConfigServer
 {
 public:
+    static constexpr const char* SSID = "phak_iu";
+    static constexpr const char* PASSWORD = "phak1uT00";
+    static constexpr const char* IP = "192.168.4.1";
+
     /**
      * @brief Constructor of WiFiAPConfigServer
      * @param settings Reference to the settings object
@@ -43,9 +47,6 @@ public:
     static const char *GetPassword();
 
 private:
-    static const char *ssid_;         // access point name
-    static const char *password_;     // access point password
-    static const char *ip_;           // webserver IP address
     AsyncWebServer server_{80};       // use port 80 for the webserver
     SettingsInterface &dmx_settings_; // reference to the settings object
     NVSStorage nvs_storage_;          // storage for the settings

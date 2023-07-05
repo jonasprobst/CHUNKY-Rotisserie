@@ -26,11 +26,11 @@ void setup()
 void loop()
 {
     // TODO: Mock a DMX connection and signal, setup Hardware (shield, USB to DMX, etc).
-    if (dmx_controller.isConnected() && dmx_controller.receiveNewMessage())
+    if (dmx_controller.IsConnected() && dmx_controller.ReceiveNewMessage())
     {
-        uint16_t position = dmx_controller.getPosition();
-        uint8_t direction = dmx_controller.getDirection(); // TODO: implement this with an enum
-        uint8_t speed = dmx_controller.getSpeed();
+        uint16_t position = dmx_controller.GetPosition();
+        uint8_t direction = dmx_controller.GetDirection(); // TODO: implement this with an enum
+        uint8_t speed = dmx_controller.GetSpeed();
 
         // Work the motor according to the mode
         uint8_t mode = dmx_settings.GetMode();

@@ -4,10 +4,6 @@
 
 static const char *TAG = "WifiAPConfigServer";
 
-const char *WifiAPConfigServer::ssid_ = "phak_iu";
-const char *WifiAPConfigServer::password_ = "phak1uT00";
-const char *WifiAPConfigServer::ip_ = "192.168.4.1";
-
 // Public functions
 WifiAPConfigServer::WifiAPConfigServer(SettingsInterface &settings)
     : dmx_settings_(settings)
@@ -24,17 +20,18 @@ void WifiAPConfigServer::ToggleAP()
 
 const char *WifiAPConfigServer::GetSSID()
 {
-    return ssid_;
+    return SSID;
 }
 
 const char *WifiAPConfigServer::GetPassword()
 {
-    return password_;
+    return PASSWORD;
 }
 
 const char *WifiAPConfigServer::GetIP()
 {
-    return ip_;
+    // Returns IP as String not IPADDRESS-Object.
+    return IP;
 }
 
 SettingsInterface &WifiAPConfigServer::GetSettings()
@@ -61,7 +58,7 @@ void WifiAPConfigServer::Start()
 
     // Set up access point
     IPAddress ip;
-    ip.fromString(ip_);
+    ip.fromString(IP);
     WiFi.softAPConfig(ip, ip, IPAddress(255, 255, 255, 0));
     WiFi.softAP(GetSSID(), GetPassword());
     delay(2000); // Give the AP some time to start
@@ -70,7 +67,7 @@ void WifiAPConfigServer::Start()
         ESP_LOGE(TAG, "An error has occurred while starting AP");
         return;
     }
-    ESP_LOGI(TAG, "AP running. SSID: %s, pw: %s", ssid_, password_);
+    ESP_LOGI(TAG, "AP running. SSID: %s, pw: %s", SSID, PASSWORD);
 
     // Serve preloaded HTML page stored in SPIFFS
     server_.on("/", HTTP_GET, [this](AsyncWebServerRequest *request)
@@ -80,7 +77,7 @@ void WifiAPConfigServer::Start()
                { HandleConfigUpdate(request); });
 
     server_.begin();
-    ESP_LOGI(TAG, "Server running at %s", ip_);
+    ESP_LOGI(TAG, "Server running at %s", IP);
 }
 
 void WifiAPConfigServer::Stop()
