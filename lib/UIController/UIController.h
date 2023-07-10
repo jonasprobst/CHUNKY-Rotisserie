@@ -25,7 +25,7 @@ public:
     static constexpr int8_t CHARACTER_WIDTH = 6; // Character width of used font in pixels
     static constexpr int8_t CHARACTERS_PER_LINE = SCREEN_WIDTH / CHARACTER_WIDTH;
     static constexpr int8_t NUM_DISPLAY_LINES = 2; // Number of lines to display at once
-    static constexpr int8_t SCROLL_SPEED = 1000;   // Scroll speed in milliseconds
+    static constexpr int16_t SCROLL_SPEED = 1000;   // Scroll speed in milliseconds
 
     /**
      * @brief Constructor for UIController class
