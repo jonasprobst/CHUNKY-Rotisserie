@@ -4,7 +4,7 @@
 
 static const char *TAG = "DMXController";
 
-DMXController::DMXController(uint8_t base_channel) : base_channel_(base_channel)
+DMXController::DMXController(uint16_t base_channel) : base_channel_(base_channel)
 {
   // Initialize the DMX driver.
   dmx_set_pin(dmx_port_, TRANSMIT_PIN, RECEIVE_PIN, ENABLE_PIN);
@@ -77,12 +77,12 @@ uint16_t DMXController::GetPosition()
   return position_;
 }
 
-int DMXController::GetDirection()
+uint8_t DMXController::GetDirection()
 {
   return direction_;
 }
 
-int DMXController::GetSpeed()
+uint8_t DMXController::GetSpeed()
 {
   return speed_;
 }

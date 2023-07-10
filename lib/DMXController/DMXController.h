@@ -10,7 +10,8 @@
  *
  * This class serves as a wrapper for the ESP_DMX library.
  * It extends the library to set a base channel and retrieve
- * the values of the subsequent channels.
+ * the values of the subsequent channels. It's made for the
+ * Sparkfun DMX-to-LED Shield.
  */
 
 class DMXController
@@ -20,14 +21,14 @@ public:
   static constexpr uint8_t DMX_PORT = 2;      // The UART port to use. 0 is used by the console.
   static constexpr uint8_t RECEIVE_PIN = 16;  // UART2 RX Pin.
   static constexpr uint8_t TRANSMIT_PIN = 17; // UART2 TX Pin.
-  static constexpr uint8_t ENABLE_PIN = 21;   // UART2 RTS Pin.
+  static constexpr uint8_t ENABLE_PIN = 21;   // Pin to enable the MAX485.
 
   /**
    * @brief Construct a new DMX Controller object.
    *
    * @param base_channel Start DMX Address of this Device (1-512)
    */
-  DMXController(uint8_t base_channel);
+  DMXController(uint16_t base_channel);
 
   /**
    * @brief Destroy the DMX Controller object.
@@ -53,14 +54,14 @@ public:
    *
    * @return The direction value.
    */
-  int GetDirection();
+  uint8_t GetDirection();
 
   /**
    * @brief Retrieve the speed value from the DMX data.
    *
    * @return The speed value.
    */
-  int GetSpeed();
+  uint8_t GetSpeed();
 
   /**
    * @brief Check if the DMX connection is active.
@@ -74,8 +75,8 @@ private:
   const uint8_t base_channel_ = 0; // The start dmx address of this device (0...(512-SIZE))
   uint16_t position_ = 0;          // ch: offset +1. The position of the motor (0...65535)
   uint8_t direction_ = 0;          // ch: offset +2. 0 = forward, 1 = reverse
-  uint8_t speed_ = 0;              // ch: offset +3. 0 = slow, 512 = fast
-  uint8_t num_channels_ = 3;       // Number of (consecutive) channels used, see above.
+  uint8_t speed_ = 0;              // ch: offset +3. 0 = slow, 255 = fast
+  uint8_t num_channels_ = 3;       // Number of (consecutive) channels used, see above. // TODO: should this bne in the settings?
   dmx_config_t config_ = DMX_CONFIG_DEFAULT;
   // TODO: check if a man config is needed. Personalities = modes? start address static(!)?
   /* dmx_config_t config_man_ = {
