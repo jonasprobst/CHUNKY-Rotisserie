@@ -14,14 +14,14 @@ public:
     /**
      * @brief Constructs a Settings object.
      */
-    //Settings();
+    Settings();
 
     /**
      * @brief Sets the base channel.
      *
      * @param base_channel The base channel value to set.
      */
-    void SetBaseChannel(uint16_t base_channel);
+    bool SetBaseChannel(uint16_t base_channel);
 
     /**
      * @brief Gets the current base channel.
@@ -35,7 +35,7 @@ public:
      *
      * @param mode The mode value to set.
      */
-    void SetMode(uint8_t mode);
+    bool SetMode(uint8_t mode);
 
     /**
      * @brief Gets the current mode.
@@ -44,14 +44,10 @@ public:
      */
     uint8_t GetMode() const;
 
-    /**
-     * @brief Sets mode and base channel to default values.
-     */
-    void Reset();
-
 private:
-    uint16_t base_channel_ = NVSStorage::DEFAULT_BASE_CHANNEL; // base_channel: DMX Start Address.
-    uint8_t mode_ = NVSStorage::DEFAULT_MODE; // mode: operation mode of this device.
+    uint16_t base_channel_; // base_channel: DMX Start Address.
+    uint8_t mode_; // mode: operation mode of this device.
+    NVSStorage nvs_storage_; // NVS storage.
 };
 
 #endif  // SETTINGS_H

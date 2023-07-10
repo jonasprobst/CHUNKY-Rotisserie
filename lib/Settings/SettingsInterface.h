@@ -18,7 +18,7 @@ public:
      *
      * @param baseChannel The base channel value to set.
      */
-    virtual void SetBaseChannel(uint16_t baseChannel) = 0;
+    virtual bool SetBaseChannel(uint16_t baseChannel) = 0;
 
     /**
      * @brief Gets the current base channel.
@@ -32,7 +32,7 @@ public:
      *
      * @param mode The mode value to set.
      */
-    virtual void SetMode(uint8_t mode) = 0;
+    virtual bool SetMode(uint8_t mode) = 0;
 
     /**
      * @brief Gets the current mode.
@@ -40,11 +40,6 @@ public:
      * @return The current mode value.
      */
     virtual uint8_t GetMode() const = 0;
-
-    /**
-     * @brief Sets mode and base channel to default values.
-     */
-    virtual void Reset() = 0;
 };
 
 #endif // SETTINGS_INTERFACE_H

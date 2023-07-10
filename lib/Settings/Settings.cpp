@@ -6,13 +6,28 @@
 
 static const char* TAG = "Settings";
 
-void Settings::SetBaseChannel(uint16_t base_channel) {
+Settings::Settings() {
+    // Set default values
+    nvs_storage_ = NVSStorage();
+    mode_ = nvs_storage_.LoadMode();
+    base_channel_ = nvs_storage_.LoadBaseChannel();
+}
+
+bool Settings::SetBaseChannel(uint16_t base_channel) {
     // Ensure the base channel is within the valid range
     if (base_channel >= 1 && base_channel <= 512) {
-        base_channel_ = base_channel;
+        // Save the base channel
+        if (nvs_storage_.SaveBaseChannel(base_channel)){
+            ESP_LOGI(TAG, "Successfully saved base channel: %d", base_channel);
+            base_channel_ = base_channel;
+            return true;
+        } else {
+            ESP_LOGE(TAG, "Failed to save base channel.");
+            return false;
+        }
     } else {
-        // Log an error
         ESP_LOGE(TAG, "Invalid base channel value: %d. Not saved.", base_channel);
+        return false;
     }
 }
 
@@ -20,22 +35,24 @@ uint16_t Settings::GetBaseChannel() const {
     return base_channel_;
 }
 
-void Settings::SetMode(uint8_t mode) {
+bool Settings::SetMode(uint8_t mode) {
     // Ensure mode is within the valid range
     if (mode >= 1 && mode <= 5) { //TODO: Set this to correct value!
-        mode_ = mode;
+        // Save the mode
+        if(nvs_storage_.SaveMode(mode)){
+            ESP_LOGI(TAG, "Successfully saved mode: %d", mode);
+            mode_ = mode;
+            return true;
+        } else {
+            ESP_LOGE(TAG, "Failed to save mode.");
+            return false;
+        }
     } else {
-        // Log an error
-        ESP_LOGE(TAG, "Invalid base channel: value %d. Not saved.", mode);
+        ESP_LOGE(TAG, "Invalid mode value: %d. Not saved.", mode);
+        return false;
     }
 }
 
 uint8_t Settings::GetMode() const {
     return mode_;
-}
-
-void Settings::Reset() {
-    // Set the base channel and mode to their default values
-    base_channel_ = DEFAULT_BASE_CHANNEL;
-    mode_ = DEFAULT_MODE;
 }
