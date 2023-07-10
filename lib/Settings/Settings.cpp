@@ -1,6 +1,9 @@
 #include "Settings.h"
 #include <esp_log.h>
 
+// FIXME: move NVS Storage handling to settings class
+// and remove it from WifiController
+
 static const char* TAG = "Settings";
 
 void Settings::SetBaseChannel(uint16_t base_channel) {
