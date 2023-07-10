@@ -22,6 +22,12 @@ UIController::UIController(SettingsInterface &dmx_settings, WifiAPConfigServer &
 void UIController::Update()
 {
     UpdateButtons();
+    uint32_t current_time = millis();
+    if (current_time - last_display_update_ > DISPLAY_UPDATE_INTERVAL_MS)
+    {
+        UpdateDisplay();
+        last_display_update_ = current_time;
+    }
     UpdateDisplay();
 }
 

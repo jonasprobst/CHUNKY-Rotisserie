@@ -20,6 +20,7 @@ public:
     static constexpr uint8_t AP_BUTTON_PIN = 12;       // TODO: change to correct pin
     static constexpr uint8_t STOP_BUTTON_PIN = 13;     // TODO: change to correct pin and implement it
     static constexpr uint16_t BOUNCE_INTERVAL_MS = 10; // Bounce interval in milliseconds
+    static constexpr uint16_t DISPLAY_UPDATE_INTERVAL_MS = 1000;
 
     /**
      * @brief Constructor for UIController class
@@ -55,6 +56,7 @@ private:
     WifiAPConfigServer &config_server_;     // Reference to the config server object
     const SettingsInterface &dmx_settings_; // Reference to the settings object
     bool ap_running_ = false;               // Flag to indicate if the access point is running
+    uint32_t last_display_update_ = 0;      // Timestamp of the last display update
 
     /**
      * @brief Setup Display (initialize, set color etc.)
