@@ -3,6 +3,8 @@
 #include "DMXController.h"
 #include "UIController.h"
 
+// TODO: Add emergency stop button? Also a hardware solution?
+
 // gpio config TODO: move to motor controller
 #define UI_AP_BTN_PIN 5 
 #define MOTOR_ENABLE_PIN 4
@@ -16,6 +18,7 @@
 Settings dmx_settings;
 WifiAPConfigServer config_server(dmx_settings);
 DMXController dmx_controller(dmx_settings.GetBaseChannel());
+UIController ui(dmx_settings, config_server);
 //TODO: StepperMotorController motor_controller( MOTOR_ENABLE_PIN, MOTOR_DIRECTION_PIN, MOTOR_STEP_PIN);    
 
 void setup()
@@ -29,7 +32,7 @@ void loop()
     if (dmx_controller.IsConnected() && dmx_controller.ReceiveNewMessage())
     {
         uint16_t position = dmx_controller.GetPosition();
-        uint8_t direction = dmx_controller.GetDirection(); // TODO: implement this with an enum
+        uint8_t direction = dmx_controller.GetDirection(); // TODO: implement this with an enum?
         uint8_t speed = dmx_controller.GetSpeed();
 
         // Work the motor according to the mode

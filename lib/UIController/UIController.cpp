@@ -1,12 +1,12 @@
 #include "UIController.h"
-#include "SettingsInterface.h"
 #include <Wire.h>
 #include <esp_log.h>
 
 static const char *TAG = "UIController";
 
-UIController::UIController(WifiAPConfigServer &config_server)
-    : config_server_(config_server),
+UIController::UIController(SettingsInterface &dmx_settings, WifiAPConfigServer &config_server)
+    : dmx_settings_(dmx_settings),
+      config_server_(config_server),
       display_(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET),
       last_button_press_(0)
 {
@@ -47,24 +47,20 @@ void UIController::DisplayError(const String &error_message)
 
 // -- Private methods --
 
-void DisplaySettings()
+void UIController::DisplaySettings()
 {
-    // FIXME: some error about config_server_  and display_ not being initialized
-    // FIXME: Error DisplayMessage() not declared in this scope
-
-    // Get settings from config_server_
-    SettingsInterface &settings = config_server_.GetSettings();
-    uint8_t dmx_mode = settings.GetMode();
-    uint16_t dmx_start_address = settings.GetBaseChannel();
-    char* ap_ssid = config_server_.GetSSID();
-    char* ap_ip = config_server_.GetIP();
+    // Get settings 
+    uint8_t dmx_mode = dmx_settings_.GetMode();
+    uint16_t dmx_base_channel = dmx_settings_.GetBaseChannel();
+    const char* ap_ssid = config_server_.GetSSID();
+    const char* ap_ip = config_server_.GetIP();
 
     // Clear display
-    display_.clearDisplay();
+    ClearDisplay();
 
     // Assemble message
     String message = "DMX Addr: ";
-    message += dmx_start_address;
+    message += dmx_base_channel;
     message += " Mode: ";
     message += dmx_mode;
     message += "\nAP: ";

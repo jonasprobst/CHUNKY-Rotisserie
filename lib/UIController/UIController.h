@@ -1,7 +1,7 @@
 #ifndef UI_CONTROLLER_H
 #define UI_CONTROLLER_H
 
-#include "Settings.h"
+#include "SettingsInterface.h"
 #include "WifiAPConfigServer.h"
 #include <Arduino.h>
 #include <Adafruit_SSD1306.h>
@@ -18,6 +18,7 @@ class UIController
 public:
     // Button pin to toggle the access point
     static constexpr uint8_t AP_BUTTON_PIN = 2;
+    static constexpr uint8_t STOP_BUTTON_PIN = 2; // TODO: change to correct pin and implement it
     // Configuration for SSD1306 OLED display (vis I2C)
     static constexpr int16_t SCREEN_WIDTH = 128; // OLED display width, in pixels
     static constexpr int16_t SCREEN_HEIGHT = 32; // OLED display height, in pixels
@@ -25,7 +26,7 @@ public:
     static constexpr int8_t CHARACTER_WIDTH = 6; // Character width of used font in pixels
     static constexpr int8_t CHARACTERS_PER_LINE = SCREEN_WIDTH / CHARACTER_WIDTH;
     static constexpr int8_t NUM_DISPLAY_LINES = 2; // Number of lines to display at once
-    static constexpr int16_t SCROLL_SPEED = 1000;   // Scroll speed in milliseconds
+    static constexpr int16_t SCROLL_SPEED = 1000;  // Scroll speed in milliseconds
 
     /**
      * @brief Constructor for UIController class
@@ -33,7 +34,7 @@ public:
      * Initializes the button pin and sets up the OLED display.
      * @param config_server reference to the config server
      */
-    UIController(WifiAPConfigServer &config_server);
+    UIController(SettingsInterface &settings, WifiAPConfigServer &config_server);
 
     /**
      * @brief Update the display and manage the button.
@@ -60,6 +61,7 @@ private:
     uint32_t last_button_press_;        // Time when the button was last pressed
     Adafruit_SSD1306 display_;          // OLED display object
     WifiAPConfigServer &config_server_; // Reference to the config server object
+    const SettingsInterface &dmx_settings_; // Reference to the settings object
     uint32_t last_scroll_ = 0;          // Time of the last scroll (ninja-go! :-D)
     std::vector<String> message_lines_; // message split into lines to fit the display
     uint16_t line_offset_ = 0;          // offset for scrolling the message lines
