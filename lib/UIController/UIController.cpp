@@ -22,12 +22,6 @@ UIController::UIController(SettingsInterface &dmx_settings, WifiAPConfigServer &
 void UIController::Update()
 {
     UpdateButtons();
-    uint32_t current_time = millis();
-    if (current_time - last_display_update_ > DISPLAY_UPDATE_INTERVAL_MS)
-    {
-        UpdateDisplay();
-        last_display_update_ = current_time;
-    }
     UpdateDisplay();
 }
 
@@ -60,6 +54,7 @@ void UIController::UpdateButtons()
 
     if (ap_button_.fell())
     {
+        // Enable or disable the access point
         ESP_LOGI(TAG, "AP button pressed");
         config_server_.ToggleAP();
         ap_running_ = !ap_running_;
@@ -67,6 +62,7 @@ void UIController::UpdateButtons()
 
     if (stop_button_.fell())
     {
+        // Stop the show :-O
         ESP_LOGI(TAG, "Stop button pressed");
         // TODO: Emergency stop the motor
     }
@@ -74,10 +70,23 @@ void UIController::UpdateButtons()
 
 void UIController::UpdateDisplay()
 {
+    // Only update the display every DISPLAY_UPDATE_INTERVAL_MS milliseconds
+    if (millis() - last_display_update_ < DISPLAY_UPDATE_INTERVAL_MS)
+    {
+        return;
+    }
+
+    // Check if something has changed. If not, don't update the display
     uint16_t base_channel = dmx_settings_.GetBaseChannel();
     uint8_t mode = dmx_settings_.GetMode();
     String ap_status = ap_running_ ? "on" : "off";
 
-    // TODO: would it be better to only update if the values have changed?
-    DisplayMessage(" B: " + String(base_channel) + "M: " + String(mode) + " AP: " + ap_status);
+    if (current_mode_ != mode || current_base_channel_ != base_channel)
+    {
+        // Something has changed, update the display
+        current_mode_ = mode;
+        current_base_channel_ = base_channel;
+        DisplayMessage(" B: " + String(base_channel) + "M: " + String(mode) + " AP: " + ap_status);
+    }
+    
 }
