@@ -49,7 +49,7 @@ public:
      * @param error_message The error message to display
      */
     void DisplayError(const String &error_message);
-    
+
     /**
      * @brief Toggle the access point
      */
@@ -84,5 +84,13 @@ private:
      * @brief Update the display and scroll it if necessary
      */
     void UpdateDisplay();
+
+    /**
+     * @brief Format a number with leading zeros to 3 digits
+     *
+     * @param num The number to format
+     * @return String The formatted number
+     */
+    String FormatWithLeadingZeros(uint16_t num);
 };
 #endif // UI_CONTROLLER_H

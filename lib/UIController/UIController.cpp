@@ -84,14 +84,23 @@ void UIController::UpdateDisplay()
     // Check if something has changed. If not, don't update the display
     uint16_t base_channel = dmx_settings_.GetBaseChannel();
     uint8_t mode = dmx_settings_.GetMode();
-    String ap_status = ap_running_ ? "on" : "off";
+    String ap_status = ap_running_ ? "ON" : "OFF";
 
     if (current_mode_ != mode || current_base_channel_ != base_channel)
     {
         // Something has changed, update the display
         current_mode_ = mode;
         current_base_channel_ = base_channel;
-        DisplayMessage("B: " + String(base_channel) + " M: " + String(mode) + " AP: " + ap_status);
+        String base_channel_str = FormatWithLeadingZeros(base_channel);
+        DisplayMessage("B:" + String(base_channel_str) + ", M:" + String(mode) + ", AP:" + ap_status);
+    } 
+}
+
+String UIController::FormatWithLeadingZeros(uint16_t num)
+{
+    String num_str = String(num);
+    while (num_str.length() < 3) {
+        num_str = "0" + num_str;
     }
-    
+    return num_str;
 }
