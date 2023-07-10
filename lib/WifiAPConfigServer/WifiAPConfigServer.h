@@ -29,6 +29,12 @@ public:
      */
     void ToggleAP();
 
+      /**
+     * @brief Checks if the access point is running.
+     * @return True if the access point is running.
+     */
+    bool IsAPRunning();
+
     /**
      * @brief Gets the idle time since the last activity.
      * @return The idle time in milliseconds.
@@ -49,12 +55,6 @@ private:
     AsyncWebServer server_{80};       // use port 80 for the webserver
     SettingsInterface &dmx_settings_; // reference to the settings object
     uint32_t last_activity_ = 0; // time of the last activity
-
-    /**
-     * @brief Checks if the access point is running.
-     * @return True if the access point is running.
-     */
-    bool IsRunning();
 
     /**
      * @brief Starts the access point and webserver.

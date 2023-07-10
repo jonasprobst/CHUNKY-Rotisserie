@@ -12,10 +12,16 @@ WifiAPConfigServer::WifiAPConfigServer(SettingsInterface &dmx_settings)
 
 void WifiAPConfigServer::ToggleAP()
 {
-    if (IsRunning())
+    if (IsAPRunning())
         Stop();
     else
         Start();
+}
+
+bool WifiAPConfigServer::IsAPRunning()
+{
+    // Returns true if AP is running
+    return (WiFi.getMode() == WIFI_MODE_AP);
 }
 
 const char *WifiAPConfigServer::GetSSID()
@@ -61,8 +67,8 @@ void WifiAPConfigServer::Start()
     ip.fromString(IP);
     WiFi.softAPConfig(ip, ip, IPAddress(255, 255, 255, 0));
     WiFi.softAP(GetSSID(), GetPassword());
-    delay(2000); // Give the AP some time to start
-    if (!IsRunning())
+    delay(100); // Give the AP some time to start. Needed?
+    if (!IsAPRunning())
     {
         ESP_LOGE(TAG, "An error has occurred while starting AP");
         return;
@@ -85,12 +91,6 @@ void WifiAPConfigServer::Stop()
     last_activity_ = 0; // Reset idle time
     server_.end();
     WiFi.softAPdisconnect(true);
-}
-
-bool WifiAPConfigServer::IsRunning()
-{
-    // Returns true if AP is running
-    return (WiFi.getMode() == WIFI_MODE_AP);
 }
 
 void WifiAPConfigServer::HandleRoot(AsyncWebServerRequest *request)
