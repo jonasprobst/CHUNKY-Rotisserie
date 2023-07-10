@@ -7,12 +7,17 @@
 /**
  * @class StepperMotorController
  * @brief Implements the StepperMotorControllerInterface for controlling a stepper motor.
- * 
+ *
  * This class provides the implementation details for the StepperMotorControllerInterface,
  * using the AccelStepper library to control the stepper motor.
  */
-class StepperMotorController : public StepperMotorControllerInterface {
- public:
+class StepperMotorController : public StepperMotorControllerInterface
+{
+public:
+  static const uint8_t MOTOR_ENABLE_PIN = 4;
+  static const uint8_t MOTOR_DIRECTION_PIN = 2;
+  static const uint8_t MOTOR_STEP_PIN = 0;
+
   /**
    * @brief Construct a new StepperMotorController object.
    *
@@ -28,14 +33,14 @@ class StepperMotorController : public StepperMotorControllerInterface {
   void setPosition(int32_t absolute_position) override;
   void setCurrentPosition(int32_t position) override;
   int32_t getCurrentPosition() const override;
-  int32_t getDistanceToGo() override; 
+  int32_t getDistanceToGo() override;
   bool isMoving() override;
   void enableMotor() override;
   void disableMotor() override;
 
- private:
-  AccelStepper stepper_;  ///< AccelStepper object to control the stepper motor.
-  int8_t enable_pin_;       ///< The pin connected to the enable input.
+private:
+  AccelStepper stepper_; ///< AccelStepper object to control the stepper motor.
+  int8_t enable_pin_;    ///< The pin connected to the enable input.
 };
 
-#endif  // STEPPER_MOTOR_CONTROLLER_H_
+#endif // STEPPER_MOTOR_CONTROLLER_H_
