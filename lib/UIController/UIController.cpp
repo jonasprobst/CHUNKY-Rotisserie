@@ -7,16 +7,22 @@ static const char *TAG = "UIController";
 UIController::UIController(SettingsInterface &dmx_settings, WifiAPConfigServer &config_server)
     : dmx_settings_(dmx_settings),
       config_server_(config_server),
-      display_(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET),
-      last_button_press_(0)
+      display_(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET)
 {
-    pinMode(AP_BUTTON_PIN, INPUT_PULLUP);
+    // Set up the Access Point button
+    ap_button_.attach(AP_BUTTON_PIN, INPUT_PULLUP);
+    ap_button_.interval(BOUNCE_INTERVAL_MS);
+
+    // Set up the Stop button
+    stop_button_.attach(STOP_BUTTON_PIN, INPUT_PULLUP);
+    stop_button_.interval(BOUNCE_INTERVAL_MS);
+
     SetupDisplay();
 }
 
 void UIController::Update()
 {
-    UpdateButton();
+    UpdateButtons();
     UpdateDisplay();
     DisplaySettings();
 }
@@ -87,38 +93,22 @@ void UIController::ClearDisplay()
     display_.display(); //TODO: needed?
 }
 
-void UIController::UpdateButton()
+void UIController::UpdateButtons()
 {
-    // Debounce the button (non blocking)
-    static constexpr uint8_t DEBOUNCE_TIME_MS = 50;
-    static uint32_t last_debounce_time_ms = 0;
-    static bool last_button_state = LOW;
+    ap_button_.update();
+    stop_button_.update();
 
-    bool current_button_state = digitalRead(button_pin_);
-
-    // If the button state has changed, reset the debouncing timer
-    if (current_button_state != last_button_state)
+    if (ap_button_.fell())
     {
-        last_debounce_time_ms = millis();
+        ESP_LOGI(TAG, "AP button pressed");
+        config_server_.ToggleAP();
     }
 
-    if ((millis() - last_debounce_time_ms) > DEBOUNCE_TIME_MS)
+    if (stop_button_.fell())
     {
-        // If the button state has not changed for the debounce interval,
-        // we assume that the button is truly in a new state.
-        if (current_button_state != button_state_)
-        {
-            button_state_ = current_button_state;
-
-            if (button_state_ == HIGH)
-            {
-                // Button was pressed. Toggle the access point.
-                config_server_.ToggleAP();
-            }
-        }
+        ESP_LOGI(TAG, "Stop button pressed");
+        // TODO: Emergency stop the motor
     }
-
-    last_button_state = current_button_state;
 }
 
 void UIController::UpdateDisplay()

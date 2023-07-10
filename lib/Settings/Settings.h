@@ -17,6 +17,11 @@ public:
     Settings();
 
     /**
+     * @brief Destroys a Settings object.
+     */
+    ~Settings();
+
+    /**
      * @brief Sets the base channel.
      *
      * @param base_channel The base channel value to set.
@@ -47,7 +52,7 @@ public:
 private:
     uint16_t base_channel_; // base_channel: DMX Start Address.
     uint8_t mode_; // mode: operation mode of this device.
-    NVSStorage nvs_storage_; // NVS storage.
+    NVSStorage* nvs_storage_; // NVS storage pointer
 };
 
 #endif  // SETTINGS_H

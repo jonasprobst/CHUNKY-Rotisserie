@@ -45,6 +45,7 @@ public:
 private:
     String nvs_namespace_;       // The namespace for NVS storage.
     nvs_handle_t nvs_handle_;    // The NVS handle.
+    bool nvs_handle_valid_;      // Indicates if the NVS handle is valid.
 
     /**
      * @brief Opens the NVS storage.

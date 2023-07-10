@@ -6,6 +6,7 @@
 #include <Arduino.h>
 #include <Adafruit_SSD1306.h>
 #include <vector>
+#include <Bounce2.h>
 
 /**
  * @class UIController
@@ -17,8 +18,10 @@ class UIController
 {
 public:
     // Button pin to toggle the access point
-    static constexpr uint8_t AP_BUTTON_PIN = 2;
-    static constexpr uint8_t STOP_BUTTON_PIN = 2; // TODO: change to correct pin and implement it
+    static constexpr uint8_t AP_BUTTON_PIN = 12;       // TODO: change to correct pin
+    static constexpr uint8_t STOP_BUTTON_PIN = 13;     // TODO: change to correct pin and implement it
+    static constexpr uint16_t BOUNCE_INTERVAL_MS = 10; // Bounce interval in milliseconds
+
     // Configuration for SSD1306 OLED display (vis I2C)
     static constexpr int16_t SCREEN_WIDTH = 128; // OLED display width, in pixels
     static constexpr int16_t SCREEN_HEIGHT = 32; // OLED display height, in pixels
@@ -57,15 +60,14 @@ public:
     void DisplayError(const String &error_message);
 
 private:
-    const uint8_t button_pin_ = AP_BUTTON_PIN;
-    uint32_t last_button_press_;        // Time when the button was last pressed
-    Adafruit_SSD1306 display_;          // OLED display object
-    WifiAPConfigServer &config_server_; // Reference to the config server object
+    Bounce ap_button_;                      // Button to toggle the access point
+    Bounce stop_button_;                    // Button to stop the show
+    Adafruit_SSD1306 display_;              // OLED display object
+    WifiAPConfigServer &config_server_;     // Reference to the config server object
     const SettingsInterface &dmx_settings_; // Reference to the settings object
-    uint32_t last_scroll_ = 0;          // Time of the last scroll (ninja-go! :-D)
-    std::vector<String> message_lines_; // message split into lines to fit the display
-    uint16_t line_offset_ = 0;          // offset for scrolling the message lines
-    bool button_state_ = false;         // current state of the button
+    uint32_t last_scroll_ = 0;              // Time of the last scroll (ninja-go! :-D)
+    std::vector<String> message_lines_;     // message split into lines to fit the display
+    uint16_t line_offset_ = 0;              // offset for scrolling the message lines
 
     /**
      * @brief Update the OLED display with the current dmx and access point settings
@@ -83,9 +85,9 @@ private:
     void ClearDisplay();
 
     /**
-     * @brief Read the button and toggle the AP if pressed
+     * @brief Read the buttons and execute the corresponding actions
      */
-    void UpdateButton();
+    void UpdateButtons();
 
     /**
      * @brief Update the display and scroll it if necessary
