@@ -5,8 +5,8 @@
 static const char *TAG = "WifiAPConfigServer";
 
 // Public functions
-WifiAPConfigServer::WifiAPConfigServer(SettingsInterface &settings)
-    : dmx_settings_(settings)
+WifiAPConfigServer::WifiAPConfigServer(SettingsInterface &dmx_settings)
+    : dmx_settings_(dmx_settings)
 {
 }
 
@@ -34,7 +34,7 @@ const char *WifiAPConfigServer::GetIP()
     return IP;
 }
 
-SettingsInterface &WifiAPConfigServer::GetSettings()
+SettingsInterface& WifiAPConfigServer::GetSettings()
 {
     return dmx_settings_;
 }
