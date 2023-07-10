@@ -11,7 +11,7 @@ UIController ui(dmx_settings, config_server);
 
 void setup()
 {
-    config_server.ToggleAP(); // TODO remove for production
+    ui.ToggleAP(); // TODO: remove for production
 }
 
 void loop()

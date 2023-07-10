@@ -49,6 +49,11 @@ public:
      * @param error_message The error message to display
      */
     void DisplayError(const String &error_message);
+    
+    /**
+     * @brief Toggle the access point
+     */
+    void ToggleAP();
 
 private:
     Bounce ap_button_;                      // Button to toggle the access point

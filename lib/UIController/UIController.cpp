@@ -35,6 +35,12 @@ void UIController::DisplayError(const String &error_message)
     ESP_LOGE(TAG, "Displaying error: %s", error_message.c_str());
 }
 
+void UIController::ToggleAP()
+{
+    config_server_.ToggleAP();
+    ap_running_ = !ap_running_;
+}
+
 // -- Private methods --
 void UIController::SetupDisplay()
 {
@@ -56,8 +62,7 @@ void UIController::UpdateButtons()
     {
         // Enable or disable the access point
         ESP_LOGI(TAG, "AP button pressed");
-        config_server_.ToggleAP();
-        ap_running_ = !ap_running_;
+        ToggleAP();
     }
 
     if (stop_button_.fell())
@@ -86,7 +91,7 @@ void UIController::UpdateDisplay()
         // Something has changed, update the display
         current_mode_ = mode;
         current_base_channel_ = base_channel;
-        DisplayMessage(" B: " + String(base_channel) + "M: " + String(mode) + " AP: " + ap_status);
+        DisplayMessage("B: " + String(base_channel) + " M: " + String(mode) + " AP: " + ap_status);
     }
     
 }
