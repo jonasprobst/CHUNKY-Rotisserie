@@ -87,7 +87,7 @@ void WifiAPConfigServer::Stop()
     WiFi.softAPdisconnect(true);
 }
 
-bool WifiAPConfigServer::IsRunning() const
+bool WifiAPConfigServer::IsRunning()
 {
     // Returns true if AP is running
     return (WiFi.getMode() == WIFI_MODE_AP);

@@ -54,7 +54,7 @@ private:
      * @brief Checks if the access point is running.
      * @return True if the access point is running.
      */
-    bool IsRunning() const;
+    bool IsRunning();
 
     /**
      * @brief Starts the access point and webserver.
