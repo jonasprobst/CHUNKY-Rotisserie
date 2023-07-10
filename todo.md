@@ -17,7 +17,7 @@
 - [ ] update final motor driver class
 - [ ] test everything again thoroughly
 - [ ] setup git hub
-- [ ]upload to github
+- [ ] upload to github
 - [ ] ask for a code view
 
 - [ ] design construction
