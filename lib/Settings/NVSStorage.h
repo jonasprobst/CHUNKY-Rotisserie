@@ -48,6 +48,11 @@ private:
     bool nvs_handle_valid_;      // Indicates if the NVS handle is valid.
 
     /**
+     * @brief Initializes the NVS storage.
+     */
+    void InitNVS();
+
+    /**
      * @brief Opens the NVS storage.
      *
      * @return True if the NVS storage was successfully opened, false otherwise.
