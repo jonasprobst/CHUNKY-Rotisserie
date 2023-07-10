@@ -1,6 +1,8 @@
 #include "NVSStorage.h"
 #include <esp_log.h>
 
+//FIXME: Uses a lot of duplicate code. Should probably be refactored to use templates.
+
 // For logging, we need a tag
 static const char *TAG = "NVSStorage";
 
@@ -17,54 +19,85 @@ NVSStorage::~NVSStorage()
   CloseNVS();
 }
 
-bool NVSStorage::SaveSettings(const SettingsInterface &settings)
-{
+uint8_t NVSStorage::LoadMode(){
+   if (!OpenNVS())
+  {
+    return DEFAULT_MODE;
+  }
+
+  uint8_t mode = DEFAULT_MODE;
+  bool load_success = LoadValue("mode", mode);
+
+  if (load_success)
+  {
+    ESP_LOGI(TAG, "Successfully loaded mode: %d", mode);
+  }
+  else
+  {
+    //This happens if the settings have never been saved before, hence logged as info not error.
+    ESP_LOGI(TAG, "Failed to load mode. Using default.");
+  }
+
+  CloseNVS();
+  return mode;
+
+}
+uint16_t NVSStorage::LoadBaseChannel(){
+   if (!OpenNVS())
+  {
+    return DEFAULT_BASE_CHANNEL;
+  }
+
+  uint16_t base_channel = DEFAULT_BASE_CHANNEL;
+  bool load_success = LoadValue("baseChannel", base_channel);
+
+  if (load_success)
+  {
+    ESP_LOGI(TAG, "Successfully loaded base channel: %d", base_channel);
+  }
+  else
+  {
+    //This happens if the settings have never been saved before. Hence logged as info not error.
+    ESP_LOGI(TAG, "Failed to load base channel. Using default.");
+  }
+
+  CloseNVS();
+  return base_channel;
+
+}
+
+bool NVSStorage::SaveMode(uint8_t mode){
   if (!OpenNVS())
   {
     return false;
   }
 
-  bool save_success = SaveValue("baseChannel", settings.GetBaseChannel()) &&
-                      SaveValue("mode", settings.GetMode());
+  bool save_success = SaveValue("mode", mode);
 
   if (!save_success)
   {
-    ESP_LOGE(TAG, "Failed to save settings");
+    ESP_LOGE(TAG, "Failed to save mode");
   }
 
   CloseNVS();
   return save_success;
-}
 
-bool NVSStorage::LoadSettings(SettingsInterface &settings)
-{
+}
+bool NVSStorage::SaveBaseChannel(uint16_t base_channel){
   if (!OpenNVS())
   {
     return false;
   }
 
-  // q: what's the value range of uint8_t?
-  uint16_t base_channel = 0;
-  uint8_t mode = 0;
+  bool save_success = SaveValue("baseChannel", base_channel);
 
-  bool load_success = LoadValue("baseChannel", base_channel) &&
-                      LoadValue("mode", mode);
-
-  if (load_success)
+  if (!save_success)
   {
-    settings.SetBaseChannel(base_channel);
-    settings.SetMode(mode);
-    ESP_LOGI(TAG, "Successfully loaded Settings. BaseChannel: %d, Mode: %d", base_channel, mode);
-  }
-  else
-  {
-    //This happens if the settings have never been saved before
-    ESP_LOGI(TAG, "Failed to load settings. Using default.");
-    settings.Reset();
+    ESP_LOGE(TAG, "Failed to save mode");
   }
 
   CloseNVS();
-  return load_success;
+  return save_success;
 }
 
 bool NVSStorage::OpenNVS()

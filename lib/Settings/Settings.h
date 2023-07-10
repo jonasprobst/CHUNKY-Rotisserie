@@ -2,6 +2,7 @@
 #define SETTINGS_H
 
 #include "SettingsInterface.h"
+#include "NVSStorage.h"
 
 /**
  * @brief The Settings class encapsulates the runtime settings of the application.
@@ -9,9 +10,6 @@
  */
 class Settings : public SettingsInterface {
 public:
-    // Default values
-    static constexpr uint16_t DEFAULT_BASE_CHANNEL = 1;
-    static constexpr uint8_t DEFAULT_MODE = 1;
 
     /**
      * @brief Constructs a Settings object.
@@ -52,8 +50,8 @@ public:
     void Reset();
 
 private:
-    uint16_t base_channel_ = DEFAULT_BASE_CHANNEL; // base_channel: DMX Start Address.
-    uint8_t mode_ = DEFAULT_MODE; // mode: operation mode of this device.
+    uint16_t base_channel_ = NVSStorage::DEFAULT_BASE_CHANNEL; // base_channel: DMX Start Address.
+    uint8_t mode_ = NVSStorage::DEFAULT_MODE; // mode: operation mode of this device.
 };
 
 #endif  // SETTINGS_H

@@ -13,10 +13,12 @@
  * The NVSStorage class uses the ESP-IDF NVS library to interact with the Non-Volatile Storage (NVS)
  * and provides methods to save and load settings from NVS.
  *
- * @note This class assumes that the NVS subsystem has been properly initialized before use.
  */
 class NVSStorage {
 public:
+    // Default values
+    static constexpr uint16_t DEFAULT_BASE_CHANNEL = 1;
+    static constexpr uint8_t DEFAULT_MODE = 1;
     /**
      * @brief Constructs an NVSStorage object with a default namespace.
      */
@@ -34,21 +36,11 @@ public:
      */
     ~NVSStorage();
 
-    /**
-     * @brief Saves the settings to NVS.
-     *
-     * @param settings The settings object implementing the SettingsInterface.
-     * @return True if the settings were successfully saved, false otherwise.
-     */
-    bool SaveSettings(const SettingsInterface& settings);
+    uint8_t LoadMode();
+    uint16_t LoadBaseChannel();
 
-    /**
-     * @brief Loads the settings from NVS.
-     *
-     * @param settings The settings object implementing the SettingsInterface.
-     * @return True if the settings were successfully loaded, false otherwise.
-     */
-    bool LoadSettings(SettingsInterface& settings);
+    bool SaveMode(uint8_t mode);
+    bool SaveBaseChannel(uint16_t base_channel);
 
 private:
     String nvs_namespace_;       // The namespace for NVS storage.

@@ -97,8 +97,7 @@ void WifiAPConfigServer::HandleRoot(AsyncWebServerRequest *request)
 {
     last_activity_ = millis(); // Update the last activity time
 
-    // Load settings from NVS
-    nvs_storage_.LoadSettings(dmx_settings_);
+    // get the mode and base channel from settings
     uint8_t mode = dmx_settings_.GetMode();
     uint8_t base_channel = dmx_settings_.GetBaseChannel();
     ESP_LOGI(TAG, "Settings loaded. M: %d, BC: %d", mode, base_channel);
@@ -151,8 +150,7 @@ void WifiAPConfigServer::HandleConfigUpdate(AsyncWebServerRequest *request)
         // Save the values to the settings object and to NVS
         dmx_settings_.SetBaseChannel(base_channel);
         dmx_settings_.SetMode(mode);
-        nvs_storage_.SaveSettings(dmx_settings_);
-
+        
         // Redirect to the root page with a success message
         request->redirect("/?save=success");
         ESP_LOGI(TAG, "Values saved successfully. M: %d, BC: %d", mode, base_channel);

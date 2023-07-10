@@ -3,7 +3,6 @@
 
 // #include "NVSSettingsInterface.h"
 #include "SettingsInterface.h"
-#include "NVSStorage.h"
 #include <Arduino.h>
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
@@ -23,7 +22,7 @@ public:
      * @brief Constructor of WiFiAPConfigServer
      * @param settings Reference to the settings object
      */
-    WifiAPConfigServer(SettingsInterface &settings);
+    WifiAPConfigServer(SettingsInterface &dmx_settings);
 
     /**
      * @brief Toggle (on/off) the access point and webserver
@@ -49,7 +48,6 @@ public:
 private:
     AsyncWebServer server_{80};       // use port 80 for the webserver
     SettingsInterface &dmx_settings_; // reference to the settings object
-    NVSStorage nvs_storage_;          // storage for the settings
     uint32_t last_activity_ = 0; // time of the last activity
 
     /**
