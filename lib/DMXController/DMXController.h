@@ -18,10 +18,11 @@ class DMXController
 {
 public:
   // Setup UART for communication via MAX485.
-  static constexpr uint8_t UART_PORT = 2;      // The UART port to use. 0 is used by the console.
+  static constexpr uint8_t UART_PORT = 2;     // The UART port to use. 0 is used by the console.
   static constexpr uint8_t RECEIVE_PIN = 16;  // UART2 RX Pin.
   static constexpr uint8_t TRANSMIT_PIN = 17; // UART2 TX Pin.
   static constexpr uint8_t ENABLE_PIN = 21;   // Pin to enable the MAX485.
+  static constexpr uint8_t NUM_CHANNELS = 3;  // Number of consecutive channels to read. TODO: should this be in the settings?
 
   /**
    * @brief Construct a new DMX Controller object.
@@ -72,11 +73,11 @@ public:
 
 private:
   dmx_port_t dmx_port_ = UART_PORT; // The UART port to use. 0 is used by the console, 1 for flash
-  const uint8_t base_channel_ = 0; // The start dmx address of this device (0...(512-SIZE))
-  uint16_t position_ = 0;          // ch: offset +1. The position of the motor (0...65535)
-  uint8_t direction_ = 0;          // ch: offset +2. 0 = forward, 1 = reverse
-  uint8_t speed_ = 0;              // ch: offset +3. 0 = slow, 255 = fast
-  uint8_t num_channels_ = 3;       // Number of (consecutive) channels used, see above. // TODO: should this bne in the settings?
+  const uint8_t base_channel_ = 0;  // The start dmx address (offset) of this device (0...512)
+  uint16_t position_ = 0;           // base_channel +1. The position of the motor (0...65535)
+  uint8_t direction_ = 0;           // base_channel +2. 0 = forward, 1 = reverse
+  uint8_t speed_ = 0;               // base_channel +3. 0 = slow, 255 = fast TODO: check if this is correct
+  uint8_t num_channels_ = NUM_CHANNELS;        // Number of consecutive channels used, see above.
   dmx_config_t config_ = DMX_CONFIG_DEFAULT;
   // TODO: check if a man config is needed. Personalities = modes? start address static(!)?
   /* dmx_config_t config_man_ = {
