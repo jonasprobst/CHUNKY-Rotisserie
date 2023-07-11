@@ -4,7 +4,9 @@
 #include "SettingsInterface.h"
 #include "WifiAPConfigServer.h"
 #include <Arduino.h>
-// #include <Adafruit_SSD1306.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <Wire.h>
 #include <Bounce2.h>
 
 /**
@@ -16,11 +18,20 @@
 class UIController
 {
 public:
-    // Button pin to toggle the access point
+    // Button Pins Settings
     static constexpr uint8_t AP_BUTTON_PIN = 12;       // TODO: change to correct pin
     static constexpr uint8_t STOP_BUTTON_PIN = 13;     // TODO: change to correct pin and implement it
     static constexpr uint16_t BOUNCE_INTERVAL_MS = 10; // Bounce interval in milliseconds
+
+    // Display Settings
+    static constexpr uint8_t I2C_SDA = 21; // GPIO 21 by default
+    static constexpr uint8_t I2C_SCL = 22; // GPIO 22 by default
     static constexpr uint16_t DISPLAY_UPDATE_INTERVAL_MS = 1000;
+    static constexpr uint8_t DISPLAY_WIDTH = 128;
+    static constexpr uint8_t DISPLAY_HEIGHT = 32;
+    static constexpr uint8_t DISPLAY_ADDRESS = 0x3C; // I2C address of the display. 0x3C for 128x32, 0x3D for 128x64
+    static constexpr uint8_t OLED_RESET = -1; // with I2C, no reset pin necessary
+
 
     /**
      * @brief Constructor for UIController class
@@ -29,6 +40,11 @@ public:
      * @param config_server reference to the config server
      */
     UIController(SettingsInterface &settings, WifiAPConfigServer &config_server);
+
+    /**
+     * @brief Destructor for UIController class
+     */
+    ~UIController();
 
     /**
      * @brief Update the display and manage the button.
@@ -60,9 +76,11 @@ private:
     Bounce stop_button_;                    // Button to stop the show
     WifiAPConfigServer &config_server_;     // Reference to the config server object
     const SettingsInterface &dmx_settings_; // Reference to the settings object
-    bool ap_running_ = false;               // Flag to indicate if the access point is running
+    bool current_ap_status_ = false;               // Flag to indicate if the access point is running
     uint8_t current_mode_ = 0;              // The current mode
     uint16_t current_base_channel_ = 0;     // The current base channel
+    Adafruit_SSD1306 *display_;              // The OLED display
+    bool display_initialized_ = false;      // Flag to indicate if the display has been initialized successfully
     uint32_t last_display_update_ = 0;      // Timestamp of the last display update
 
     /**

@@ -18,7 +18,7 @@ class DMXController
 {
 public:
   // Setup UART for communication via MAX485.
-  static constexpr uint8_t DMX_PORT = 2;      // The UART port to use. 0 is used by the console.
+  static constexpr uint8_t UART_PORT = 2;      // The UART port to use. 0 is used by the console.
   static constexpr uint8_t RECEIVE_PIN = 16;  // UART2 RX Pin.
   static constexpr uint8_t TRANSMIT_PIN = 17; // UART2 TX Pin.
   static constexpr uint8_t ENABLE_PIN = 21;   // Pin to enable the MAX485.
@@ -71,7 +71,7 @@ public:
   bool IsConnected();
 
 private:
-  dmx_port_t dmx_port_ = DMX_PORT;
+  dmx_port_t dmx_port_ = UART_PORT; // The UART port to use. 0 is used by the console, 1 for flash
   const uint8_t base_channel_ = 0; // The start dmx address of this device (0...(512-SIZE))
   uint16_t position_ = 0;          // ch: offset +1. The position of the motor (0...65535)
   uint8_t direction_ = 0;          // ch: offset +2. 0 = forward, 1 = reverse

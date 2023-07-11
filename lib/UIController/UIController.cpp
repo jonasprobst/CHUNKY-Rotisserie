@@ -6,7 +6,8 @@ static const char *TAG = "UIController";
 
 UIController::UIController(SettingsInterface &dmx_settings, WifiAPConfigServer &config_server)
     : dmx_settings_(dmx_settings),
-      config_server_(config_server)
+      config_server_(config_server),
+      display_(nullptr) // Need to initialise wire first in SetupDisplay()
 {
     // Set up the Access Point button
     ap_button_.attach(AP_BUTTON_PIN, INPUT_PULLUP);
@@ -19,6 +20,11 @@ UIController::UIController(SettingsInterface &dmx_settings, WifiAPConfigServer &
     SetupDisplay();
 }
 
+UIController::~UIController()
+{
+    delete display_;
+}
+
 void UIController::Update()
 {
     UpdateButtons();
@@ -27,30 +33,81 @@ void UIController::Update()
 
 void UIController::DisplayMessage(const String &message)
 {
-    ESP_LOGI(TAG, "Displaying message: %s", message.c_str());
+    ESP_LOGI(TAG, "Displaying message: %s", message.c_str()); //TODO: move this down again
+  
+   if (!display_initialized_) {
+        return;
+    }
+
+    // Check following links for formatting options:
+    // https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
+    // https://github.com/adafruit/Adafruit_SSD1306/blob/master/examples/ssd1306_128x32_i2c/ssd1306_128x32_i2c.ino
+    // -> HERE
+    ClearDisplay();
+    display_->write(message.c_str());
+    display_->display();
 }
 
 void UIController::DisplayError(const String &error_message)
 {
-    ESP_LOGE(TAG, "Displaying error: %s", error_message.c_str());
+    ESP_LOGE(TAG, "Displaying error: %s", error_message.c_str()); //TODO: move this down again
+    
+    if (!display_initialized_) {
+        return;
+    }
+
+    // -> HERE
+    ClearDisplay();
+    display_->setTextColor(SSD1306_BLACK, SSD1306_WHITE); // 'inverted' text
+    display_->println(F("ERROR:")); // store in flash to save RAM F()
+    display_->println(error_message.c_str()); 
 }
 
 void UIController::ToggleAP()
 {
     config_server_.ToggleAP();
-    ap_running_ = !ap_running_;
 }
 
 // -- Private methods --
 void UIController::SetupDisplay()
-{
-    // Initialize the OLED display
-    // TODO: implement
+{   
+    ESP_LOGI(TAG, "Setting up display");
+    // FIXME: This is causing problems :-(
+     /*
+    // Initialize I2C (this is why we can't use the constructor for display_ above)
+    if (!Wire.begin(I2C_SDA, I2C_SCL)) {
+        ESP_LOGE(TAG, "Could not start I2C bus");
+        display_initialized_ = false;
+        display_= nullptr;
+        return;
+    }
+
+    // Initialize SSD1306 with the I2C addr 0x3C (factory default for the 128x32)
+    display_ = new Adafruit_SSD1306(DISPLAY_WIDTH, DISPLAY_HEIGHT, &Wire, OLED_RESET);
+   if (display_->begin(SSD1306_SWITCHCAPVCC, DISPLAY_ADDRESS)) {
+        display_initialized_ = true;
+        DisplayMessage("Starting up...");
+        delay(1000);
+    } else {
+        ESP_LOGE(TAG, "SSD1306 allocation failed");
+        display_initialized_ = false;
+        display_= nullptr;
+    }
+    */
 }
 
 void UIController::ClearDisplay()
 {
-    // TODO: implement
+    if (!display_initialized_) {
+        return;
+    }
+
+    // Clear the display and reset the cursor
+    display_->clearDisplay();
+    display_->setTextSize(1);
+    display_->setCursor(0, 0);
+    display_->setTextColor(SSD1306_WHITE);
+    display_->cp437(true); // Use full 256 char 'Code Page 437' font
 }
 
 void UIController::UpdateButtons()
@@ -84,15 +141,21 @@ void UIController::UpdateDisplay()
     // Check if something has changed. If not, don't update the display
     uint16_t base_channel = dmx_settings_.GetBaseChannel();
     uint8_t mode = dmx_settings_.GetMode();
-    String ap_status = ap_running_ ? "ON" : "OFF";
+    bool ap_status = config_server_.IsAPRunning();
+    
 
-    if (current_mode_ != mode || current_base_channel_ != base_channel)
+    // TODO: Check if the AP status has changed and display a message if it has
+    // TODO: Remove wait time from ConfigServer if possible when starting AP 
+    //       so it can't block other code (dmx, etc.)
+    if (current_mode_ != mode || current_base_channel_ != base_channel || current_ap_status_ != ap_status)
     {
         // Something has changed, update the display
         current_mode_ = mode;
         current_base_channel_ = base_channel;
+        current_ap_status_ = ap_status;
         String base_channel_str = FormatWithLeadingZeros(base_channel);
-        DisplayMessage("B:" + String(base_channel_str) + ", M:" + String(mode) + ", AP:" + ap_status);
+        String ap_status_str = current_ap_status_ ? "ON" : "OFF";
+        DisplayMessage("B:" + String(base_channel_str) + ", M:" + String(mode) + ", AP:" + ap_status_str);
     } 
 }
 
