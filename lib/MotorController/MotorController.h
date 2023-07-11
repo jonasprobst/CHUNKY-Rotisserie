@@ -3,6 +3,12 @@
 
 #include <AccelStepper.h>
 
+/**
+ * @class MotorController
+ * @brief Motor Controller for AccelStepper library.
+ *
+ * This class serves as a wrapper for the AccelStepper library.
+ */
 class MotorController
 {
 public:
@@ -22,18 +28,70 @@ public:
         SERVO
     };
 
-    // Constructor
+    /**
+     * @brief Construct a new Motor Controller object.
+     */
     MotorController();
 
-    // Motor control functions
+    /**
+     * @brief Destroy the Motor Controller object.
+     */
+    ~MotorController();
+
+    /**
+     * @brief Set the Speed object.
+     *
+     * @param speed The speed to set.
+     */
     void SetSpeed(uint32_t speed);
+
+    /**
+     * @brief Set the Direction object.
+     *
+     * @param direction The direction to set.
+     */
     void SetDirection(Direction direction);
+
+    /**
+     * @brief Set the Mode object.
+     *
+     * @param mode The mode to set.
+     */
     void SetMode(MotorMode mode);
+
+    /**
+     * @brief Set the Target Position object.
+     *
+     * @param position The target position to set.
+     */
     void SetTargetPosition(uint16_t position);
+
+    /**
+     * @brief Set the Servo Positions object.
+     *
+     * @param position1 The first servo position to set.
+     * @param position2 The second servo position to set.
+     */
     void SetServoPositions(uint16_t position1, uint16_t position2);
+
+    /**
+     * @brief Move the motor according to the current mode.
+     */
     void Step();
+
+    /**
+     * @brief Stop the motor.
+     */
     void Stop();
+
+    /**
+     * @brief Enable the motor.
+     */
     void Enable();
+
+    /**
+     * @brief Disable the motor.
+     */
     void Disable();
 
 private:
