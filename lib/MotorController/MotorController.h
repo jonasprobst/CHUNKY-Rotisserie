@@ -13,9 +13,10 @@ class MotorController
 {
 public:
     // Pin definitions
-    static const uint8_t STEP_PIN = 0;
-    static const uint8_t DIRECTION_PIN = 1;
-    static const uint8_t ENABLE_PIN = 2;
+    static constexpr uint8_t STEP_PIN = 27; //DATA3
+    static constexpr uint8_t DIRECTION_PIN = 19; //DATA2
+    static constexpr uint8_t ENABLE_PIN = 18; //DATA1
+    // static const uint8_t LED_CLOCK = 5; //DMX Shield
     enum Direction
     {
         CLOCKWISE,

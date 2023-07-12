@@ -7,18 +7,26 @@ String TAG = "MotorController";
 MotorController::MotorController()
     : stepper_(AccelStepper::DRIVER, STEP_PIN, DIRECTION_PIN)
 {
+    stepper_.setPinsInverted(false, false, true);
+    stepper_.setMaxSpeed(1000);
     pinMode(ENABLE_PIN, OUTPUT);
     SetDirection(CLOCKWISE);
     SetSpeed(0);
     Disable();
 }
 
+MotorController::~MotorController()
+{
+    Stop();
+    Disable();
+}
+
 // Set motor speed
 void MotorController::SetSpeed(uint32_t speed)
 {
-    if (speed != stepper_.maxSpeed())
+    if (speed != stepper_.speed())
     {
-        stepper_.setMaxSpeed(static_cast<float>(speed));
+        stepper_.setSpeed(static_cast<float>(speed));
         ESP_LOGI(TAG, "Speed set to %d", speed);
     }
 }
@@ -28,8 +36,7 @@ void MotorController::SetDirection(Direction direction)
 {
     if (current_direction_ != direction)
     {
-        bool clockwise = direction == CLOCKWISE; // true for clockwise, false for counterclockwise
-        stepper_.setPinsInverted(clockwise, !clockwise, false);
+        stepper_.setSpeed(stepper_.speed() * -1);
         current_direction_ = direction;
         ESP_LOGI(TAG, "Direction set to %d", direction);
     }
@@ -83,9 +90,11 @@ void MotorController::Step()
     {
     case MANUAL:
        // Run the motor at the current speed and direction
-        if(!stepper_.runSpeed()){
+
+        /*if(!stepper_.runSpeed()){
             ESP_LOGE(TAG, "Motor couldn't move");
-        }
+        }*/
+        stepper_.runSpeed();
         break;
 
     case STEPPER:
@@ -136,7 +145,7 @@ void MotorController::Enable()
     // active low, due to the common-cathode wiring of TB6600
     digitalWrite(ENABLE_PIN, LOW); 
     enabled_ = true;
-    ESP_LOGI(TAG, "Motor enabled");
+    ESP_LOGI(TAG, "Motor enabled.");
 }
 
 // Disable the motor
@@ -145,5 +154,5 @@ void MotorController::Disable()
     // active low, due to the common-cathode wiring of TB6600
     digitalWrite(ENABLE_PIN, HIGH); 
     enabled_ = false;
-    ESP_LOGI(TAG, "Motor disabled");
+    ESP_LOGI(TAG, "Motor disabled.");
 }

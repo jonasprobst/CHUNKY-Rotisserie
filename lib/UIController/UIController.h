@@ -19,8 +19,8 @@ class UIController
 {
 public:
     // Button Pins Settings
-    static constexpr uint8_t AP_BUTTON_PIN = 12;       // TODO: change to correct pin
-    static constexpr uint8_t STOP_BUTTON_PIN = 13;     // TODO: change to correct pin and implement it
+    static constexpr uint8_t AP_BUTTON_PIN = 14;       // TODO: change to correct pin
+    static constexpr uint8_t STOP_BUTTON_PIN = 15;     // TODO: change to correct pin and implement it
     static constexpr uint16_t BOUNCE_INTERVAL_MS = 10; // Bounce interval in milliseconds
 
     // Display Settings

@@ -16,13 +16,31 @@ void setup()
     ui.DisplayMessage("starting AP...");
     ui.ToggleAP(); // TODO: remove for production
 
+    motor_controller.SetMode(MotorController::MANUAL);
+    motor_controller.SetSpeed(200);
     motor_controller.Enable();
-    motor_controller.SetSpeed(1000);
-    motor_controller.SetDirection(motor_direction); //true for clockwise, false for counterclockwise
 }
 
 void loop()
 {
+    //DEBUG LOOP
+    while(true){
+        motor_controller.SetDirection(MotorController::CLOCKWISE);
+        for(int i = 0; i < 100; i++){
+            motor_controller.Step();
+            delay(100);
+        }
+        motor_controller.Stop();
+        delay(1000);
+        motor_controller.SetDirection(MotorController::COUNTERCLOCKWISE); 
+        for(int i = 0; i < 100; i++){  
+            motor_controller.Step();
+            delay(100);
+        }
+        motor_controller.Stop();
+        delay(1000);
+    }
+
     ui.Update();
 
     if (dmx_controller.IsConnected())
