@@ -40,7 +40,7 @@ const char *WifiAPConfigServer::GetIP()
     return IP;
 }
 
-SettingsInterface& WifiAPConfigServer::GetSettings()
+SettingsInterface &WifiAPConfigServer::GetSettings()
 {
     return dmx_settings_;
 }
@@ -147,13 +147,19 @@ void WifiAPConfigServer::HandleConfigUpdate(AsyncWebServerRequest *request)
         uint16_t base_channel = request->getParam("dmxBaseChannel", true)->value().toInt();
         uint8_t mode = request->getParam("mode", true)->value().toInt();
 
-        // Save the values to the settings object and to NVS
-        dmx_settings_.SetBaseChannel(base_channel);
-        dmx_settings_.SetMode(mode);
-        
-        // Redirect to the root page with a success message
-        request->redirect("/?save=success");
-        ESP_LOGI(TAG, "Values saved successfully. M: %d, BC: %d", mode, base_channel);
+        // Try saving the values to the settings object
+        if (dmx_settings_.SetBaseChannel(base_channel) &&
+            dmx_settings_.SetMode(mode) == true)
+        {
+            // It worked! Redirect to the root page with a success message
+            request->redirect("/?save=success");
+            ESP_LOGI(TAG, "Values saved successfully. M: %d, BC: %d", mode, base_channel);
+        }
+        else
+        {
+            request->redirect("/?save=failure");
+            ESP_LOGI(TAG, "Error saving values. Value(s) out of range.");
+        }
     }
     else
     {

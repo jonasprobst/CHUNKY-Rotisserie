@@ -16,18 +16,18 @@ Settings::~Settings() {
 
 bool Settings::SetBaseChannel(uint16_t base_channel) {
     // Ensure the base channel is within the valid range
-    if (base_channel >= 1 && base_channel <= 512) {
+    if (base_channel >= 1 && base_channel <= 505) {
         // Save the base channel
         if (nvs_storage_->SaveBaseChannel(base_channel)){
-            ESP_LOGI(TAG, "Successfully saved base channel: %d", base_channel);
             base_channel_ = base_channel;
+            ESP_LOGI(TAG, "Successfully saved base channel: %d", base_channel);
             return true;
         } else {
-            ESP_LOGE(TAG, "Failed to save base channel.");
+            ESP_LOGE(TAG, "Failed to save base channel. (NVS Error)");
             return false;
         }
     } else {
-        ESP_LOGE(TAG, "Invalid base channel value: %d. Not saved.", base_channel);
+        ESP_LOGE(TAG, "Base channel value out of Range (1-505): %d. Not saved.", base_channel);
         return false;
     }
 }
@@ -38,7 +38,7 @@ uint16_t Settings::GetBaseChannel() const {
 
 bool Settings::SetMode(uint8_t mode) {
     // Ensure mode is within the valid range
-    if (mode >= 1 && mode <= 5) { //TODO: Set this to correct value!
+    if (valid_modes_.count(mode) > 0) {
         // Save the mode
         if(nvs_storage_->SaveMode(mode)){
             ESP_LOGI(TAG, "Successfully saved mode: %d", mode);
