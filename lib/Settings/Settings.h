@@ -41,21 +41,21 @@
  *        4. rotate motor with Channel 5 to desired position
  *        5. set channel 5 to 0 to save position as CCW limit
  *        6. continue with position or angular mode
- *   
+ *
  *        Position mode:
  *        1. Follow the steps in Setup limits mode
  *        2. Set channel 6 to 55-79% to enable position mode
  *        3. Set channel 3 desired speed (0 = slow, 255 = fast)
- *        4. Set channel 1 (rough) and 2 (fine) to move the motor 
+ *        4. Set channel 1 (rough) and 2 (fine) to move the motor
  *           to the relative position. The motor will turn in the direction
  *           that is the shortest way to the target position.
- * 
+ *
  *        Angular mode:
  *        1. Follow the steps in Setup limits mode
  *        2. Set channel 6 to 80-100% to enable angular mode
  *        3. Set channel 3 desired speed (0 = slow, 255 = fast)
  *        4. Set channel 1 (rough) and 2 (fine) to move the motor
- * 
+ *
  */
 class Settings : public SettingsInterface
 {
@@ -98,12 +98,22 @@ public:
      */
     uint8_t GetMode() const;
 
+    /**
+     * @brief Gets the current ramp speed
+     *
+     * @return The current ramp speed value.
+     */
+    uint8_t GetRamp() const;
+
 private:
-    const std::set<uint8_t> valid_modes_ = {1, 2, 3, 7, 8}; // valid modes
-    uint8_t mode_;            // operation mode of this device
-    uint16_t base_channel_;   // DMX Start Address aka offset
-    NVSStorage *nvs_storage_; // NVS storage pointer
-    
+    const std::set<uint8_t> valid_modes_ = {1, 2, 3, 7, 8};          // valid modes
+    static constexpr uint8_t SLOW_RAMP = 50;                   // slow ramp speed
+    static constexpr uint8_t NORMAL_RAMP = 100;                // normal ramp speed (default)
+    static constexpr uint8_t FAST_RAMP = 200;                  // fast ramp speed
+    static constexpr uint8_t DEFAULT_RAMP = NORMAL_RAMP; // threshold for ramp speed
+    uint8_t mode_;                                                   // operation mode of this device
+    uint16_t base_channel_;                                          // DMX Start Address aka offset
+    NVSStorage *nvs_storage_;                                        // NVS storage pointer
 };
 
 #endif // SETTINGS_H
