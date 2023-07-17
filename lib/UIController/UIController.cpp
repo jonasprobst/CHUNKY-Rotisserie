@@ -10,14 +10,14 @@ UIController::UIController(SettingsInterface &dmx_settings, WifiAPConfigServer &
       display_(nullptr) // Need to initialise wire first in SetupDisplay()
 {
     // Set up the Access Point button
-    ap_button_.attach(AP_BUTTON_PIN, INPUT_PULLUP);
+    ap_button_.attach(BUTTON_AP, INPUT_PULLUP);
     ap_button_.interval(BOUNCE_INTERVAL_MS);
 
     // Set up the Stop button
-    stop_button_.attach(STOP_BUTTON_PIN, INPUT_PULLUP);
+    stop_button_.attach(BUTTON_STOP, INPUT_PULLUP);
     stop_button_.interval(BOUNCE_INTERVAL_MS);
 
-    SetupDisplay();
+    // SetupDisplay(); TODO: reanable once fixed :-)
 }
 
 UIController::~UIController()
@@ -71,19 +71,23 @@ void UIController::ToggleAP()
 // -- Private methods --
 void UIController::SetupDisplay()
 {   
+    // TODO: Display probably needs 5V in and logic to work properly?
+    // Or maybe it can be set to use 3.3V with #define SSD1306_SWITCHCAPVCC 0x02 ///< Gen. display voltage from 3.3V
     ESP_LOGI(TAG, "Setting up display");
-    // FIXME: This is causing problems :-(
-     /*
-    // Initialize I2C (this is why we can't use the constructor for display_ above)
-    if (!Wire.begin(I2C_SDA, I2C_SCL)) {
+
+    // TODO: I2C is probably used for Thing connected to DMX Shield?
+    //Initialize I2C (this is why we can't use the constructor for display_ above)
+    if (!Wire.begin(THING_SDA, THING_SCL)) {
         ESP_LOGE(TAG, "Could not start I2C bus");
         display_initialized_ = false;
         display_= nullptr;
         return;
     }
 
-    // Initialize SSD1306 with the I2C addr 0x3C (factory default for the 128x32)
-    display_ = new Adafruit_SSD1306(DISPLAY_WIDTH, DISPLAY_HEIGHT, &Wire, OLED_RESET);
+    // FIXME: This is causing problems :-(
+
+    // TODO: true? -> Initialize SSD1306 with the I2C addr 0x3C (factory default for the 128x32)
+    display_ = new Adafruit_SSD1306(DISPLAY_WIDTH, DISPLAY_HEIGHT);
    if (display_->begin(SSD1306_SWITCHCAPVCC, DISPLAY_ADDRESS)) {
         display_initialized_ = true;
         DisplayMessage("Starting up...");
@@ -93,7 +97,6 @@ void UIController::SetupDisplay()
         display_initialized_ = false;
         display_= nullptr;
     }
-    */
 }
 
 void UIController::ClearDisplay()

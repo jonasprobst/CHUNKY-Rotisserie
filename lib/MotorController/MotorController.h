@@ -1,6 +1,7 @@
 #ifndef MOTORCONTROLLER_H
 #define MOTORCONTROLLER_H
 
+#include "PinConfig.h"
 #include <AccelStepper.h>
 
 /**
@@ -12,11 +13,8 @@
 class MotorController
 {
 public:
-    // Pin definitions
-    static constexpr uint8_t STEP_PIN = 27; //DATA3
-    static constexpr uint8_t DIRECTION_PIN = 19; //DATA2
-    static constexpr uint8_t ENABLE_PIN = 18; //DATA1
-    // static const uint8_t LED_CLOCK = 5; //DMX Shield
+    static constexpr uint8_t MOTOR_MAX_SPEED = 200; // The Maximum Speed the Motor can operate at
+    
     enum Direction
     {
         CLOCKWISE,
@@ -44,7 +42,7 @@ public:
      *
      * @param speed The speed to set.
      */
-    void SetSpeed(uint32_t speed);
+    void SetSpeed(uint8_t speed);
 
     /**
      * @brief Set the Direction object.
@@ -103,7 +101,7 @@ private:
     uint16_t servo_position1_;    // Servo position 1
     uint16_t servo_position2_;    // Servo position 2
     uint16_t target_position_;    // Motor target position
-    uint32_t current_speed_;      // Motor speed
+    uint8_t current_speed_;      // Motor speed
 };
 
 #endif // MOTORCONTROLLER_H

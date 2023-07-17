@@ -1,6 +1,7 @@
 #ifndef UI_CONTROLLER_H
 #define UI_CONTROLLER_H
 
+#include "PinConfig.h"
 #include "SettingsInterface.h"
 #include "WifiAPConfigServer.h"
 #include <Arduino.h>
@@ -18,20 +19,16 @@
 class UIController
 {
 public:
-    // Button Pins Settings
-    static constexpr uint8_t AP_BUTTON_PIN = 14;       // TODO: change to correct pin
-    static constexpr uint8_t STOP_BUTTON_PIN = 15;     // TODO: change to correct pin and implement it
+    // Pin definitions => PinConfig.h
+    // Debounce Setting
     static constexpr uint16_t BOUNCE_INTERVAL_MS = 10; // Bounce interval in milliseconds
 
     // Display Settings
-    static constexpr uint8_t I2C_SDA = 21; // GPIO 21 by default
-    static constexpr uint8_t I2C_SCL = 22; // GPIO 22 by default
     static constexpr uint16_t DISPLAY_UPDATE_INTERVAL_MS = 1000;
     static constexpr uint8_t DISPLAY_WIDTH = 128;
     static constexpr uint8_t DISPLAY_HEIGHT = 32;
-    static constexpr uint8_t DISPLAY_ADDRESS = 0x3C; // I2C address of the display. 0x3C for 128x32, 0x3D for 128x64
+    static constexpr uint8_t DISPLAY_ADDRESS = 0x3C; // TODO:true? I2C address of the display (0x3D for 128x64) 
     static constexpr uint8_t OLED_RESET = -1; // with I2C, no reset pin necessary
-
 
     /**
      * @brief Constructor for UIController class

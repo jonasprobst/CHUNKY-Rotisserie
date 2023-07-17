@@ -1,15 +1,22 @@
+#include "PinConfig.h"
 #include "MotorController.h"
 #include <Arduino.h>
 
 String TAG = "MotorController";
 
+
+//TODO: change Modes: Rotation, Position, Angular
+//TODO: Only change mode if it's different form current mode
+//TODO: Update the ramp from settings object (mode) -> add settings object to update in real time
+//      Maybe it makes more sense to do this in the main loop?
+
 // Constructor implementation
 MotorController::MotorController()
-    : stepper_(AccelStepper::DRIVER, STEP_PIN, DIRECTION_PIN)
+    : stepper_(AccelStepper::DRIVER, STEPPER_STEP, STEPPER_DIRECTION)
 {
     stepper_.setPinsInverted(false, false, true);
     stepper_.setMaxSpeed(1000);
-    pinMode(ENABLE_PIN, OUTPUT);
+    pinMode(STEPPER_ENABLE, OUTPUT);
     SetDirection(CLOCKWISE);
     SetSpeed(0);
     Disable();
@@ -22,7 +29,7 @@ MotorController::~MotorController()
 }
 
 // Set motor speed
-void MotorController::SetSpeed(uint32_t speed)
+void MotorController::SetSpeed(uint8_t speed)
 {
     if (speed != stepper_.speed())
     {
@@ -143,7 +150,7 @@ void MotorController::Stop()
 void MotorController::Enable()
 {
     // active low, due to the common-cathode wiring of TB6600
-    digitalWrite(ENABLE_PIN, LOW); 
+    digitalWrite(STEPPER_ENABLE, LOW); 
     enabled_ = true;
     ESP_LOGI(TAG, "Motor enabled.");
 }
@@ -152,7 +159,7 @@ void MotorController::Enable()
 void MotorController::Disable()
 {
     // active low, due to the common-cathode wiring of TB6600
-    digitalWrite(ENABLE_PIN, HIGH); 
+    digitalWrite(STEPPER_ENABLE, HIGH); 
     enabled_ = false;
     ESP_LOGI(TAG, "Motor disabled.");
 }

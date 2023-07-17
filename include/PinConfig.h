@@ -10,10 +10,9 @@ constexpr uint8_t THING_SCL = 23; // I2C SCL [Pin 11]
 
 // SparkFun DMX-To-LED Shield (https://www.sparkfun.com/products/15110)
 constexpr uint8_t DMX_ENABLE = 21; // Driver Output Enable (DE) of MAX3485. High for TX. (GPIO21) - [Pin 16]
-constexpr uint8_t DMX_PORT = 1;    // UART2 (0 is used by the console for debugging)
 constexpr uint8_t DMX_TX = 17;     // UART2 TX (GPIO17) - [Pin 14]
 constexpr uint8_t DMX_RX = 16;     // UART2 RX (GPIO16) - [Pin 15]
-constexpr uint8_t DMX_UNUSED = 5;  // DMX-Shield LED-CLOCK (GPIO5) - shifted to 5V - [Pin 11]
+// constexpr uint8_t DMX_UNUSED = 5;  // DMX-Shield LED-CLOCK (GPIO5) - shifted to 5V - [Pin 11]
 
 // Stepper Motor Driver - TB6600 (common cathode wiring)
 constexpr uint8_t STEPPER_ENABLE = 27;    // DMX-Shield DATA2 (GPIO27) - shifted to 5V - [Pin 6]
