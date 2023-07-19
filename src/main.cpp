@@ -1,11 +1,9 @@
-#include "PinConfig.h"
 #include "WifiAPConfigServer.h"
 #include "Settings.h"
 #include "DMXController.h"
 #include "UIController.h"
 #include "MotorController.h"
 
-String TAG = TAG; // ESP_LOGx Tag
 Settings dmx_settings;
 WifiAPConfigServer config_server(dmx_settings);
 DMXController dmx_controller(dmx_settings.GetBaseChannel());
@@ -17,7 +15,7 @@ uint8_t position = 0;
 uint8_t max_speed = 0;
 uint8_t cw_speed = 0;
 uint8_t ccw_speed = 0;
-uint8_t motor_mode = 1; // Continuous rotation mode
+uint8_t motor_mode = 0;
 
 void setup()
 {
@@ -35,27 +33,53 @@ void loop()
     while (true)
     {
         motor_controller.SetDirection(MotorController::CLOCKWISE);
+        ESP_LOGI("MAIN","Motor ENA: %d", gpio_get_level(STEPPER_ENABLE));
+        ESP_LOGI("MAIN","Motor DIR: %d", gpio_get_level(STEPPER_DIRECTION));
+        ESP_LOGI("MAIN","Motor STP: %d", gpio_get_level(STEPPER_STEP));
         for (int i = 0; i < 100; i++)
         {
             motor_controller.Step();
             delay(100);
         }
+        
+        ESP_LOGI("MAIN","Motor ENA: %d", gpio_get_level(STEPPER_ENABLE));
+        ESP_LOGI("MAIN","Motor DIR: %d", gpio_get_level(STEPPER_DIRECTION));
+        ESP_LOGI("MAIN","Motor STP: %d", gpio_get_level(STEPPER_STEP));
         motor_controller.Stop();
         delay(1000);
         motor_controller.SetDirection(MotorController::COUNTERCLOCKWISE);
+        ESP_LOGI("MAIN","Motor ENA: %d", gpio_get_level(STEPPER_ENABLE));
+        ESP_LOGI("MAIN","Motor DIR: %d", gpio_get_level(STEPPER_DIRECTION));
+        ESP_LOGI("MAIN","Motor STP: %d", gpio_get_level(STEPPER_STEP));
         for (int i = 0; i < 100; i++)
         {
             motor_controller.Step();
             delay(100);
         }
+        
+        ESP_LOGI("MAIN","Motor ENA: %d", gpio_get_level(STEPPER_ENABLE));
+        ESP_LOGI("MAIN","Motor DIR: %d", gpio_get_level(STEPPER_DIRECTION));
+        ESP_LOGI("MAIN","Motor STP: %d", gpio_get_level(STEPPER_STEP));
         motor_controller.Stop();
         delay(1000);
 
+        ESP_LOGI("MAIN","DMX State before Update: %d", dmx_controller.IsConnected());
+        ESP_LOGI("MAIN","RX %d", gpio_get_level(DMX_RX));
+        ESP_LOGI("MAIN","TX %d", gpio_get_level(DMX_TX));
+        ESP_LOGI("MAIN","EN %d", gpio_get_level(DMX_ENABLE));
+
         dmx_controller.Update();
         if(dmx_controller.IsConnected()){
-            ESP_LOGI(TAG,"DMX Position: %d", dmx_controller.GetPosition());
-            ESP_LOGI(TAG,"DMX Max Speed: %d", dmx_controller.GetMaxSpeed());
+            ESP_LOGI("MAIN","DMX Position: %d", dmx_controller.GetPosition());
+            ESP_LOGI("MAIN","DMX Max Speed: %d", dmx_controller.GetMaxSpeed());
+        } else {
+            ESP_LOGE("MAIN","No DMX signal:");
+            ESP_LOGI("MAIN","RX %d", gpio_get_level(DMX_RX));
+            ESP_LOGI("MAIN","TX %d", gpio_get_level(DMX_TX));
+            ESP_LOGI("MAIN","EN %d", gpio_get_level(DMX_ENABLE));
         }
+
+        delay(1000);
     }
 
     ui.Update();
@@ -66,13 +90,15 @@ void loop()
         // TODO: Emergency stop + Update UI
         // ui.displayError("no DMX signal");
         motor_controller.Stop();
+        // TODO: reset everything to 0;
+
     } 
 
     // All is good. Let's get the latest DMX messages
     position = dmx_controller.GetPosition();
     max_speed = dmx_controller.GetMaxSpeed();
-    cw_speed = dmx_controller.GetSpeedCW();
-    ccw_speed = dmx_controller.GetSpeedCCW();
+    cw_speed = dmx_controller.GetCWSpeed();
+    ccw_speed = dmx_controller.GetCCWSpeed();
     motor_mode = dmx_controller.GetMotorMode();
 
     // work the motor according to DMX instructions
@@ -99,7 +125,7 @@ void loop()
         // Invalid mode -  this should never happen
         // TODO: Emergency Stop??
         // TODO: Display Error
-        ESP_LOGE(TAG, "Invalid motor mode: %d", motor_mode);
+        ESP_LOGE("MAIN", "Invalid motor mode: %d", motor_mode);
         ui.DisplayError("Invalid motor mode");
         break;
     }
