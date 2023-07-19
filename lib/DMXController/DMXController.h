@@ -53,7 +53,7 @@ public:
    *
    * @return The clock wise speed value (% of max speed).
    */
-  uint8_t GetSpeedCW();
+  uint8_t GetCWSpeed();
 
   /**
    * @brief Retrieve the limit counter clock wise speed value from the DMX data.
@@ -63,7 +63,7 @@ public:
    *
    * @return The counter clock wise speed value (% of max speed).
    */
-  uint8_t GetSpeedCCW();
+  uint8_t GetCCWSpeed();
 
   /**
    * @brief Retrieve the operation mode from the DMX data.
@@ -93,7 +93,7 @@ public:
    * @brief Update the DMX connection.
    * @note This function must be called regularly in the main loop.
    */
-  void Update();
+  bool Update();
 
 private:
   // Channel settings
@@ -106,8 +106,8 @@ private:
   static constexpr uint8_t MOTOR_MODE_CHANNEL = 6;  // Modus Operandi
 
   dmx_port_t dmx_port_ = DMX_NUM_2; // The UART port to use. WARNING: Use the correct pin setup for this!
-  TaskHandle_t dmx_task_handle_;    // The task handle for the DMX task.
-  SemaphoreHandle_t dmx_mutex_;     // The mutex for the DMX task.
+  //TaskHandle_t dmx_task_handle_;    // The task handle for the DMX task.
+  //SemaphoreHandle_t dmx_mutex_;     // The mutex for the DMX task.
   uint8_t base_channel_;            // The base channel (aka dmx address aka offset) to read from.
   uint8_t data_[NUM_CHANNELS];      // The data array to store the read data in.
   uint8_t last_position_hb_;        // The high byte of the last received position
