@@ -5,6 +5,7 @@
 String TAG = "MotorController";
 
 
+
 //TODO: change Modes: Rotation, Position, Angular
 //TODO: Only change mode if it's different form current mode
 //TODO: Update the ramp from settings object (mode) -> add settings object to update in real time

@@ -1,7 +1,6 @@
 #ifndef MOTORCONTROLLER_H
 #define MOTORCONTROLLER_H
 
-#include "PinConfig.h"
 #include <AccelStepper.h>
 
 /**
