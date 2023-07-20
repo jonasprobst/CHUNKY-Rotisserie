@@ -13,8 +13,8 @@ MotorController::Direction motor_direction = MotorController::CLOCKWISE;
 
 uint8_t position = 0;
 uint8_t max_speed = 0;
-uint8_t cw_speed = 0;
-uint8_t ccw_speed = 0;
+uint8_t speed = 0;
+uint8_t direction = 0;
 uint8_t motor_mode = 0;
 
 void setup()
@@ -70,7 +70,7 @@ void loop()
 
         dmx_controller.Update();
         if(dmx_controller.IsConnected()){
-            ESP_LOGI("MAIN","DMX Position: %d", dmx_controller.GetPosition());
+            ESP_LOGI("MAIN","DMX Position: %d", dmx_controller.GetTargetPosition());
             ESP_LOGI("MAIN","DMX Max Speed: %d", dmx_controller.GetMaxSpeed());
         } else {
             ESP_LOGE("MAIN","No DMX signal:");
@@ -95,10 +95,10 @@ void loop()
     } 
 
     // All is good. Let's get the latest DMX messages
-    position = dmx_controller.GetPosition();
+    position = dmx_controller.GetTargetPosition();
     max_speed = dmx_controller.GetMaxSpeed();
-    cw_speed = dmx_controller.GetCWSpeed();
-    ccw_speed = dmx_controller.GetCCWSpeed();
+    speed = dmx_controller.GetSpeed();
+    direction = dmx_controller.GetDirection();
     motor_mode = dmx_controller.GetMotorMode();
 
     // work the motor according to DMX instructions
