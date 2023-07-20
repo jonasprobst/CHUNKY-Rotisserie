@@ -21,12 +21,16 @@ Drama Dynamo is designed to control a motorized theater prop using DMX messages 
 
 The ESP32 device will save the mode and base channel so that these settings persist even after the system is powered off. The device will operate in one of two modes:
 
+//TODO: update
+
 - **Mode 1 (Fully Controlled Mode)**: In this mode, speed and direction are fully controlled by the lighting desk.
 - **Mode 2 (Start-End Mode)**: In this mode, a start and end position is set by driving the motor to a specific location and sending a save command on a DMX channel. Once these positions are set, the motor can move back and forth between the two positions. The speed can be adjusted, and when the speed is 0, the motor stops.
 
 The status of the system, Access Point, and motor will be indicated by LEDs.
 
 ## Software Architecture
+
+//TODO: Update
 
 1. **Hardware Abstraction Layer (HAL):** Interacts with the DMX shield, WiFi module, stepper motor, LEDs, and the AP button. Contains classes/functions to handle hardware-specific tasks. It must implement robust error handling due to direct interface with hardware.
 2. **DMX Controller:** Interprets the DMX messages received, mapping DMX channels to controls like position, speed, direction, etc.
@@ -42,3 +46,11 @@ The status of the system, Access Point, and motor will be indicated by LEDs.
 - **Unit and Integration Tests:** Write and execute tests for all the major functionalities and classes as we go forward.
 - **Documenting the Code:** Provide enough comments and documentation in the code to make it understandable to others or ourselves in the future.
 - **Safety of the stage personell:** provide emergency stop and ensure that in case of prolonged dmx communication errors or signal loss the motor is stopped. Implement Hardware safety features like fuses and curent limiting.
+
+//TODO: Update
+- Automated Stoping (Loosing DMX Connection, Limit Switches?, Current Sensor?, temperature sensor?)
+- Lightningdesk Personell (Max Speed - Channel 3 to 0, setup a set all 0 button on Desk)
+- Housing of the device (grounded), choice of cables (big where needed), keeping thing savely stored away
+- Double saftey for things attached to shaft [like this](https://images.app.goo.gl/RfDvGF1uAmsQuWuMA)
+- Seperate circuits for DMX Data and Device (Groundloop protection)
+
