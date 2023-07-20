@@ -10,7 +10,7 @@ constexpr gpio_num_t THING_SDA = GPIO_NUM_23; // I2C SDA [Pin 12]
 constexpr gpio_num_t THING_SCL = GPIO_NUM_23; // I2C SCL [Pin 11]
 
 // SparkFun DMX-To-LED Shield (https://www.sparkfun.com/products/15110)
-constexpr gpio_num_t DMX_ENABLE = GPIO_NUM_21; // Driver Output Enable (DE) of MAX3485. High for TX. [Pin 16]
+constexpr gpio_num_t DMX_ENABLE = GPIO_NUM_4; //GPIO_NUM_21; // Driver Output Enable (DE) of MAX3485. High for TX. [Pin 16]
 constexpr gpio_num_t DMX_TX = GPIO_NUM_17;     // UART2 TX [Pin 14]
 constexpr gpio_num_t DMX_RX = GPIO_NUM_16;     // UART2 RX [Pin 15]
 // constexpr uint8_t DMX_UNUSED = 5;  // DMX-Shield LED-CLOCK - shifted to 5V - [Pin 11]
@@ -21,7 +21,7 @@ constexpr gpio_num_t STEPPER_DIRECTION = GPIO_NUM_19; // DMX-Shield DATA1 - shif
 constexpr gpio_num_t STEPPER_STEP = GPIO_NUM_18;      // DMX-Shield DATA0 - shifted to 5V - [Pin 12]
 
 // Push Buttons
-constexpr gpio_num_t BUTTON_AP = GPIO_NUM_25;   
+constexpr gpio_num_t BUTTON_AP = GPIO_NUM_25;
 constexpr gpio_num_t BUTTON_STOP = GPIO_NUM_26; 
 
 /***************************************************
