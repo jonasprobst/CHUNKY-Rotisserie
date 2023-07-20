@@ -2,13 +2,13 @@
 
 - [x] Update libraries to handle the new Settings and NVSStorage class
 - [x] update main and test
-- [ ] Setup test hardware (DMX, UI, small Driver, small Motor)
-- [ ] Document Hardware setup and Pin Config
-- [ ] Test DMX reception
+- [x] Setup test hardware (DMX, UI, small Driver, small Motor)
+- [x] Document Hardware setup and Pin Config
+- [x] Test DMX reception
 - [ ] Finish the UI class
 - [ ] Update main and test UI integration
-- [ ] Research modes from Wahlberg Rotator
-- [ ] Implement a basic MotorController for one of my small drivers and motors
+- [x] Research modes from Wahlberg Rotator
+- [.] Implement a basic MotorController for one of my small drivers and motors
 - [ ] update main and test Motor Implementation
 - [ ] write some tests and test things well considering personnel safety (write a e2e test protocol)
 
