@@ -64,7 +64,7 @@
  *       Setup (has to be done once each power cycle):
  *         1. Set all channels to 0.
  *         2. Set channel 3 (max speed) to 50% (slow rotation)
- *         3. Rotate motor with Channel 4 (CW) at least one full turn to let it zero
+ *         3. Rotate motor with Channel 4 (CW) at least one full turn to home it (find its zero position)
  *         4. Set channel 4 (CW) to 0.
  *         5. Set channel 6 to 80-100% to enable angular mode.
  *       Controls:
