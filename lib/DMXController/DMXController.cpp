@@ -50,7 +50,7 @@ uint8_t DMXController::GetSpeed()
     // Unallowed state. Stop motor.
     return 0;
   }
-  // return absolute value of speed
+  // set absolute value of speed
   (ccw_speed > 0) ? speed_ = ccw_speed : speed_ = cw_speed;
   ESP_LOGI(TAG, "Speed: %d", speed_);
   return speed_;
