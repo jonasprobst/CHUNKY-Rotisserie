@@ -40,6 +40,13 @@ public:
      * @return The current mode value.
      */
     virtual uint8_t GetMode() const = 0;
+
+    /**
+     * @brief Gets the current ramp.
+     * 
+     * @return The current ramp value.
+     */
+    virtual uint8_t GetRamp() const = 0;
 };
 
 #endif // SETTINGS_INTERFACE_H
