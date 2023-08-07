@@ -23,7 +23,7 @@
  *       7 = Clockwise (CW) Rotation, speed set by base channel.
  *       8 = Counter clockwise (CCW) Rotation, speed set by base channel.
  *       0,4,5,6,9 = No function -> motor is off.
- * 
+ *
  *       Channels:
  *       1 = Position rough (High byte of 16bit)
  *       2 = Position fine (Low byte of 16bit)
@@ -37,7 +37,7 @@
  *           - 80-100% Angular mode
  *
  *       Continuous rotation mode:
- *       The motor will rotate continuously in the direction set by channel 4 or 5 at the speed set by channel 3.  
+ *       The motor will rotate continuously in the direction set by channel 4 or 5 at the speed set by channel 3.
  *       - Channel 3: Set max speed
  *       - Channel 4: Rotate CW relative to max speed. Channel 5 must be 0.
  *       - Channel 5: Rotate CCW relative to max speed. Channel 4 must be 0.
@@ -55,7 +55,7 @@
  *         8. Set channel 6 to 55-79% to enable position mode
  *       Controls:
  *         - Channel 1 + 2: Set target position relative to the set limits
- *         - Channel 3: Set Max speed 
+ *         - Channel 3: Set Max speed
  *
  *       Angular mode (zero position is lost when powered off):
  *       The Position is relative to a full rotation. E.g. 25% = 90°, 50% = 180°, etc.
@@ -71,7 +71,7 @@
  *         - Channel 1 + 2: Set target position relative to a full rotation (360°)
  *         - Channel 3: Set max speed
  *       Example switching from continuous rotation to angular mode:
- *         − Normal: The current position is 5° and the next set position is 350°. 
+ *         − Normal: The current position is 5° and the next set position is 350°.
  *           → The rotator will move 15° back to the new position.
  *         - Exception: The rotator is moving continuously (channel 4 or 5 set), and the next position is 350°
  *           → The rotator will continue in the same direction until it reaches the new position even if going backwards would be shorter.
@@ -125,11 +125,8 @@ public:
     uint8_t GetRamp() const;
 
 private:
-    const std::set<uint8_t> valid_modes_ = {1, 2, 3, 7, 8}; // valid modes
-    static constexpr uint8_t SLOW_RAMP = 50;                // slow ramp speed
-    static constexpr uint8_t NORMAL_RAMP = 100;             // normal ramp speed (default)
-    static constexpr uint8_t FAST_RAMP = 200;               // fast ramp speed
-    static constexpr uint8_t DEFAULT_RAMP = NORMAL_RAMP;    // default ramp speed
+    // TODO: Move valid modes to a more generic place?
+    const std::set<uint8_t> valid_modes_ = {1, 2, 3, 7, 8}; // valid modes for this device
     uint8_t mode_;                                          // operation mode of this device
     uint16_t base_channel_;                                 // DMX Start Address aka offset
     NVSStorage *nvs_storage_;                               // NVS storage pointer

@@ -5,7 +5,7 @@ static const char* TAG = "Settings";
 
 Settings::Settings() {
     // Set default values
-    nvs_storage_ = new NVSStorage(); // Use 'new' to allocate on the heap
+    nvs_storage_ = new NVSStorage();
     base_channel_ = nvs_storage_->LoadBaseChannel();
     mode_ = nvs_storage_->LoadMode();
 }
@@ -56,17 +56,4 @@ bool Settings::SetMode(uint8_t mode) {
 
 uint8_t Settings::GetMode() const {
     return mode_;
-}
-
-uint8_t Settings::GetRamp() const {
-    switch (mode_) {
-        case 1:
-            return SLOW_RAMP;
-        case 2:
-            return NORMAL_RAMP;
-        case 3:
-            return FAST_RAMP;
-        default:
-            return DEFAULT_RAMP;
-    }
 }
