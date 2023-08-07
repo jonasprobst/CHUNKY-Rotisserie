@@ -4,6 +4,6 @@
 .vscode/launch.json
 .vscode/ipch
 .code-workspace
-**/.DS_Store
+.DS_Store
 
 prompts.md
