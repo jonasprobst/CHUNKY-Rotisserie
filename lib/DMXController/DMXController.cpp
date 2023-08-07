@@ -56,7 +56,7 @@ uint8_t DMXController::GetOperationMode()
   return operation_mode_;
 }
 
-uint8_t DMXController::GetChannelValue(uint8_t channel, uint8_t default_value = 0)
+uint8_t DMXController::GetChannelValue(uint8_t channel, uint8_t default_value)
 {
   // Check if DMX is connected and channel in range
   // On error, return default value to prevent motor from moving unintentionally

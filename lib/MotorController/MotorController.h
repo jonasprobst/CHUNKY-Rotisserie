@@ -1,35 +1,29 @@
 #ifndef MOTORCONTROLLER_H
 #define MOTORCONTROLLER_H
 
+#include "MotorControllerInterface.h"
+#include "Settings.h"
 #include <AccelStepper.h>
 
 /**
  * @class MotorController
  * @brief Motor Controller for AccelStepper library.
  *
- * This class serves as a wrapper for the AccelStepper library.
+ * This serves as a wrapper for the AccelStepper library to control the motor.
  */
-class MotorController
+
+class MotorController : public MotorControllerInterface
 {
 public:
-    static constexpr uint8_t MOTOR_MAX_SPEED = 200; // The Maximum Speed the Motor can operate at
-    
-    enum Direction
-    {
-        CLOCKWISE,
-        COUNTERCLOCKWISE
-    };
-    enum MotorMode
-    {
-        MANUAL,
-        STEPPER,
-        SERVO
-    };
-
     /**
      * @brief Construct a new Motor Controller object.
+     *
+     * @param motor_mode The mode the motor is in.
+     * @warning This is the motor mode configured via Webserver.
+     *          (e.g. ramp-speed, manual, etc.)
+     *          Not the operation mode.
      */
-    MotorController();
+    MotorController(uint8_t motor_mode);
 
     /**
      * @brief Destroy the Motor Controller object.
@@ -37,7 +31,25 @@ public:
     ~MotorController();
 
     /**
-     * @brief Set the Speed object.
+     * @brief Set the Operation Mode.
+     * @warning This is the operation mode that can be set via DMX channel 6
+     *          (e.g. continuous rotation, angular mode, etc.).
+     *          Not the motor mode set via Webserver!
+     *
+     * @param operation_mode The operation mode to set.
+     */
+    void SetOperationMode(OperationMode operation_mode);
+
+    /**
+     * @brief Set max speed of the motor.
+     * @warning The max speed is limited to MOTOR_MAX_SPEED.
+     *
+     * @return uint8_t The max speed.
+     */
+    void SetMaxSpeed(uint8_t max_speed);
+
+    /**
+     * @brief Set the Speed of motor relative to max speed.
      *
      * @param speed The speed to set.
      */
@@ -51,11 +63,11 @@ public:
     void SetDirection(Direction direction);
 
     /**
-     * @brief Set the Mode object.
+     * @brief Set soft limits for position mode.
      *
-     * @param mode The mode to set.
+     * @param direction The direction to set the limit for.
      */
-    void SetMode(MotorMode mode);
+    void SaveLimitPosition(Direction direction);
 
     /**
      * @brief Set the Target Position object.
@@ -65,42 +77,70 @@ public:
     void SetTargetPosition(uint16_t position);
 
     /**
-     * @brief Set the Servo Positions object.
-     *
-     * @param position1 The first servo position to set.
-     * @param position2 The second servo position to set.
-     */
-    void SetServoPositions(uint16_t position1, uint16_t position2);
-
-    /**
      * @brief Move the motor according to the current mode.
+     *
+     * @return true if the motor moved successfully.
      */
-    void Step();
+    bool Move();
 
     /**
      * @brief Stop the motor.
+     *
+     * @return true if the motor is stopped.
      */
-    void Stop();
+    bool Stop();
 
     /**
      * @brief Enable the motor.
+     * @warning The motor will not move until enabled.
+     *          The constructor does not enable the motor.
      */
     void Enable();
 
     /**
      * @brief Disable the motor.
+     * @warning This resets the motor's speed, position, saved limits and
+     *          target position. Only use this for an emergency stop.
+     *
+     * No power will be applied to the motor and it can be manually moved freely.
      */
     void Disable();
 
 private:
-    AccelStepper stepper_;        // AccelStepper instance
-    bool enabled_;                // Motor enabled flag
-    Direction current_direction_; // Motor direction
-    MotorMode current_mode_;      // Motor mode
-    uint16_t servo_position1_;    // Servo position 1
-    uint16_t servo_position2_;    // Servo position 2
-    uint16_t target_position_;    // Motor target position
-    uint8_t current_speed_;      // Motor speed
+    static constexpr uint16_t MOTOR_MAX_SPEED = 500; // The Maximum Speed the Motor can operate at
+    static constexpr uint16_t MOTOR_MAX_RAMP = 1000; // The Maximum Ramp the Motor can operate at
+
+    AccelStepper *stepper_ = nullptr;          // AccelStepper instance
+    OperationMode operation_mode_ = MODE_STOP; // Motor mode
+    float ramp_ = 0;                           // Motor ramp
+    float max_speed_ = 0;                      // Motor max speed
+    float speed_ = 0;                          // Motor speed
+    Direction direction_ = DIRECTION_CW;       // Motor direction
+    uint16_t saved_cw_position_ = 0;           // Servo position 1
+    uint16_t saved_ccw_position_ = 0;          // Servo position 2
+    uint16_t target_position_ = 0;             // Motor target position
+    bool is_moving_ = false;                   // Motor moving flag TODO: Better use the AccelStepper method?
+    bool is_enabled_ = false;                  // Motor enabled flag
+
+    /**
+     * @brief Set the Motor Mode.
+     * 
+     * @param motor_mode The motor mode to set.
+    */
+   void SetMotorMode(uint8_t motor_mode);
+
+    /**
+     * @brief Setup the stepper motor instance.
+     */
+    void SetupStepper();
+
+    /**
+     * @brief Set Ramp (aka Acceleration) of the motor.
+     *        This is set via MotorMode in Webserver.
+     *
+     * @param ramp The ramp to set.
+     */
+    void SetRamp(uint8_t ramp);
 };
 
 #endif // MOTORCONTROLLER_H

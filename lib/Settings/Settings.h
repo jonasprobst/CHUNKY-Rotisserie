@@ -30,7 +30,7 @@
  *       3 = Set the maximum speed the motor will ramp up to
  *       4 = Rotate CW relative to max speed (and set CW limit)
  *       5 = Rotate CCW relative to max speed (and set CCW limit)
- *       6 = Motor Mode (only relevant in Mode 1-3, details see below)
+ *       6 = Motor Operation Mode (only relevant in Mode 1-3, details see below)
  *           - 0-50% Continuous rotation mode
  *           - 51-54% Position Mode (set limits enabled)
  *           - 55-79% Position mode
@@ -117,12 +117,6 @@ public:
      */
     uint8_t GetMode() const;
 
-    /**
-     * @brief Gets the current ramp speed
-     *
-     * @return The current ramp speed value.
-     */
-    uint8_t GetRamp() const;
 
 private:
     // TODO: Move valid modes to a more generic place?
