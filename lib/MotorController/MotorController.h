@@ -81,14 +81,14 @@ public:
      *
      * @return true if the motor moved successfully.
      */
-    bool Move();
+    void Move();
 
     /**
      * @brief Stop the motor.
      *
      * @return true if the motor is stopped.
      */
-    bool Stop();
+    void Stop();
 
     /**
      * @brief Enable the motor.
@@ -119,8 +119,10 @@ private:
     uint16_t saved_cw_position_ = 0;           // Servo position 1
     uint16_t saved_ccw_position_ = 0;          // Servo position 2
     uint16_t target_position_ = 0;             // Motor target position
+    uint16_t home_position_ = 0;               // Motor home position          
     bool is_moving_ = false;                   // Motor moving flag TODO: Better use the AccelStepper method?
     bool is_enabled_ = false;                  // Motor enabled flag
+    bool is_limits_saved_ = false;              // Limits saved flag
 
     /**
      * @brief Set the Motor Mode.
@@ -130,7 +132,7 @@ private:
    void SetMotorMode(uint8_t motor_mode);
 
     /**
-     * @brief Setup the stepper motor instance.
+     * @brief Setup the axelstepper motor instance.
      */
     void SetupStepper();
 

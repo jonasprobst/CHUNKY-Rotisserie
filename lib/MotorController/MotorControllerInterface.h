@@ -39,8 +39,8 @@ public:
     virtual void SetDirection(Direction direction) = 0;
     virtual void SaveLimitPosition(Direction direction) = 0;
     virtual void SetTargetPosition(uint16_t position) = 0;
-    virtual bool Move() = 0;
-    virtual bool Stop() = 0;
+    virtual void Move() = 0;
+    virtual void Stop() = 0;
     virtual bool IsMoving() = 0;
     virtual void Enable() = 0;
     virtual void Disable() = 0;

@@ -4,10 +4,6 @@
 
 String TAG = "MotorController";
 
-// TODO: Only change mode if it's different form current mode
-// TODO: Update the ramp from settings object (mode) -> add settings object to update in real time
-//       Maybe it makes more sense to do this in the main loop?
-
 MotorController::MotorController(uint8_t motor_mode)
     : operation_mode_(MODE_STOP),
       direction_(DIRECTION_CW)
@@ -33,30 +29,25 @@ void MotorController::SetupStepper()
 
 void MotorController::SetMotorMode(uint8_t motor_mode)
 {
-    // Set the motor mode. The mode is based on the Wahloberg Rotator modes,
-    // where the mode is a hardware rotary switch. See: https://wahlberg.dk/products/dmx-rotators/dmx-rotator
+    // The motor mode is based on the Wahloberg Rotator (https://wahlberg.dk/products/dmx-rotators/dmx-rotator)
     // The following modes are supported:
     // 0: Stop
     // 1: Slow Speed Change (Ramp)
     // 2: Normal Speed Change (Ramp)
     // 3: Fast Speed Change (Ramp)
-    // Modes 5 - 9 are not supported atm.
-    // TODO: Add support for modes 5 - 9?
+    // Modes 5 - 9 (manual modes) are not supported.
+    // (TODO: Feature Idea: Add support for modes 5 - 9?)
 
     ESP_LOGI(TAG, "Motor mode set to %d", motor_mode);
 
     switch (motor_mode)
     {
-    case (0): // Mode Stop
+    case (0, 2): // Mode Stop
         SetRamp(RAMP_NORMAL);
         break;
 
     case (1): // Mode Slow Speed Change (Ramp)
         SetRamp(RAMP_SLOW);
-        break;
-
-    case (2): // Mode Normal Speed Change (Ramp)
-        SetRamp(RAMP_NORMAL);
         break;
 
     case (3): // Mode Fast Speed Change (Ramp)
@@ -73,7 +64,32 @@ void MotorController::SetMotorMode(uint8_t motor_mode)
 void MotorController::SetRamp(uint8_t ramp)
 {
     ramp_ = ramp;
-    ESP_LOGI(TAG, "Ramp set to %d", ramp_);
+    ESP_LOGI(TAG, "Motor Mode (Ramp) set to %d", ramp_);
+}
+
+void SetOperationMode(uint8_t operation_mode)
+{
+    // Operation mode is determind by channel 6
+    // Map it to percent for readability
+    operation_mode = map(operation_mode,0, 255, 0, 100);
+
+    // Set operation mode
+    if(operation_mode > 1 && operation_mode < 49){
+        operation_mode_ = MODE_ROTATION;
+        ESP_LOGI(TAG, "Operation mode set to ROTATION ");
+    } else if (operation_mode > 1 && operation_mode < 49){
+        operation_mode_ = MODE_POSITION_SAVE;
+        ESP_LOGI(TAG, "Operation mode set to POSITION SAVE ");
+    } else if (operation_mode > 1 && operation_mode < 49){
+        operation_mode_ = MODE_POSITION;
+        ESP_LOGI(TAG, "Operation mode set to POSITION ");
+    } else if (operation_mode > 1 && operation_mode < 49){
+        operation_mode_ = MODE_ANGULAR;
+        ESP_LOGI(TAG, "Operation mode set to ANGULAR ");
+    } else {
+        operation_mode_ = MODE_STOP;
+        ESP_LOGI(TAG, "Operation mode set to STOP ");
+    }
 }
 
 void MotorController::SetMaxSpeed(uint8_t speed)
@@ -90,17 +106,6 @@ void MotorController::SetSpeed(uint8_t speed)
     speed_ = map(speed, 0, 255, 0, max_speed_);
     stepper_->setMaxSpeed(speed_);
     ESP_LOGI(TAG, "Speed set to %d", speed_);
-}
-
-void MotorController::SetDirection(Direction direction)
-{
-    if (direction_ != direction)
-    {
-        direction_ = direction;
-        // FIXME: How does accelstepper handle direction changes??
-        // stepper_ = new direction
-        ESP_LOGI(TAG, "Direction set to %d", direction);
-    }
 }
 
 // FIXME: Split this into two methods, one for each direction??
@@ -125,50 +130,54 @@ void MotorController::SetTargetPosition(uint16_t position)
     if (current_position != position)
     {
         target_position_ = position;
-        stepper_->moveTo(position); // FIXME: Should this be done here or in the Move() method?
         ESP_LOGI(TAG, "Target position set to %d", position);
     }
 }
 
-bool MotorController::Move()
+void MotorController::Move()
 {
     switch (operation_mode_)
     {
     case OperationMode::MODE_STOP:
-        if (stepper_->isRunning())
-        {
-            Stop();
-        }
-        ESP_LOGI(TAG, "Motor mode set to MODE_STOP");
+        Stop();
         break;
 
     case OperationMode::MODE_ROTAION:
-        // Continuous Rotation Mode:
-        // The motor rotates continuously in the direction set by channel 4/ 5 at the speed set by channel 3.
+        // The motor rotates in the direction and speed set by channel 4/ 5. 
+        // The speed is a percentage of max speed set by channel 3.
         // - Channel 3: Set max speed
         // - Channel 4: Rotate CW relative to max speed. Channel 5 must be 0.
         // - Channel 5: Rotate CCW relative to max speed. Channel 4 must be 0. */
 
         // move motor by speed and direction
-        ESP_LOGI(TAG, "MODE_ROTATION: moving at speed: %d in direction: %d", speed_, direction_);
 
         break;
 
     case OperationMode::MODE_POSITION_SAVE:
         // Save current position as a limit position
+        // The motor rotates continuously in the direction set by channel 4/ 5 at the speed set by channel 3.
         // - Channel 3: Set max speed
         // - Channel 4: Rotate CW relative to max speed. Channel 5 must be 0.
         // - Channel 5: Rotate CCW relative to max speed. Channel 4 must be 0. */
         // The moment Channel 4 or 5 reach 0, the current position is saved as a limit position.
-
-        //SaveLimitPosition(direction_);
+        // TODO: Implement
+        saved_ccw_position_ = 0;
+        saved_cw_position_ = 0;
+        is_limits_saved_ = false;
         break;
 
     case OperationMode::MODE_POSITION:
-        // Both limit positions must be saved before moving to a position
-        // Ensure target position is within saved limits before moving
-        // MoveTo(target_position_); // Make sure to create a safe method to move to a position
-
+        //
+        // Ensure both limites were saved before moving to a position
+        if (is_limits_saved_)
+        {
+            // Check if target is set
+            // if it's not set, set it
+            // Check if we are at pivot point (current position = target position)
+            // if we are, swap target position
+            // if not, keep moving
+        }
+        ESP_LOGI(TAG, "Motor mode set to POSITION SAVE");
         break;
 
     case OperationMode::MODE_ANGULAR:
@@ -179,27 +188,20 @@ bool MotorController::Move()
 
     default:
         ESP_LOGE(TAG, "Invalid operation mode");
+        Stop(); // FIXME: is this the right action?
     }
-    return true; //TODO
 }
 
 // Stop the motor
-_Bool MotorController::Stop()
+void MotorController::Stop()
 {
-    if (!stepper_->isRunning())
-    {
-        ESP_LOGI(TAG, "Motor already stopped");
-        return true;
-    }
-
-    stepper_->stop(); // resets speed and target position to 0.
+    stepper_->stop(); // sets speed, target and position to 0.
     ESP_LOGI(TAG, "Motor stopped");
 
+    // TODO: needed? Check Axel stepper docu
     // get things back to the way they were before stopping so we can resume if needed
     SetSpeed(speed_);
     SetDirection(direction_);
-    // TODO: set mode and based on mode set target position, etc.
-    return true; //TODO: return false if motor is not stopped
 }
 
 // Enable the motor
