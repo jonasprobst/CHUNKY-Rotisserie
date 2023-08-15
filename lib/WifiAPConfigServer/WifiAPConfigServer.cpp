@@ -2,7 +2,7 @@
 #include <esp_log.h>
 #include <Arduino.h>
 
-static constexpr char *TAG = "WifiAPConfigServer";
+static constexpr const char TAG[] = "WifiAPConfigServer";
 
 // Public functions
 WifiAPConfigServer::WifiAPConfigServer(SettingsInterface &dmx_settings)
@@ -18,29 +18,29 @@ void WifiAPConfigServer::ToggleAP()
         Start();
 }
 
-bool WifiAPConfigServer::IsAPRunning()
+bool WifiAPConfigServer::IsAPRunning() const
 {
     // Returns true if AP is running
     return (WiFi.getMode() == WIFI_MODE_AP);
 }
 
-const char *WifiAPConfigServer::GetSSID()
+const char *WifiAPConfigServer::GetSSID() const
 {
     return SSID;
 }
 
-const char *WifiAPConfigServer::GetPassword()
+const char *WifiAPConfigServer::GetPassword() const
 {
     return PASSWORD;
 }
 
-const char *WifiAPConfigServer::GetIP()
+const char *WifiAPConfigServer::GetIP() const
 {
     // Returns IP as String not IPADDRESS-Object.
     return IP;
 }
 
-SettingsInterface &WifiAPConfigServer::GetSettings()
+const SettingsInterface &WifiAPConfigServer::GetSettings() const
 {
     return dmx_settings_;
 }

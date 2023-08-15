@@ -2,7 +2,7 @@
 #include "MotorController.h"
 #include <Arduino.h>
 
-String TAG = "MotorController";
+static constexpr const char TAG[] = "MotorController";
 
 MotorController::MotorController(uint8_t motor_mode)
 {

@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include <esp_log.h>
 
-static constexpr char *TAG = "UIController";
+static constexpr const char TAG[] = "UIController";
 
 UIController::UIController(SettingsInterface &dmx_settings, WifiAPConfigServer &config_server)
     : dmx_settings_(dmx_settings),

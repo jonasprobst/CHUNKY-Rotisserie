@@ -4,7 +4,7 @@
 // FIXME: Uses a lot of duplicate code. Should probably be refactored to use templates.
 
 // For logging, we need a tag
-static constexpr char *TAG = "NVSStorage";
+static constexpr const char TAG[] = "NVSStorage";
 
 NVSStorage::NVSStorage()
 {

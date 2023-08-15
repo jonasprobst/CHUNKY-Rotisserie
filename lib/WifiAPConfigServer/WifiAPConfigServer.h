@@ -47,19 +47,19 @@ public:
      * @brief Gets the SSID of the access point.
      * @return The SSID.
     */
-    char *GetSSID() const;
+    const char *GetSSID() const;
 
     /**
      * @brief Gets the IP of the access point.
      * @return The IP.
     */
-    char *GetIP() const;
+    const char *GetIP() const;
 
     /**
      * @brief Gets the password of the access point.
      * @return The password.
     */
-    char *GetPassword() const;
+    const char *GetPassword() const;
 
 private:
     // AP settings 

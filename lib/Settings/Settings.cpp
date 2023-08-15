@@ -1,7 +1,7 @@
 #include "Settings.h"
 #include <esp_log.h>
 
-static constexpr char* TAG = "Settings";
+static constexpr const char TAG[] = "Settings";
 
 Settings::Settings() {
     // Set default values

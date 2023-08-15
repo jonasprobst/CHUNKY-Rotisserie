@@ -5,7 +5,7 @@
 //#include "MotorController.h"
 #include <esp_log.h>
 
-String TAG = "Main";
+constexpr const char TAG[] = "Main";
 
 Settings dmx_settings;
 WifiAPConfigServer config_server(dmx_settings);
