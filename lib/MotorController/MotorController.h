@@ -38,7 +38,7 @@ public:
      *
      * @param operation_mode The operation mode to set.
      */
-    void SetOperationMode(OperationMode operation_mode);
+    void SetOperationMode(uint8_t operation_mode);
 
     /**
      * @brief Set max speed of the motor.
@@ -56,18 +56,30 @@ public:
     void SetSpeed(uint8_t speed);
 
     /**
-     * @brief Set the Direction object.
-     *
-     * @param direction The direction to set.
+     * @brief Set the Direction of the motor to counter-clockwise.
+     * @warning This direction is only used programatically and may not
+     *          reflect the physical direction of the motor.
      */
-    void SetDirection(Direction direction);
+    void SetDirectionCW();
 
     /**
-     * @brief Set soft limits for position mode.
-     *
-     * @param direction The direction to set the limit for.
+     * @brief Set the Direction of the motor to clockwise.
+     * @warning This direction is only used programatically and may not
+     *         reflect the physical direction of the motor.
      */
-    void SaveLimitPosition(Direction direction);
+    void SetDirectionCCW();
+
+    /**
+     * @brief Sets soft limit for clockwise direction.
+     * @warning This is required to enable position mode.
+     */
+    void SetCWLimitPosition();
+
+    /**
+     * @brief Sets soft limit for counter-clockwise direction.
+     * @warning This is required to enable position mode.
+     */
+    void SetCCWLimitPosition();
 
     /**
      * @brief Set the Target Position object.
@@ -77,11 +89,17 @@ public:
     void SetTargetPosition(uint16_t position);
 
     /**
-     * @brief Move the motor according to the current mode.
-     *
-     * @return true if the motor moved successfully.
+     * @brief Run the motor according to the current operation mode.
+     * @warning This has to be called repeatedly in the main loop.
      */
-    void Move();
+    void Run();
+
+    /**
+     * @brief Check if the motor is moving.
+     *
+     * @return true if the motor is moving.
+     */
+    bool IsRunning();
 
     /**
      * @brief Stop the motor.
@@ -90,46 +108,32 @@ public:
      */
     void Stop();
 
-    /**
-     * @brief Enable the motor.
-     * @warning The motor will not move until enabled.
-     *          The constructor does not enable the motor.
-     */
-    void Enable();
-
-    /**
-     * @brief Disable the motor.
-     * @warning This resets the motor's speed, position, saved limits and
-     *          target position. Only use this for an emergency stop.
-     *
-     * No power will be applied to the motor and it can be manually moved freely.
-     */
-    void Disable();
-
 private:
-    static constexpr uint16_t MOTOR_MAX_SPEED = 500; // The Maximum Speed the Motor can operate at
-    static constexpr uint16_t MOTOR_MAX_RAMP = 1000; // The Maximum Ramp the Motor can operate at
+    static constexpr uint16_t MOTOR_MAX_SPEED = 500;    // The Maximum Speed the Motor can operate at
+    static constexpr uint16_t STEPS_PER_ROTATION = 200; // The number of steps per rotation
+    static constexpr uint16_t RAMP_SLOW = 300;
+    static constexpr uint16_t RAMP_NORMAL = 600;
+    static constexpr uint16_t RAMP_FAST = 900;
 
     AccelStepper *stepper_ = nullptr;          // AccelStepper instance
     OperationMode operation_mode_ = MODE_STOP; // Motor mode
     float ramp_ = 0;                           // Motor ramp
     float max_speed_ = 0;                      // Motor max speed
     float speed_ = 0;                          // Motor speed
-    Direction direction_ = DIRECTION_CW;       // Motor direction
-    uint16_t saved_cw_position_ = 0;           // Servo position 1
-    uint16_t saved_ccw_position_ = 0;          // Servo position 2
-    uint16_t target_position_ = 0;             // Motor target position
-    uint16_t home_position_ = 0;               // Motor home position          
-    bool is_moving_ = false;                   // Motor moving flag TODO: Better use the AccelStepper method?
+    uint16_t cw_limit_position_ = 0;           // CW limit position (position mode)
+    uint16_t ccw_limit_position_ = 0;          // CCW limit position (position mode)
+    uint16_t target_position_ = 0;             // Target position
+    uint16_t absolute_position_ = 0;           // Absolute position 
+    uint16_t previous_position_ = 0;           // Previous position (helper to calculate absolute position)
     bool is_enabled_ = false;                  // Motor enabled flag
-    bool is_limits_saved_ = false;              // Limits saved flag
+    bool is_direction_cw_ = true;              // Direction flag
 
     /**
      * @brief Set the Motor Mode.
-     * 
+     *
      * @param motor_mode The motor mode to set.
-    */
-   void SetMotorMode(uint8_t motor_mode);
+     */
+    void SetMotorMode(uint8_t motor_mode);
 
     /**
      * @brief Setup the axelstepper motor instance.
@@ -143,6 +147,25 @@ private:
      * @param ramp The ramp to set.
      */
     void SetRamp(uint8_t ramp);
+
+    /**
+     * @brief Enable the motor.
+     * @warning The motor will not move until enabled.
+     *          The constructor does not enable the motor.
+     */
+    void EnableMotor();
+
+    /**
+     * @brief Disable the motor.
+     *
+     *  TODO: True? ->No power will be applied to the motor and it can be manually moved freely.
+     */
+    void DisableMotor();
+
+    void ContinuousRotation();
+
+    void AngularMode();
+
 };
 
 #endif // MOTORCONTROLLER_H
