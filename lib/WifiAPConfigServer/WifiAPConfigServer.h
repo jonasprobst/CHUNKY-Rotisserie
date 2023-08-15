@@ -29,7 +29,7 @@ public:
      * @brief Checks if the access point is running.
      * @return True if the access point is running.
      */
-    bool IsAPRunning();
+    bool IsAPRunning() const;
 
     /**
      * @brief Gets the idle time since the last activity.
@@ -41,11 +41,25 @@ public:
      * @brief Gets the settings object.
      * @return Reference to the settings object.
      */
-    SettingsInterface &GetSettings();
+    const SettingsInterface &GetSettings() const;
 
-    static const char *GetSSID();
-    static const char *GetIP();
-    static const char *GetPassword();
+    /**
+     * @brief Gets the SSID of the access point.
+     * @return The SSID.
+    */
+    char *GetSSID() const;
+
+    /**
+     * @brief Gets the IP of the access point.
+     * @return The IP.
+    */
+    char *GetIP() const;
+
+    /**
+     * @brief Gets the password of the access point.
+     * @return The password.
+    */
+    char *GetPassword() const;
 
 private:
     // AP settings 

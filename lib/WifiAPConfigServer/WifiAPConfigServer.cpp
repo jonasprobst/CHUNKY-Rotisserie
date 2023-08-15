@@ -2,7 +2,7 @@
 #include <esp_log.h>
 #include <Arduino.h>
 
-static const char *TAG = "WifiAPConfigServer";
+static constexpr char *TAG = "WifiAPConfigServer";
 
 // Public functions
 WifiAPConfigServer::WifiAPConfigServer(SettingsInterface &dmx_settings)

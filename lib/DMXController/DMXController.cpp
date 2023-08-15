@@ -2,7 +2,7 @@
 #include "DMXController.h"
 #include <esp_log.h>
 
-static const char *TAG = "DMXController";
+static constexpr char *TAG = "DMXController";
 
 DMXController::DMXController(uint8_t base_channel)
     : base_channel_(base_channel), is_connected_(false)
