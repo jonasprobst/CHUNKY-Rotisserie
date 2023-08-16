@@ -103,8 +103,7 @@ public:
 
     /**
      * @brief Stop the motor.
-     *
-     * @return true if the motor is stopped.
+     * @warning Initiates a controlled deceleration to stop the motor, rather than stopping it abruptly.
      */
     void Stop();
 
@@ -123,7 +122,7 @@ private:
     uint16_t cw_limit_position_ = 0;           // CW limit position (position mode)
     uint16_t ccw_limit_position_ = 0;          // CCW limit position (position mode)
     uint16_t target_position_ = 0;             // Target position
-    uint16_t absolute_position_ = 0;           // Absolute position 
+    uint16_t absolute_position_ = 0;           // Absolute position
     uint16_t previous_position_ = 0;           // Previous position (helper to calculate absolute position)
     bool is_enabled_ = false;                  // Motor enabled flag
     bool is_direction_cw_ = true;              // Direction flag
@@ -162,10 +161,24 @@ private:
      */
     void DisableMotor();
 
+    /**
+     * @brief Rotate the motor continuously in the direction at speed.
+     */
     void ContinuousRotation();
 
-    void AngularMode();
+    /**
+     * @brief Moves the motor between two limit positions. If the motor reaches a limit,
+     *        it reverses its direction. If the motor's target isn't one of the limits,
+     *        it corrects the target based on the current direction.
+     * @warning cw_limit_position_ and ccw_limit_position_ must be set.
+     */
+    void MoveBetweenLimitPositions();
 
+    /**
+     * @brief Move the motor on the shortest path to the set target angle
+     * @warning The motor must be homed before using this mode.
+     */
+    void AngularMode();
 };
 
 #endif // MOTORCONTROLLER_H

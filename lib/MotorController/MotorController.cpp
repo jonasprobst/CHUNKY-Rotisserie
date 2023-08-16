@@ -76,6 +76,8 @@ void MotorController::SetOperationMode(uint8_t operation_mode)
     // - 51-54% Position Mode (set limits enabled)
     // - 55-79% Position mode
     // - 80-100% Angular mode
+
+    // Map the operation mode to the range 0 to 100
     operation_mode = map(operation_mode, 0, 255, 0, 100);
 
     // Set operation mode
@@ -123,20 +125,19 @@ void MotorController::SetSpeed(uint8_t speed)
     ESP_LOGI(TAG, "Speed set to %d", speed_);
 }
 
-// FIXME: Split this into two methods, one for each direction??
 void MotorController::SetCWLimitPosition()
 {
-    cw_limit_position_ = stepper_->currentPosition();
+    // set the current absolute position as the limit for the given direction
+    cw_limit_position_ = absolute_position_;
     ESP_LOGI(TAG, "CW limit position %d", cw_limit_position_);
 }
 
 void MotorController::SetCCWLimitPosition()
 {
-    // set the current position as the limit for the given direction
-    ccw_limit_position_ = stepper_->currentPosition();
+    // set the current absolute position as the limit for the given direction
+    ccw_limit_position_ = absolute_position_;
     ESP_LOGI(TAG, "Saved CCW position %d", ccw_limit_position_);
 }
-
 
 void MotorController::SetTargetPosition(uint16_t position)
 {
@@ -151,44 +152,51 @@ void MotorController::Run()
     switch (operation_mode_)
     {
     case OperationMode::MODE_STOP:
-        ESP_LOGI(TAG, "Operation mode set to STOP");
+        // The motor is stopped.
         Stop();
-        stepper_->run();
+        stepper_->run(); // needed to ramp down to full stop
         break;
 
     case OperationMode::MODE_ROTATION:
-        ESP_LOGI(TAG, "Operation mode set to ROTATION");
+        // The motor rotates in the direction and speed set by channel 4/ 5.
+        // The speed is a percentage of max speed set by channel 3.
+        // - Channel 3: Set max speed
+        // - Channel 4: Rotate CW relative to max speed. Channel 5 must be 0.
+        // - Channel 5: Rotate CCW relative to max speed. Channel 4 must be 0.
         ContinuousRotation();
         break;
 
     case OperationMode::MODE_POSITION_SAVE:
-        ESP_LOGI(TAG, "Operation mode set to POSITION SAVE");
-        // Save current position as a limit position
-        // move motor like continuous rotation but:
-        // The moment Channel 4 or 5 reach 0, the current position is saved as a limit position.
-        // TODO: Is current implementation working?
+        // The motor rotates like continuous rotation mode, but:
+        // Once the motor stops, current absolute position is saved as a limit position.
+        
+        ContinuousRotation();
 
-        if(IsRunning()){
-            if(is_direction_cw_){
-                SetCWLimitPosition();
-            } else {
-                SetCCWLimitPosition();
-            }
-            ContinuousRotation();
+        if (!IsRunning && is_direction_cw_)
+        {
+            SetCWLimitPosition();
+        }
+        else
+        {
+            SetCCWLimitPosition();
         }
         break;
 
     case OperationMode::MODE_POSITION:
-        ESP_LOGI(TAG, "Operation mode set to POSITION");
-        // TODO: Implement
-        // Ensure both limites were saved before moving to a position
-        // Check if we are at pivot point (current position = target position)
-        // if we are, swap target position
-        // Move torwards target position (stepoper handles direction and acceleration)
+        // The motor moves between the two set limit positions
+
+        // Ensure both limites were set before starting position mode
+        if (cw_limit_position_ == 0 && ccw_limit_position_ == 0)
+        {
+            ESP_LOGE(TAG, "No limits set. Can't move to position");
+            Stop();
+            break;
+        }
+
+        MoveBetweenLimitPositions();
         break;
 
     case OperationMode::MODE_ANGULAR:
-        ESP_LOGI(TAG, "Operation mode set to ANGULAR");
         // TODO: Implement
         // Make sure motor is homed
         // Move to the chosen angle relative to home
@@ -198,25 +206,18 @@ void MotorController::Run()
         ESP_LOGE(TAG, "Invalid operation mode");
         Stop(); // FIXME: is this the right action?
     }
-
 }
 
 void MotorController::ContinuousRotation()
 {
-    // The motor rotates in the direction and speed set by channel 4/ 5.
-    // The speed is a percentage of max speed set by channel 3.
-    // - Channel 3: Set max speed
-    // - Channel 4: Rotate CW relative to max speed. Channel 5 must be 0.
-    // - Channel 5: Rotate CCW relative to max speed. Channel 4 must be 0. */
-
     // In order to let AccelStepper handel the ramping for us we can't use the
     // speed parameter to set the direction. Instead we reset the current position
-    // and set a target position (twice the speed to make sure the motor doesn't stop unintentionally) 
+    // and set a target position (twice the speed to make sure the motor doesn't stop unintentionally)
     // in the direction we want to go. Since we are messing with the current position we need an absolute position
     // to be able to go back our homed (0) position for position mode and angular mode. The reliabilty of these positions
     // depends on the accuracy of the stepper motor. So this is just best effort here ;-)
     stepper_->setCurrentPosition(0);
-    uint16_t target_position = 2 * max_speed_; // carrot to chase to keep the motor running continuously
+    uint16_t target_position = 2 * max_speed_; // carrot to chase, keeps motor running continuously
 
     // set direction
     if (is_direction_cw_)
@@ -233,17 +234,44 @@ void MotorController::ContinuousRotation()
 
     // keep track of the absolute position (actual steps moved)
     uint16_t current_position = stepper_->currentPosition();
-    if (current_position != previous_position_) {
+    if (current_position != previous_position_)
+    {
         absolute_position_ += (current_position - previous_position_);
         // ensure absolute position stays in range 0 to STEPS_PER_ROTATION
         // can't use % operator because it doesn't handle negative numbers correctly
-        if (absolute_position_ < 0){
-            absolute_position_ += STEPS_PER_ROTATION; 
-        } else if(absolute_position_ >= STEPS_PER_ROTATION){
+        if (absolute_position_ < 0)
+        {
+            absolute_position_ += STEPS_PER_ROTATION;
+        }
+        else if (absolute_position_ >= STEPS_PER_ROTATION)
+        {
             absolute_position_ -= STEPS_PER_ROTATION;
         }
         previous_position_ = current_position;
     }
+}
+
+void MotorController::MoveBetweenLimitPositions()
+{
+    long current_target = stepper_->targetPosition(); // could be negative due to continuous running implementation
+
+    if (stepper_->distanceToGo() == 0)
+    {
+        // Motor has reached a target position, change direction and move to other limit
+        is_direction_cw_ = !is_direction_cw_;
+        uint16_t new_target = is_direction_cw_ ? ccw_limit_position_ : cw_limit_position_;
+        stepper_->moveTo(new_target);
+    }
+    else if (current_target != cw_limit_position_ &&
+             current_target != ccw_limit_position_)
+    {
+        // current target is not within the limits (eg. when changin into position mode)
+        // continue to the limit in the current direction
+        uint16_t correct_target = is_direction_cw_ ? cw_limit_position_ : ccw_limit_position_;
+        stepper_->moveTo(correct_target);
+    }
+    // Run motor at speed between target positions, ramping automatically
+    stepper_->run();
 }
 
 void MotorController::Stop()
