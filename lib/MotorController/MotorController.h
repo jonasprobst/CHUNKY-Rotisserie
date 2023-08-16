@@ -178,7 +178,7 @@ private:
      * @brief Move the motor on the shortest path to the set target angle
      * @warning The motor must be homed before using this mode.
      */
-    void AngularMode();
+    void MoveToAngle();
 };
 
 #endif // MOTORCONTROLLER_H

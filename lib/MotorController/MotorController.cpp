@@ -169,7 +169,7 @@ void MotorController::Run()
     case OperationMode::MODE_POSITION_SAVE:
         // The motor rotates like continuous rotation mode, but:
         // Once the motor stops, current absolute position is saved as a limit position.
-        
+
         ContinuousRotation();
 
         if (!IsRunning && is_direction_cw_)
@@ -220,16 +220,10 @@ void MotorController::ContinuousRotation()
     uint16_t target_position = 2 * max_speed_; // carrot to chase, keeps motor running continuously
 
     // set direction
-    if (is_direction_cw_)
-    {
-        SetTargetPosition(target_position);
-    }
-    else
-    {
-        SetTargetPosition(-target_position);
-    }
+    target_position = is_direction_cw_ ? target_position : -target_position;
 
     // move motor by speed and direction, handling acceleration and deceleration automatically
+    stepper_->moveTo(target_position);
     stepper_->run();
 
     // keep track of the absolute position (actual steps moved)
@@ -253,6 +247,8 @@ void MotorController::ContinuousRotation()
 
 void MotorController::MoveBetweenLimitPositions()
 {
+    // FIXME: This is a servo implementation! Instead move to set target by target_position_ within the limits!!!
+
     long current_target = stepper_->targetPosition(); // could be negative due to continuous running implementation
 
     if (stepper_->distanceToGo() == 0)
@@ -274,6 +270,38 @@ void MotorController::MoveBetweenLimitPositions()
     stepper_->run();
 }
 
+void MotorController::MoveToAngle()
+{
+    // Convert 16bit DMX512 value (2 Channels)
+    long target_position = (target_position_ * STEPS_PER_ROTATION) / 65535;
+
+    // Calculate the difference between the current position and the target
+    long current_position = stepper_->currentPosition();
+    long steps_to_target = target_position - current_position;
+
+    // If motor is stationarry: Adjust for shortest path, considering wrap-around at STEPS_PER_ROTATION.
+    // Ele continue in current direction to target angle. This based on the whalberg implementation.
+    if (IsRunning())
+    {
+        if (steps_to_target >= (STEPS_PER_ROTATION / 2))
+        {
+            // steps to target are more than half a rotation.
+            // moving backward is shorter.
+            steps_to_target -= STEPS_PER_ROTATION;
+        }
+        else if (steps_to_target <= (-STEPS_PER_ROTATION / 2))
+        {
+            // steps to target are less than negative half of STEPS_PER_ROTATION
+            // moving backward takes longer. It's quicker to move forward.
+            steps_to_target += STEPS_PER_ROTATION;
+        }
+    }
+
+    // Move to the desired position
+    stepper_->moveTo(current_position + steps_to_target);
+    stepper_->run();
+}
+
 void MotorController::Stop()
 {
     // Initiates a controlled deceleration to stop the motor, rather than stopping it abruptly.
@@ -285,7 +313,6 @@ void MotorController::Stop()
 
 void MotorController::EnableMotor()
 {
-    // TODO: impplement this with a timer to prevent the motor from being enabled and disabled too quickly -> call stop?
     if (!is_enabled_)
     {
         stepper_->enableOutputs();
@@ -296,7 +323,6 @@ void MotorController::EnableMotor()
 
 void MotorController::DisableMotor()
 {
-    // active low, due to the common-cathode wiring of TB6600
     if (is_enabled_)
     {
         stepper_->disableOutputs();
