@@ -84,9 +84,9 @@ bool DMXController::Update()
 {
   dmx_packet_t packet;
 
-  // TODO: make this non-blocking if possible!
+  // TODO: make this non-blocking if possible! 
   // Try to receive a DMX package (this blocks until one is receive or it times out)
-  if (dmx_receive(dmx_port_, &packet, DMX_TIMEOUT_TICK) > 0)
+  if (dmx_receive(dmx_port_, &packet, DMX_TIMEOUT_TICK) == 0) //FIXME: Here seems to be an error?
   {
     is_connected_ = false;
     ESP_LOGE(TAG, "Timed out waiting for DMX packet. Error: %s", esp_err_to_name(packet.err));
@@ -101,8 +101,7 @@ bool DMXController::Update()
   }
 
   // Package received succesfully. Read the channel values.
-  dmx_read(dmx_port_, channel_values_, NUM_CHANNELS);
   is_connected_ = true;
-  ESP_LOGI(TAG, "DMX packet received successfully.");
+  dmx_read(dmx_port_, channel_values_, NUM_CHANNELS);
   return true;
 }
