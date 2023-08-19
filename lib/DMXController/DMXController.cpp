@@ -7,9 +7,9 @@ static constexpr const char TAG[] = "DMXController";
 DMXController::DMXController(uint8_t base_channel)
     : base_channel_(base_channel), is_connected_(false)
 {
-  // Initialise DMX Connection and print status
-  ESP_LOGI(TAG, "Port enable: %s", dmx_set_pin(dmx_port_, DMX_TX, DMX_RX, DMX_ENABLE));
-  ESP_LOGI(TAG, "Driver install: %s", dmx_driver_install(dmx_port_, DMX_DEFAULT_INTR_FLAGS));
+  // Initialise DMX Connection
+  dmx_set_pin(dmx_port_, DMX_TX, DMX_RX, DMX_ENABLE);
+  dmx_driver_install(dmx_port_, DMX_DEFAULT_INTR_FLAGS);
 }
 
 uint16_t DMXController::GetTargetPosition()
