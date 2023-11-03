@@ -2,6 +2,7 @@
 #include "MotorController.h"
 #include <Arduino.h>
 
+
 static constexpr const char TAG[] = "MotorController";
 
 MotorController::MotorController(uint8_t motor_mode)
@@ -32,7 +33,7 @@ void MotorController::SetupStepper()
     stepper_->setCurrentPosition(0);               // Set the current position
 }
 
-void MotorController::SetMotorMode(uint8_t motor_mode)
+void MotorController::SetMotorMode(uint8_t motor_mode) //TODO: rename to SetRampMode?
 {
     // The motor mode is based on the Wahloberg Rotator (https://wahlberg.dk/products/dmx-rotators/dmx-rotator)
     // It determins mainly the speed of the motor acceleration / deceleration (Ramp).

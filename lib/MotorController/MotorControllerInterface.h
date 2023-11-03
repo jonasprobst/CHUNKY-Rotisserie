@@ -26,16 +26,17 @@ public:
     virtual ~MotorControllerInterface() {}
 
     virtual void SetRamp(uint8_t ramp) = 0;
-    virtual void SetOperationMode(OperationMode mode) = 0;
+    virtual void SetOperationMode(uint8_t operation_mode) = 0;
     virtual void SetMaxSpeed(uint8_t speed) = 0;
     virtual void SetSpeed(uint8_t SetMaxSpeed) = 0;
     virtual void SetDirectionCW() = 0;
     virtual void SetDirectionCCW() = 0;
-    virtual void SaveLimitPosition() = 0;
+    virtual void SetCWLimitPosition() = 0;
+    virtual void SetCCWLimitPosition() = 0;
     virtual void SetTargetPosition(uint16_t position) = 0;
-    virtual void Move() = 0;
+    virtual void Run() = 0;
     virtual void Stop() = 0;
-    virtual bool IsMoving() = 0;
+    virtual bool IsRunning() = 0;
     virtual void EnableMotor() = 0;
     virtual void DisableMotor() = 0;
 };

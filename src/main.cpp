@@ -2,7 +2,7 @@
 #include "Settings.h"
 #include "DMXController.h"
 #include "UIController.h"
-// #include "MotorController.h"
+#include "MotorController.h"
 #include <esp_log.h>
 
 constexpr const char TAG[] = "Main";
@@ -11,7 +11,7 @@ Settings dmx_settings;
 WifiAPConfigServer config_server(dmx_settings);
 DMXController dmx_controller(dmx_settings.GetBaseChannel());
 UIController ui(dmx_settings, config_server);
-// MotorController motor_controller(dmx_settings.GetMode());
+MotorController motor_controller(dmx_settings.GetMode());
 // MotorController::OperationMode operation_mode = motor_controller.GetOperationMode();
 
 uint16_t target_position = 0;
