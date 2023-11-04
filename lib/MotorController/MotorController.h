@@ -33,9 +33,15 @@ public:
 
     /**
      * @brief Set the Operation Mode.
-     * @warning This is the operation mode that can be set via DMX channel 6
-     *          (e.g. continuous rotation, angular mode, etc.).
-     *          Not the motor mode set via Webserver!
+     * This code is based on the Wahloberg Rotator (https://wahlberg.dk/products/dmx-rotators/dmx-rotator).
+     * Unfortunately Whalberg has made a mess with naming the modes.
+     * There is the mode that is set by the rotary switches on the hardware: in this code reffered to "Motor Mode" (see SetMotorMode for details)
+     * And the mode that is set via DMX Channel 6: in this code reffered to as "Operation Mode".
+     * Operation mode is set as a percentage of the DMX Channel 6 value.
+     *  - 0-50% Continuous rotation mode
+     *  - 51-54% Position Mode (set limits enabled)
+     *  - 55-79% Position mode
+     *  - 80-100% Angular mode
      *
      * @param operation_mode The operation mode to set.
      */
@@ -136,17 +142,21 @@ private:
     void SetMotorMode(uint8_t motor_mode);
 
     /**
-     * @brief Setup the axelstepper motor instance.
+     * @brief Sets the motor mode.
+     * The motor mode is based on the Wahloberg Rotator (https://wahlberg.dk/products/dmx-rotators/dmx-rotator).
+     * Unfortunately Whalberg has made a mess naming the modes.
+     * There is the mode that is set via DMX Channel 6: in this code reffered to as "Operation Mode" (see SetOperationMode for details).
+     * And the mode that is set on the rotary switches on the hardware: in this code reffered to as "Motor Mode".
+     * The Motor Mode is set via the Webserver in this implementation - requires a restart to take effect!
+     * Motor Mode 0-3 determines the ramping (up and down) of the motor (mode 0: neutral, mode 1: slow, mode 2: normal, mode 3: fast).
+     * Motor Mode 4-6 have no function (not implemented).
+     * Motor Mode 6-9 is a manual controll interface on the original hardware via the rotary switch buttons (not implemented).
+     * @warning This code only implements motor mode 0-3. The other modes are not implemented.
+     * @warning Changes to the motor mode need a restart of the ESP32 to take effect!
+     * 
+     * @param motor_mode The operation mode to set.
      */
     void SetupStepper();
-
-    /**
-     * @brief Set Ramp (aka Acceleration) of the motor.
-     *        This is set via MotorMode in Webserver.
-     *
-     * @param ramp The ramp to set.
-     */
-    void SetRamp(uint8_t ramp);
 
     /**
      * @brief Enable the motor.

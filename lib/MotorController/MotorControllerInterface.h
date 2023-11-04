@@ -25,7 +25,7 @@ public:
     MotorControllerInterface() {}
     virtual ~MotorControllerInterface() {}
 
-    virtual void SetRamp(uint8_t ramp) = 0;
+    virtual void SetMotorMode(uint8_t motor_mode) = 0;
     virtual void SetOperationMode(uint8_t operation_mode) = 0;
     virtual void SetMaxSpeed(uint8_t speed) = 0;
     virtual void SetSpeed(uint8_t SetMaxSpeed) = 0;

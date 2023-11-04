@@ -33,17 +33,15 @@ void MotorController::SetupStepper()
     stepper_->setCurrentPosition(0);               // Set the current position
 }
 
-void MotorController::SetMotorMode(uint8_t motor_mode) //TODO: rename to SetRampMode?
+void MotorController::SetMotorMode(uint8_t motor_mode)
 {
-    // The motor mode is based on the Wahloberg Rotator (https://wahlberg.dk/products/dmx-rotators/dmx-rotator)
-    // It determins mainly the speed of the motor acceleration / deceleration (Ramp).
-    // It can be edited in the Config Webserver - changes need a restart of the ESP32 to take effect.
-    // The following modes are supported:
-    // 0: Stop
-    // 1: Slow Speed Change (Ramp)
-    // 2: Normal Speed Change (Ramp)
-    // 3: Fast Speed Change (Ramp)
-    // IMPORTANT: Modes 5 - 9 (manual modes) are currently _NOT_ supported! (Could be implemented via Webserver)
+    // IMPRTANT: this is not the same as the operation mode (see SetOperationMode for details)
+    // Motor mode sets the ramp (up and down) of the stepper motor. It is set via Webserver.
+    // - 0: Neutral function – motor stops
+    // - 1: Slow
+    // - 2: Normal
+    // - 3: Fast
+
 
     switch (motor_mode)
     {
@@ -71,8 +69,11 @@ void MotorController::SetMotorMode(uint8_t motor_mode) //TODO: rename to SetRamp
 
 void MotorController::SetOperationMode(uint8_t operation_mode)
 {
-    // Operation mode is determind by channel 6
-    // Map it to percent for readability
+    // This code is based on the Wahloberg Rotator (https://wahlberg.dk/products/dmx-rotators/dmx-rotator).
+    // Unfortunately Whalberg has made abit of a mess with naming the modes.
+    // There is the mode that is set by the rotary switches on the hardware: in this code reffered to "Motor Mode" (see SetMotorMode for details)
+    // And the mode that is set via DMX Channel 6: in this code reffered to as "Operation Mode".
+    // Operation mode is set as a percentage of the DMX Channel 6 value.
     // - 0-50% Continuous rotation mode
     // - 51-54% Position Mode (set limits enabled)
     // - 55-79% Position mode
@@ -173,7 +174,7 @@ void MotorController::Run()
 
         ContinuousRotation();
 
-        if (!IsRunning && is_direction_cw_)
+        if (!IsRunning() && is_direction_cw_)
         {
             SetCWLimitPosition();
         }
