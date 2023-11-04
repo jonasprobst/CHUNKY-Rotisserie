@@ -35,7 +35,7 @@ void MotorController::SetupStepper()
 
 void MotorController::SetMotorMode(uint8_t motor_mode)
 {
-    // IMPRTANT: this is not the same as the operation mode (see SetOperationMode for details)
+    // IMPORTANT: this is not the same as the operation mode (see SetOperationMode for details)
     // Motor mode sets the ramp (up and down) of the stepper motor. It is set via Webserver.
     // - 0: Neutral function – motor stops
     // - 1: Slow
@@ -69,10 +69,7 @@ void MotorController::SetMotorMode(uint8_t motor_mode)
 
 void MotorController::SetOperationMode(uint8_t operation_mode)
 {
-    // This code is based on the Wahloberg Rotator (https://wahlberg.dk/products/dmx-rotators/dmx-rotator).
-    // Unfortunately Whalberg has made abit of a mess with naming the modes.
-    // There is the mode that is set by the rotary switches on the hardware: in this code reffered to "Motor Mode" (see SetMotorMode for details)
-    // And the mode that is set via DMX Channel 6: in this code reffered to as "Operation Mode".
+    // IMPORTANT: this is not the same as motor mode (see SetMotorMode for details)
     // Operation mode is set as a percentage of the DMX Channel 6 value.
     // - 0-50% Continuous rotation mode
     // - 51-54% Position Mode (set limits enabled)
