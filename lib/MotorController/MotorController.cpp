@@ -98,7 +98,7 @@ void MotorController::SetOperationMode(uint8_t operation_mode)
     else if (operation_mode >= 80 && operation_mode <= 100)
     {
         operation_mode_ = MODE_ANGULAR;
-        ESP_LOGI(TAG, "Operation mode set to ANGULAR ");
+        ESP_LOGI(TAG, "Operation mode set to ANGULAR (not implemented yet) ");
     }
     else
     {
@@ -147,7 +147,7 @@ void MotorController::SetTargetPosition(uint16_t position)
 
 void MotorController::Run()
 {
-    EnableMotor();
+    EnableMotor(); //TODO: FIXME: Probably the wrong place for this? => Case stop!
     switch (operation_mode_)
     {
     case OperationMode::MODE_STOP:
@@ -202,8 +202,9 @@ void MotorController::Run()
         break;
 
     default:
+        // Technically this can't be called... I think
         ESP_LOGE(TAG, "Invalid operation mode");
-        Stop(); // FIXME: is this the right action?
+        Stop(); // is this the right action?
     }
 }
 

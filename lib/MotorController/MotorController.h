@@ -115,7 +115,7 @@ public:
     void Stop();
 
 private:
-    static constexpr uint16_t MOTOR_MAX_SPEED = 500;    // The Maximum Speed the Motor can operate at
+    static constexpr uint16_t MOTOR_MAX_SPEED = 1000;    // The Maximum Speed the Motor can operate at
     static constexpr uint16_t STEPS_PER_ROTATION = 200; // The number of steps per rotation
     static constexpr uint16_t RAMP_SLOW = 300;
     static constexpr uint16_t RAMP_NORMAL = 600;
