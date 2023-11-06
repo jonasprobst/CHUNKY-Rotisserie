@@ -96,7 +96,6 @@ public:
 
 private:
   // Channel settings
-  static constexpr uint8_t NUM_CHANNELS = 6;           // Number of consecutive channels to read.
   static constexpr uint8_t POSITION_CHANNEL_HB = 1;    // Position rough (High Byte of 16bit DMX Channel)
   static constexpr uint8_t POSITION_CHANNEL_LB = 2;    // Position fine (Low Byte of 16bit DMX Channel)
   static constexpr uint8_t MAX_SPEED_CHANNEL = 3;      // Set the maximum speed
@@ -106,7 +105,7 @@ private:
 
   dmx_port_t dmx_port_ = DMX_NUM_1; // The UART port to use. WARNING: Use the correct pin setup for this!
   uint8_t base_channel_ = 0;        // The base channel (aka dmx address aka offset) to read from.
-  uint8_t channel_values_[NUM_CHANNELS];      // The array to store the read values in.
+  byte channel_values_[DMX_PACKET_SIZE];      // The array to store the read values in.
   bool is_connected_ = false;               // Flag to indicate if the DMX connection is active.
 
   uint8_t position_hb_;      // The high byte of the last received position

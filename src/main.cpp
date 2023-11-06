@@ -25,7 +25,7 @@ unsigned long last_update = 0;
 void setup()
 {
     ui.DisplayMessage("starting AP...");
-    ui.ToggleAP(); // TODO: remove for production
+    ui.ToggleAP(); // TODO: remove for production once buttons are implemented
 }
 
 void loop()
@@ -40,6 +40,7 @@ void loop()
         // ui.displayError("no DMX signal");
         // motor_controller.Stop();
         // reset everything to 0?
+        // see: .pio/libdeps/debug_thing/esp_dmx/examples/DMXRead/DMXRead.ino
 
         if (millis() >= last_update + 1000)
         {
