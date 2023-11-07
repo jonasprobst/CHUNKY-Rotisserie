@@ -81,7 +81,7 @@ void MotorController::SetOperationMode(uint8_t operation_mode)
 
     // Set operation mode
     if (operation_mode >= 1 && operation_mode <= 50)
-    { // TODO: should this start at 0?
+    { // FIXME: should this start at 0? @demi
         operation_mode_ = MODE_ROTATION;
         ESP_LOGI(TAG, "Operation mode set to ROTATION ");
     }

@@ -33,16 +33,15 @@ void UIController::Update()
 
 void UIController::DisplayMessage(const String &message)
 {
-    ESP_LOGI(TAG, "Displaying message: %s", message.c_str()); //TODO: move this down again
-  
-   if (!display_initialized_) {
+    if (!display_initialized_)
+    {
         return;
     }
 
     // Check following links for formatting options:
     // https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
     // https://github.com/adafruit/Adafruit_SSD1306/blob/master/examples/ssd1306_128x32_i2c/ssd1306_128x32_i2c.ino
-    // -> HERE
+    ESP_LOGI(TAG, "Displaying message: %s", message.c_str());
     ClearDisplay();
     display_->write(message.c_str());
     display_->display();
@@ -50,17 +49,16 @@ void UIController::DisplayMessage(const String &message)
 
 void UIController::DisplayError(const String &error_message)
 {
-    ESP_LOGE(TAG, "Displaying error: %s", error_message.c_str()); //TODO: move this down again
-    
-    if (!display_initialized_) {
+    if (!display_initialized_)
+    {
         return;
     }
 
-    // -> HERE
+    ESP_LOGE(TAG, "Displaying error: %s", error_message.c_str());
     ClearDisplay();
     display_->setTextColor(SSD1306_BLACK, SSD1306_WHITE); // 'inverted' text
-    display_->println(F("ERROR:")); // store in flash to save RAM F()
-    display_->println(error_message.c_str()); 
+    display_->println(F("ERROR:"));                       // store in flash to save RAM F(), needed?
+    display_->println(error_message.c_str());
 }
 
 void UIController::ToggleAP()
@@ -70,17 +68,18 @@ void UIController::ToggleAP()
 
 // -- Private methods --
 void UIController::SetupDisplay()
-{   
+{
     // TODO: Display probably needs 5V in and logic to work properly?
     // Or maybe it can be set to use 3.3V with #define SSD1306_SWITCHCAPVCC 0x02 ///< Gen. display voltage from 3.3V
     ESP_LOGI(TAG, "Setting up display");
 
     // TODO: I2C is probably used for Thing connected to DMX Shield?
-    //Initialize I2C (this is why we can't use the constructor for display_ above)
-    if (!Wire.begin(THING_SDA, THING_SCL)) {
+    // Initialize I2C (this is why we can't use the constructor for display_ above)
+    if (!Wire.begin(THING_SDA, THING_SCL))
+    {
         ESP_LOGE(TAG, "Could not start I2C bus");
         display_initialized_ = false;
-        display_= nullptr;
+        display_ = nullptr;
         return;
     }
 
@@ -88,20 +87,24 @@ void UIController::SetupDisplay()
 
     // TODO: true? -> Initialize SSD1306 with the I2C addr 0x3C (factory default for the 128x32)
     display_ = new Adafruit_SSD1306(DISPLAY_WIDTH, DISPLAY_HEIGHT);
-   if (display_->begin(SSD1306_SWITCHCAPVCC, DISPLAY_ADDRESS)) {
+    if (display_->begin(SSD1306_SWITCHCAPVCC, DISPLAY_ADDRESS))
+    {
         display_initialized_ = true;
         DisplayMessage("Starting up...");
         delay(1000);
-    } else {
+    }
+    else
+    {
         ESP_LOGE(TAG, "SSD1306 allocation failed");
         display_initialized_ = false;
-        display_= nullptr;
+        display_ = nullptr;
     }
 }
 
 void UIController::ClearDisplay()
 {
-    if (!display_initialized_) {
+    if (!display_initialized_)
+    {
         return;
     }
 
@@ -145,10 +148,9 @@ void UIController::UpdateDisplay()
     uint16_t base_channel = dmx_settings_.GetBaseChannel();
     uint8_t mode = dmx_settings_.GetMode();
     bool ap_status = config_server_.IsAPRunning();
-    
 
     // TODO: Check if the AP status has changed and display a message if it has
-    // TODO: Remove wait time from ConfigServer if possible when starting AP 
+    // TODO: Remove wait time from ConfigServer if possible when starting AP
     //       so it can't block other code (dmx, etc.)
     if (current_mode_ != mode || current_base_channel_ != base_channel || current_ap_status_ != ap_status)
     {
@@ -159,13 +161,14 @@ void UIController::UpdateDisplay()
         String base_channel_str = FormatWithLeadingZeros(base_channel);
         String ap_status_str = current_ap_status_ ? "ON" : "OFF";
         DisplayMessage("B:" + String(base_channel_str) + ", M:" + String(mode) + ", AP:" + ap_status_str);
-    } 
+    }
 }
 
 String UIController::FormatWithLeadingZeros(uint16_t num)
 {
     String num_str = String(num);
-    while (num_str.length() < 3) {
+    while (num_str.length() < 3)
+    {
         num_str = "0" + num_str;
     }
     return num_str;

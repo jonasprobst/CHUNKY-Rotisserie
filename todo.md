@@ -8,21 +8,21 @@
 - [ ] Finish the UI class
 - [ ] Update main and test UI integration
 - [x] Research modes from Wahlberg Rotator
-- [.] Implement a basic MotorController for one of my small drivers and motors
-- [ ] update main and test Motor Implementation
+- [x] Implement a basic MotorController for one of my small drivers and motors
+- [.] update main and test Motor Implementation
 - [ ] write some tests and test things well considering personnel safety (write a e2e test protocol)
 
 - [x] get final motor specifications -> max 10kg
-- [ ] order motor if needed
+- [x] order motor if needed
 - [ ] Limit switches? or closed system? Encoder?
 - [ ] update final motor driver class
 - [ ] test everything again thoroughly
-- [ ] setup git hub
-- [ ] upload to github
-- [ ] ask for a code view##
+- [x] setup git hub
+- [x] upload to github
+- [ ] ask for a code review
 
-- [ ] design construction
-- [ ] design housing
+- [x] design construction
+- [.] design housing
 - [ ] assemble
 - [ ] test, test, test (emergency Stops! Blocked motor, fuse, signal loss, and other edge cases)
 - [ ] document things in the README.md for future me and technician
@@ -33,6 +33,12 @@
 - [ ] test with real people
 - [ ] document everything
 - [ ] celebrate
+
+## Sicherheit
+
+[ ] Doppelt gersichter (siehe Disco Kugel achsen)
+[ ] Nichts darf herunter fliegen können (achse, kabel, etc. alles in einem Gehäuse / hinter einer abdeckung)
+[ ] das doppelte vom load muss gehen (schrauben, verbindungen, motor load?)
 
 ## Notes
 
@@ -45,9 +51,4 @@ Ferrite choke:
 3. **Rated Current**: The specific current rating will depend on the current your device will draw. As a safe estimate, a choke rated for at least 5-10 Amps should provide a good safety margin for most applications. But you should check the power requirements of your devices to make sure.
 4. **Material**: Ferrite chokes are made of different materials classified by "material types". The types are usually denoted by a number. For dealing with high-frequency noise, Material Type 43 or 61 could be a good starting point. However, check the data sheet for the specific frequency performance of each material type.
 
-## Sicherheit
 
-Doppelt gersichter (siehe Disco Kugel achsen)
-Nichts darf herunter fliegen (achse, kabel, etc. alles in einem Gehäuse / hinter einer abdeckung)
-das oppelte vom load muss gehen (schrauben, verbindungen, motor load?)
-Kabel: Normal oder Powercon

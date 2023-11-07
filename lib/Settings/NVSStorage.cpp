@@ -1,7 +1,7 @@
 #include "NVSStorage.h"
 #include <esp_log.h>
 
-// FIXME: Uses a lot of duplicate code. Should probably be refactored to use templates.
+// TODO: Uses a lot of duplicate code. Should probably be refactored to use templates.
 
 // For logging, we need a tag
 static constexpr const char TAG[] = "NVSStorage";

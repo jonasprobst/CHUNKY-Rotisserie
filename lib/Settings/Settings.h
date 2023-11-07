@@ -119,7 +119,7 @@ public:
 
 
 private:
-    // TODO: Move valid modes to a more generic place?
+    // TODO: Move valid modes to a more prominent place?
     const std::set<uint8_t> valid_modes_ = {1, 2, 3, 7, 8}; // valid modes for this device
     uint8_t mode_;                                          // operation mode of this device
     uint16_t base_channel_;                                 // DMX Start Address aka offset
