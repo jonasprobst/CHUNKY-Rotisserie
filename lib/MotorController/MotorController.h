@@ -123,7 +123,7 @@ private:
 
     AccelStepper *stepper_ = nullptr;          // AccelStepper instance
     OperationMode operation_mode_ = MODE_STOP; // Motor mode
-    float ramp_ = 0;                           // Motor ramp
+    //float ramp_ = 0;                           // Motor ramp
     float max_speed_ = 0;                      // Motor max speed
     float speed_ = 0;                          // Motor speed
     uint16_t cw_limit_position_ = 0;           // CW limit position (position mode)

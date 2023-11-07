@@ -57,7 +57,7 @@ void MotorController::SetMotorMode(uint8_t motor_mode)
 
     case (3): // Mode Fast Speed Change (Ramp)
         stepper_->setAcceleration(RAMP_FAST);
-        ESP_LOGI(TAG, "Motor mode (ramp): fast");
+        ESP_LOGI(TAG, "Motor mode (ramp): fast.");
         break;
 
     default:
@@ -112,16 +112,16 @@ void MotorController::SetMaxSpeed(uint8_t speed)
     // Map the speed percentage to the range 0 to MOTOR_MAX_SPEED
     max_speed_ = map(speed, 0, 255, 0, MOTOR_MAX_SPEED);
     stepper_->setMaxSpeed(max_speed_);
-    ESP_LOGI(TAG, "Max speed set to %d", max_speed_);
+    ESP_LOGI(TAG, "Max speed set to %f", max_speed_);
 }
 
 void MotorController::SetSpeed(uint8_t speed)
 {
     // Map the speed percentage to the range 0 to current max_speed_
     speed_ = map(speed, 0, 255, 0, max_speed_);
-    // using SetMaxSpeed instead of SetSpeed so stepper can handle acceleration itself
+    // using SetMaxSpeed instead of SetSpeed so stepper handles ramp up/down itself
     stepper_->setMaxSpeed(speed_);
-    ESP_LOGI(TAG, "Speed set to %d", speed_);
+    ESP_LOGI(TAG, "Speed set to %f", speed_);
 }
 
 void MotorController::SetCWLimitPosition()
@@ -147,7 +147,7 @@ void MotorController::SetTargetPosition(uint16_t position)
 
 void MotorController::Run()
 {
-    EnableMotor(); //TODO: FIXME: Probably the wrong place for this? => Case stop!
+    EnableMotor(); //FIXME: Probably the wrong place for this? => Case stop!
     switch (operation_mode_)
     {
     case OperationMode::MODE_STOP:

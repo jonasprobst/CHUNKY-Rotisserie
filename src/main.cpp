@@ -59,17 +59,18 @@ void loop()
 
             // set direction and speed (relevant for continuous rotation mode only)
             if(cw_speed > 0 && ccw_speed > 0) {
-                // what should we do here? stop the motor?
+                // FIXME: what should we do here? stop the motor? @demi
+                // or ignore and just work with what ever value is bigger?
                 ESP_LOGE(TAG, "Both CW and CCW speed are set. This is not supported.");
-            } else if(cw_speed > 0) {
+                motor_controller.SetSpeed(0);
+            } else if(cw_speed >= ccw_speed) {
+                ESP_LOGE(TAG, "turning cw.");
                 motor_controller.SetSpeed(cw_speed);
                 motor_controller.SetDirectionCW();
-            } else if(ccw_speed > 0) {
+            } else {
+                ESP_LOGE(TAG, "turning ccw.");
                 motor_controller.SetSpeed(ccw_speed);
                 motor_controller.SetDirectionCCW();
-            } else {
-                // both speeds are 0, guess we're in a different mode
-                // anything to do here?
             }
             
             ESP_LOGI(TAG, "----"); // make the log look nicer
