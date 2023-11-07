@@ -119,7 +119,7 @@ void MotorController::SetSpeed(uint8_t speed)
 {
     // Map the speed percentage to the range 0 to current max_speed_
     speed_ = map(speed, 0, 255, 0, max_speed_);
-    // setting max speed insted of speed so the stepper can handle acceleration itself
+    // using SetMaxSpeed instead of SetSpeed so stepper can handle acceleration itself
     stepper_->setMaxSpeed(speed_);
     ESP_LOGI(TAG, "Speed set to %d", speed_);
 }

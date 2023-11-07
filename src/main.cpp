@@ -47,7 +47,7 @@ void loop()
 
             // These log when called
             target_position = dmx_controller.GetTargetPosition();
-            max_speed = dmx_controller.GetMaxSpeed(); //FIXME: responds to Channel 2 (not 3)
+            max_speed = dmx_controller.GetMaxSpeed();
             cw_speed = dmx_controller.GetCWSpeed();
             ccw_speed = dmx_controller.GetCCWSpeed();
             operation_mode = dmx_controller.GetOperationMode();

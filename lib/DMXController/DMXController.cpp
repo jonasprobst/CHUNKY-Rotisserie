@@ -14,8 +14,8 @@ DMXController::DMXController(uint8_t base_channel)
 
 uint16_t DMXController::GetTargetPosition()
 {
-  // If an error occurred receiving the new position, the last position will be returned.
-  // this is to prevent the motor from moving unintentionally towards a new position
+  // GetChannelValue returns the second argument if an error occured reading DMX data.
+  // here this prevents the motor from moving unintentionally towards a new position
   position_hb_ = GetChannelValue(POSITION_CHANNEL_HB, position_hb_);
   position_lb_ = GetChannelValue(POSITION_CHANNEL_LB, position_lb_);
   target_position_ = position_lb_ + (position_hb_ << 8);
@@ -25,23 +25,23 @@ uint16_t DMXController::GetTargetPosition()
 
 uint8_t DMXController::GetMaxSpeed()
 {
-  // retruns 0 on error to stop the motor.
-  max_speed_ = GetChannelValue(MAX_SPEED_CHANNEL);
+  // GetChannelValue retruns 0 on error to stop the motor.
+  max_speed_ = GetChannelValue(MAX_SPEED_CHANNEL, 0);
   ESP_LOGI(TAG, "Max Speed: %d", max_speed_);
   return max_speed_;
 }
 
 uint8_t DMXController::GetCWSpeed()
 {
-  // returns 0 on error to stop the motor
-  cw_speed_ = GetChannelValue(CW_SPEED_CHANNEL);
+  // GetChannelValue returns 0 on error to stop the motor
+  cw_speed_ = GetChannelValue(CW_SPEED_CHANNEL, 0);
   ESP_LOGI(TAG, "CW Speed: %d", cw_speed_);
   return cw_speed_;
 }
 
 uint8_t DMXController::GetCCWSpeed()
 {
-  // returns 0 on error to stop the motor
+  // GetChannelValue returns 0 on error to stop the motor
   ccw_speed_ = GetChannelValue(CCW_SPEED_CHANNEL);
   ESP_LOGI(TAG, "CCW Speed: %d", ccw_speed_);
   return ccw_speed_;
@@ -49,7 +49,7 @@ uint8_t DMXController::GetCCWSpeed()
 
 uint8_t DMXController::GetOperationMode()
 {
-  // Returns the last known operation mode on error.
+  // GetChannelValue returns the last known operation mode on error.
   // this is to prevent the motor from moving unintentionally
   operation_mode_ = GetChannelValue(OPERATION_MODE_CHANNEL, operation_mode_);
   ESP_LOGI(TAG, "Operation Mode: %d", operation_mode_);
@@ -71,7 +71,7 @@ uint8_t DMXController::GetChannelValue(uint8_t channel, uint8_t default_value)
     ESP_LOGE(TAG, "Error: Invalid channel number: %d", channel);
     return default_value;
   }
-  // Return the value of the requested channel offset by the base channel
+  // Return the value of the requested channel offset by base channel
   return channel_values_[base_channel_ + channel -1];
 }
 
