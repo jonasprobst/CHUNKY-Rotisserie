@@ -5,8 +5,6 @@
 #include "Settings.h"
 #include <AccelStepper.h>
 
-
-
 /**
  * @class MotorController
  * @brief Motor Controller for AccelStepper library.
@@ -33,19 +31,20 @@ public:
 
     /**
      * @brief Set the Operation Mode.
-     * This code is based on the Wahloberg Rotator (https://wahlberg.dk/products/dmx-rotators/dmx-rotator).
-     * Unfortunately Whalberg has made a mess with naming the modes.
-     * There is the mode that is set by the rotary switches on the hardware: in this code reffered to "Motor Mode" (see SetMotorMode for details)
-     * And the mode that is set via DMX Channel 6: in this code reffered to as "Operation Mode".
-     * Operation mode is set as a percentage of the DMX Channel 6 value.
-     *  - 0-50% Continuous rotation mode
-     *  - 51-54% Position Mode (set limits enabled)
-     *  - 55-79% Position mode
-     *  - 80-100% Angular mode
+     * This code is based on the Wahlberg Rotator (https://wahlberg.dk/products/dmx-rotators/dmx-rotator).
+     * Unfortunately Wahlberg has made a mess with naming the modes.
+     * There is the mode that is set by the rotary switches on the hardware: in this code referred to "Motor Mode" (see SetMotorMode for details)
+     * And the mode that is set via DMX Channel 6: in this code referred to as "Operation Mode".
+     * Operation mode is set as a value between 0-255 in the DMX Channel 6 value.
+     *  - 0 MotorStop
+     *  - 1-128 (1-50%) Continuous rotation mode
+     *  - 129-139 (51-54%) Position Mode (set limits enabled)
+     *  - 140-203 (55-79%) Position mode
+     *  - 204-255 (80-100%) Angular mode
      *
      * @param operation_mode The operation mode to set.
      */
-    void SetOperationMode(uint8_t operation_mode);
+    void SetOperationMode(uint8_t operation_mode_dmx);
 
     /**
      * @brief Set max speed of the motor.
@@ -53,25 +52,25 @@ public:
      *
      * @return uint8_t The max speed.
      */
-    void SetMaxSpeed(uint8_t max_speed);
+    void SetUserMaxSpeed(uint8_t user_max_speed_dmx);
 
     /**
      * @brief Set the Speed of motor relative to max speed.
      *
      * @param speed The speed to set.
      */
-    void SetSpeed(uint8_t speed);
+    void SetSpeed(uint8_t speed_dmx);
 
     /**
      * @brief Set the Direction of the motor to counter-clockwise.
-     * @warning This direction is only used programatically and may not
+     * @warning This direction is only used programmatically and may not
      *          reflect the physical direction of the motor.
      */
     void SetDirectionCW();
 
     /**
      * @brief Set the Direction of the motor to clockwise.
-     * @warning This direction is only used programatically and may not
+     * @warning This direction is only used programmatically and may not
      *         reflect the physical direction of the motor.
      */
     void SetDirectionCCW();
@@ -93,7 +92,7 @@ public:
      *
      * @param position The target position to set.
      */
-    void SetTargetPosition(uint16_t position);
+    void SetTargetPosition(uint16_t position_dmx16);
 
     /**
      * @brief Run the motor according to the current operation mode.
@@ -115,7 +114,7 @@ public:
     void Stop();
 
 private:
-    static constexpr uint16_t MOTOR_MAX_SPEED = 1000;    // The Maximum Speed the Motor can operate at
+    static constexpr uint16_t MOTOR_MAX_SPEED = 1000;   // The Maximum Speed the Motor can operate at
     static constexpr uint16_t STEPS_PER_ROTATION = 200; // The number of steps per rotation
     static constexpr uint16_t RAMP_SLOW = 300;
     static constexpr uint16_t RAMP_NORMAL = 600;
@@ -124,7 +123,7 @@ private:
     AccelStepper *stepper_ = nullptr;          // AccelStepper instance
     OperationMode operation_mode_ = MODE_STOP; // Motor mode
     //float ramp_ = 0;                           // Motor ramp
-    float max_speed_ = 0;                      // Motor max speed
+    float user_max_speed_ = 0;                 // Motor max speed
     float speed_ = 0;                          // Motor speed
     uint16_t cw_limit_position_ = 0;           // CW limit position (position mode)
     uint16_t ccw_limit_position_ = 0;          // CCW limit position (position mode)
@@ -153,7 +152,7 @@ private:
      * Motor Mode 6-9 is a manual controll interface on the original hardware via the rotary switch buttons (not implemented).
      * @warning This code only implements motor mode 0-3. The other modes are not implemented.
      * @warning Changes to the motor mode need a restart of the ESP32 to take effect!
-     * 
+     *
      * @param motor_mode The operation mode to set.
      */
     void SetupStepper();

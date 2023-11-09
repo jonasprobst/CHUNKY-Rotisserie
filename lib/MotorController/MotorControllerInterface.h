@@ -25,15 +25,15 @@ public:
     MotorControllerInterface() {}
     virtual ~MotorControllerInterface() {}
 
-    virtual void SetMotorMode(uint8_t motor_mode) = 0;
-    virtual void SetOperationMode(uint8_t operation_mode) = 0;
-    virtual void SetMaxSpeed(uint8_t speed) = 0;
-    virtual void SetSpeed(uint8_t SetMaxSpeed) = 0;
+    virtual void SetMotorMode(uint8_t motor_mode_dmx) = 0;
+    virtual void SetOperationMode(uint8_t operation_mode_dmx) = 0;
+    virtual void SetUserMaxSpeed(uint8_t user_max_speed_dmx) = 0;
+    virtual void SetSpeed(uint8_t speed_dmx) = 0;
     virtual void SetDirectionCW() = 0;
     virtual void SetDirectionCCW() = 0;
     virtual void SetCWLimitPosition() = 0;
     virtual void SetCCWLimitPosition() = 0;
-    virtual void SetTargetPosition(uint16_t position) = 0;
+    virtual void SetTargetPosition(uint16_t position_dmx16) = 0;
     virtual void Run() = 0;
     virtual void Stop() = 0;
     virtual bool IsRunning() = 0;

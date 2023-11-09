@@ -73,10 +73,10 @@ private:
     Bounce stop_button_;                    // Button to stop the show
     WifiAPConfigServer &config_server_;     // Reference to the config server object
     const SettingsInterface &dmx_settings_; // Reference to the settings object
-    bool current_ap_status_ = false;               // Flag to indicate if the access point is running
+    bool current_ap_status_ = false;        // Flag to indicate if the access point is running
     uint8_t current_mode_ = 0;              // The current mode
     uint16_t current_base_channel_ = 0;     // The current base channel
-    Adafruit_SSD1306 *display_;              // The OLED display
+    Adafruit_SSD1306 *display_;             // The OLED display
     bool display_initialized_ = false;      // Flag to indicate if the display has been initialized successfully
     uint32_t last_display_update_ = 0;      // Timestamp of the last display update
 

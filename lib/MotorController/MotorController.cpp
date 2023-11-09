@@ -2,7 +2,6 @@
 #include "MotorController.h"
 #include <Arduino.h>
 
-
 static constexpr const char TAG[] = "MotorController";
 
 MotorController::MotorController(uint8_t motor_mode)
@@ -26,7 +25,7 @@ void MotorController::SetupStepper()
 {
     stepper_ = new AccelStepper(AccelStepper::DRIVER, STEPPER_STEP, STEPPER_DIRECTION);
     stepper_->setEnablePin(STEPPER_ENABLE);
-    stepper_->disableOutputs();                    // This dsiables the motor - it will not move until enabled
+    stepper_->disableOutputs();                    // This disables the motor - it will not move until enabled
     stepper_->setPinsInverted(false, false, true); // Invert the enable pin (common-cathode wiring)
     stepper_->setMaxSpeed(MOTOR_MAX_SPEED);        // Set the max speed
     stepper_->setAcceleration(RAMP_NORMAL);        // Set the acceleration
@@ -41,7 +40,6 @@ void MotorController::SetMotorMode(uint8_t motor_mode)
     // - 1: Slow
     // - 2: Normal
     // - 3: Fast
-
 
     switch (motor_mode)
     {
@@ -67,7 +65,7 @@ void MotorController::SetMotorMode(uint8_t motor_mode)
     }
 }
 
-void MotorController::SetOperationMode(uint8_t operation_mode)
+void MotorController::SetOperationMode(uint8_t operation_mode_dmx)
 {
     // IMPORTANT: this is not the same as motor mode (see SetMotorMode for details)
     // Operation mode is set as a percentage of the DMX Channel 6 value.
@@ -77,25 +75,31 @@ void MotorController::SetOperationMode(uint8_t operation_mode)
     // - 80-100% Angular mode
 
     // Map the operation mode to the range 0 to 100
-    operation_mode = map(operation_mode, 0, 255, 0, 100);
+    uint8_t operation_mode_pct = map(operation_mode_dmx, 0, 255, 0, 100); // macht es einfacher zu lesen, compiler optimiert es ohnehin, dass es nicht mehr programspeicher braucht.
 
     // Set operation mode
-    if (operation_mode >= 1 && operation_mode <= 50)
-    { // FIXME: should this start at 0? @demi
+    // Etwas einfacher zu lesen, da beim else if die vorherigen Bedingungen berücksichtigt wird.
+    if (operation_mode_pct == 0)
+    {
+        operation_mode_ = MODE_STOP;
+        ESP_LOGI(TAG, "Operation mode set to STOP ");
+    }
+    else if (operation_mode_pct <= 50)
+    { // FIXME: should this start at 0? @demi -> würde sagen es kommt auf die fixture drauf an. Aber ist sicher gut, wenn es default nicht im Rotation Mode ist.
         operation_mode_ = MODE_ROTATION;
         ESP_LOGI(TAG, "Operation mode set to ROTATION ");
     }
-    else if (operation_mode >= 51 && operation_mode <= 54)
+    else if (operation_mode_pct <= 54)
     {
         operation_mode_ = MODE_POSITION_SAVE;
         ESP_LOGI(TAG, "Operation mode set to POSITION SAVE ");
     }
-    else if (operation_mode >= 55 && operation_mode <= 79)
+    else if (operation_mode_pct <= 79)
     {
         operation_mode_ = MODE_POSITION;
         ESP_LOGI(TAG, "Operation mode set to POSITION ");
     }
-    else if (operation_mode >= 80 && operation_mode <= 100)
+    else if (operation_mode_pct <= 100)
     {
         operation_mode_ = MODE_ANGULAR;
         ESP_LOGI(TAG, "Operation mode set to ANGULAR (not implemented yet) ");
@@ -103,22 +107,22 @@ void MotorController::SetOperationMode(uint8_t operation_mode)
     else
     {
         operation_mode_ = MODE_STOP;
-        ESP_LOGI(TAG, "Operation mode set to STOP ");
+        ESP_LOGI(TAG, "Operation mode set to STOP, cause undefined state. ");
     }
 }
 
-void MotorController::SetMaxSpeed(uint8_t speed)
+void MotorController::SetUserMaxSpeed(uint8_t max_speed_dmx)
 {
     // Map the speed percentage to the range 0 to MOTOR_MAX_SPEED
-    max_speed_ = map(speed, 0, 255, 0, MOTOR_MAX_SPEED);
-    stepper_->setMaxSpeed(max_speed_);
-    ESP_LOGI(TAG, "Max speed set to %f", max_speed_);
+    user_max_speed_ = map(max_speed_dmx, 0, 255, 0, MOTOR_MAX_SPEED);
+    stepper_->setMaxSpeed(user_max_speed_);
+    ESP_LOGI(TAG, "Max speed set to %f", user_max_speed_);
 }
 
-void MotorController::SetSpeed(uint8_t speed)
+void MotorController::SetSpeed(uint8_t speed_dmx)
 {
     // Map the speed percentage to the range 0 to current max_speed_
-    speed_ = map(speed, 0, 255, 0, max_speed_);
+    speed_ = map(speed_dmx, 0, 255, 0, user_max_speed_);
     // using SetMaxSpeed instead of SetSpeed so stepper handles ramp up/down itself
     stepper_->setMaxSpeed(speed_);
     ESP_LOGI(TAG, "Speed set to %f", speed_);
@@ -138,16 +142,16 @@ void MotorController::SetCCWLimitPosition()
     ESP_LOGI(TAG, "Saved CCW position %d", ccw_limit_position_);
 }
 
-void MotorController::SetTargetPosition(uint16_t position)
+void MotorController::SetTargetPosition(uint16_t position_dmx16)
 {
-    target_position_ = position;
+    target_position_ = position_dmx16;
     stepper_->moveTo(target_position_);
-    ESP_LOGI(TAG, "Target position set to %d", position);
+    ESP_LOGI(TAG, "Target position set to %d", target_position_);
 }
 
 void MotorController::Run()
 {
-    EnableMotor(); //FIXME: Probably the wrong place for this? => Case stop!
+    EnableMotor(); // FIXME: Probably the wrong place for this? => Case stop!
     switch (operation_mode_)
     {
     case OperationMode::MODE_STOP:
@@ -184,7 +188,7 @@ void MotorController::Run()
     case OperationMode::MODE_POSITION:
         // The motor moves between the two set limit positions
 
-        // Ensure both limites were set before starting position mode
+        // Ensure both limits were set before starting position mode
         if (cw_limit_position_ == 0 && ccw_limit_position_ == 0)
         {
             ESP_LOGE(TAG, "No limits set. Can't move to position");
@@ -214,16 +218,16 @@ void MotorController::ContinuousRotation()
     // speed parameter to set the direction. Instead we reset the current position
     // and set a target position (twice the speed to make sure the motor doesn't stop unintentionally)
     // in the direction we want to go. Since we are messing with the current position we need an absolute position
-    // to be able to go back our homed (0) position for position mode and angular mode. The reliabilty of these positions
+    // to be able to go back our homed (0) position for position mode and angular mode. The reliability of these positions
     // depends on the accuracy of the stepper motor. So this is just best effort here ;-)
     stepper_->setCurrentPosition(0);
-    uint16_t target_position = 2 * max_speed_; // carrot to chase, keeps motor running continuously
+    uint16_t position_to_chase = 2 * user_max_speed_; // carrot to chase, keeps motor running continuously
 
     // set direction
-    target_position = is_direction_cw_ ? target_position : -target_position;
+    position_to_chase = is_direction_cw_ ? position_to_chase : -position_to_chase;
 
     // move motor by speed and direction, handling acceleration and deceleration automatically
-    stepper_->moveTo(target_position);
+    stepper_->moveTo(position_to_chase);
     stepper_->run();
 
     // keep track of the absolute position (actual steps moved)
@@ -261,7 +265,7 @@ void MotorController::MoveBetweenLimitPositions()
     else if (current_target != cw_limit_position_ &&
              current_target != ccw_limit_position_)
     {
-        // current target is not within the limits (eg. when changin into position mode)
+        // current target is not within the limits (eg. when changing into position mode)
         // continue to the limit in the current direction
         uint16_t correct_target = is_direction_cw_ ? cw_limit_position_ : ccw_limit_position_;
         stepper_->moveTo(correct_target);
@@ -279,8 +283,8 @@ void MotorController::MoveToAngle()
     long current_position = stepper_->currentPosition();
     long steps_to_target = target_position - current_position;
 
-    // If motor is stationarry: Adjust for shortest path, considering wrap-around at STEPS_PER_ROTATION.
-    // Ele continue in current direction to target angle. This based on the whalberg implementation.
+    // If the motor is stationary: Adjust for shortest path, considering wrap-around at STEPS_PER_ROTATION.
+    // Else continue in current direction to target angle. This is based on the implementation by Wahlberg.
     if (IsRunning())
     {
         if (steps_to_target >= (STEPS_PER_ROTATION / 2))

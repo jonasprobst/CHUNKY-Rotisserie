@@ -101,7 +101,7 @@ bool DMXController::Update()
     return false;
   }
 
-  // Package received succesfully. Read the channel values.
+  // Package received successfully. Read the channel values.
   is_connected_ = true;
   dmx_read(dmx_port_, channel_values_, packet.size);
   return true;
