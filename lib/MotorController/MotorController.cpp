@@ -69,37 +69,40 @@ void MotorController::SetOperationMode(uint8_t operation_mode_dmx)
 {
     // IMPORTANT: this is not the same as motor mode (see SetMotorMode for details)
     // Operation mode is set as a percentage of the DMX Channel 6 value.
-    // - 0-50% Continuous rotation mode
-    // - 51-54% Position Mode (set limits enabled)
-    // - 55-79% Position mode
-    // - 80-100% Angular mode
+    // Operation mode is set as a value between 0-255 in the DMX Channel 6 value.
+    //  - 0 MotorStop
+    //  - 1-128 (1-50%) Continuous rotation mode
+    //  - 129-139 (51-54%) Position Mode (set limits enabled)
+    //  - 140-203 (55-79%) Position mode
+    //  - 204-255 (80-100%) Angular mode
 
     // Map the operation mode to the range 0 to 100
+    // !!! AS PERCENTAGE IS LESS PRECISE THAN THE 255 STEPS OF DMX, I SUGGEST NOT TO CONVERT AND HARDCODE DMX VALUES. THE PERCENTAGE IS JUST A NICE FEATURE WHEN PROGRAMMING ON THE LIGHTDESK.
+    // I ADDED SOME DMX VALUES TO THE COMMENTS I HOPE THEY CORRELATE WITH THOSE FROM WAHLBERG
     uint8_t operation_mode_pct = map(operation_mode_dmx, 0, 255, 0, 100); // macht es einfacher zu lesen, compiler optimiert es ohnehin, dass es nicht mehr programspeicher braucht.
 
     // Set operation mode
-    // Etwas einfacher zu lesen, da beim else if die vorherigen Bedingungen berücksichtigt wird.
-    if (operation_mode_pct == 0)
+    if (operation_mode_dmx == 0)
     {
         operation_mode_ = MODE_STOP;
         ESP_LOGI(TAG, "Operation mode set to STOP ");
     }
-    else if (operation_mode_pct <= 50)
+    else if (operation_mode_dmx < 129)
     { // FIXME: should this start at 0? @demi -> würde sagen es kommt auf die fixture drauf an. Aber ist sicher gut, wenn es default nicht im Rotation Mode ist.
         operation_mode_ = MODE_ROTATION;
         ESP_LOGI(TAG, "Operation mode set to ROTATION ");
     }
-    else if (operation_mode_pct <= 54)
+    else if (operation_mode_dmx < 140)
     {
         operation_mode_ = MODE_POSITION_SAVE;
         ESP_LOGI(TAG, "Operation mode set to POSITION SAVE ");
     }
-    else if (operation_mode_pct <= 79)
+    else if (operation_mode_dmx < 204)
     {
         operation_mode_ = MODE_POSITION;
         ESP_LOGI(TAG, "Operation mode set to POSITION ");
     }
-    else if (operation_mode_pct <= 100)
+    else if (operation_mode_dmx <= 255)
     {
         operation_mode_ = MODE_ANGULAR;
         ESP_LOGI(TAG, "Operation mode set to ANGULAR (not implemented yet) ");
@@ -107,7 +110,7 @@ void MotorController::SetOperationMode(uint8_t operation_mode_dmx)
     else
     {
         operation_mode_ = MODE_STOP;
-        ESP_LOGI(TAG, "Operation mode set to STOP, cause undefined state. ");
+        ESP_LOGI(TAG, "Operation mode set to STOP !! undefined state ");
     }
 }
 
@@ -255,12 +258,23 @@ void MotorController::MoveBetweenLimitPositions()
 
     long current_target = stepper_->targetPosition(); // could be negative due to continuous running implementation
 
-    if (stepper_->distanceToGo() == 0)
+    if (stepper_->distanceToGo() == 0) // my experience with servos is that they often don't hit the target exactly. at least when using a sensor and electro motor. therefore a target range might be adequate. This is possibly not the case when counting steps on a steppermotor.
     {
         // Motor has reached a target position, change direction and move to other limit
         is_direction_cw_ = !is_direction_cw_;
-        uint16_t new_target = is_direction_cw_ ? ccw_limit_position_ : cw_limit_position_;
+        /*
+        uint16_t new_target = is_direction_cw_ ? ccw_limit_position_ : cw_limit_position_; // Not everyone can read this way of writing if/else, if you want to make it better readable for everyone, better write it out.
         stepper_->moveTo(new_target);
+        */
+
+        if(is_direction_cw_)
+        {
+            stepper_->moveTo(ccw_limit_position_); // as we already have switched direction it seems contradictory the new target?
+        }else
+        {
+            stepper_->moveTo(cw_limit_position_);
+        }
+    
     }
     else if (current_target != cw_limit_position_ &&
              current_target != ccw_limit_position_)

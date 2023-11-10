@@ -13,9 +13,13 @@ WifiAPConfigServer::WifiAPConfigServer(SettingsInterface &dmx_settings)
 void WifiAPConfigServer::ToggleAP()
 {
     if (IsAPRunning())
+    { // it works fine without, but better safe than sorry.
         Stop();
+    }
     else
+    {
         Start();
+    }
 }
 
 bool WifiAPConfigServer::IsAPRunning() const
