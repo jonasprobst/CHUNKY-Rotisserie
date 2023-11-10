@@ -55,7 +55,7 @@ void loop()
 
             // handle motor
             motor_controller.SetOperationMode(operation_mode_dmx);
-            motor_controller.SetTargetPosition(target_position_dmx);
+            motor_controller.SetTargetPosition(target_position_dmx); // THIS CALL ALWAYS MAKES THE MOTOR MOVE TOWARDS A TARGET INDEPENDENT OF THE OPERATION MODE??? OR AM I WRONG
             motor_controller.SetUserMaxSpeed(user_max_speed_dmx);
 
             // set direction and speed (relevant for continuous rotation mode only)

@@ -291,7 +291,7 @@ void MotorController::MoveBetweenLimitPositions()
 void MotorController::MoveToAngle()
 {
     // Convert 16bit DMX512 value (2 Channels)
-    long target_position = (target_position_ * STEPS_PER_ROTATION) / 65535;
+    long target_position = (target_position_ * STEPS_PER_ROTATION) / 65535; // TAKE CARE OF THE VARIABLE target_position_ HERE!!! I THINK IT'S NOT HOW IT'S INTENDED
 
     // Calculate the difference between the current position and the target
     long current_position = stepper_->currentPosition();

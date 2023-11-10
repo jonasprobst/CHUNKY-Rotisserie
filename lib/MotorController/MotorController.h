@@ -127,7 +127,7 @@ private:
     float speed_ = 0;                          // Motor speed
     uint16_t cw_limit_position_ = 0;           // CW limit position (position mode)
     uint16_t ccw_limit_position_ = 0;          // CCW limit position (position mode)
-    uint16_t target_position_ = 0;             // Target position
+    uint16_t target_position_ = 0;             // Target position I AM NOT SURE IF IT COMPLETELY CAN BE LEFT OUT, BUT THE AccelStepper CLASS ALREADY KEEPS TRACK OF THIS VALUE. MOVE TO AN ANGLE MIGHT NEED A VARIABLE BUT COULD BE NAMED DIFFERENTLY
     uint16_t absolute_position_ = 0;           // Absolute position
     uint16_t previous_position_ = 0;           // Previous position (helper to calculate absolute position)
     bool is_enabled_ = false;                  // Motor enabled flag
