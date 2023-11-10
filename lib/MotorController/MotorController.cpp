@@ -79,8 +79,7 @@ void MotorController::SetOperationMode(uint8_t operation_mode_dmx)
     // Map the operation mode to the range 0 to 100
     // !!! AS PERCENTAGE IS LESS PRECISE THAN THE 255 STEPS OF DMX, I SUGGEST NOT TO CONVERT AND HARDCODE DMX VALUES. THE PERCENTAGE IS JUST A NICE FEATURE WHEN PROGRAMMING ON THE LIGHTDESK.
     // I ADDED SOME DMX VALUES TO THE COMMENTS I HOPE THEY CORRELATE WITH THOSE FROM WAHLBERG
-    uint8_t operation_mode_pct = map(operation_mode_dmx, 0, 255, 0, 100); // macht es einfacher zu lesen, compiler optimiert es ohnehin, dass es nicht mehr programspeicher braucht.
-
+    
     // Set operation mode
     if (operation_mode_dmx == 0)
     {
