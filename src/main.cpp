@@ -31,6 +31,7 @@ void loop()
 {
     ui.Update();
     dmx_controller.Update();
+    motor_controller.Run();
     
     if (dmx_controller.IsConnected() == 1)
     {
@@ -64,11 +65,11 @@ void loop()
                 ESP_LOGE(TAG, "Both CW and CCW speed are set. This is not supported.");
                 motor_controller.SetSpeed(0);
             } else if(cw_speed >= ccw_speed) {
-                ESP_LOGE(TAG, "turning cw.");
+                ESP_LOGE(TAG, "turning cw at %f rpm.", cw_speed);
                 motor_controller.SetSpeed(cw_speed);
                 motor_controller.SetDirectionCW();
             } else {
-                ESP_LOGE(TAG, "turning ccw.");
+                ESP_LOGE(TAG, "turning ccw at %f rpm.", ccw_speed);
                 motor_controller.SetSpeed(ccw_speed);
                 motor_controller.SetDirectionCCW();
             }
