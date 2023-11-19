@@ -2,6 +2,7 @@
 #include "MotorController.h"
 #include <Arduino.h>
 
+// IMPORTANT: WIP, not finished and not tested yet!
 
 static constexpr const char TAG[] = "MotorController";
 
@@ -24,8 +25,8 @@ MotorController::~MotorController()
 
 void MotorController::SetupStepper()
 {
-    stepper_ = new AccelStepper(AccelStepper::DRIVER, STEPPER_STEP, STEPPER_DIRECTION);
-    stepper_->setEnablePin(STEPPER_ENABLE);
+    stepper_ = new AccelStepper(AccelStepper::DRIVER, MOTOR_STEP, MOTOR_DIRECTION);
+    stepper_->setEnablePin(MOTOR_ENABLE);
     stepper_->disableOutputs();                    // This dsiables the motor - it will not move until enabled
     stepper_->setPinsInverted(false, false, true); // Invert the enable pin (common-cathode wiring)
     stepper_->setMaxSpeed(MOTOR_MAX_SPEED);        // Set the max speed
