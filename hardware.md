@@ -61,7 +61,7 @@ The ESCON 36/2 DC has protective circuits against overcurrent, excess temperatur
 
 ### ESCON Setup (in Studio)
 
-Followint the settings set via setup wizard in ESCON Studio. Make sure the firmware is up to date.
+Following the settings set via setup wizard in ESCON Studio. Make sure the firmware is up to date.
 
 - Speed Constant: 520 rpm/V (Motor Configuration - p.5)
 - Thermal time constant winding: 20s (Motor Configuration - p.5)
@@ -71,7 +71,7 @@ Followint the settings set via setup wizard in ESCON Studio. Make sure the firmw
 - Speed sensor: Digital Incremental Encoder
 - Encoder Resolution: 500 Counts/turn (Motor Configuration - p.2)
     - Encoder Direction: Maxon (guess since it's a maxon sensor)
-- Mode of operation: Speec Controller closed loop (my choice)
+- Mode of operation: Speed Controller closed loop (my choice)
     - Inner current control loop (default)
 - Enable: Enable & Direction (how my firmware works)
     - Enable: Digital Input 2, high active (enabled on high, disabled on low)
@@ -88,14 +88,23 @@ Followint the settings set via setup wizard in ESCON Studio. Make sure the firmw
     - Ramp at 100%: 2000rpm/s
 - Offset type: Fixed Offset
     - Offset: 0rpm (-> no offset)
-
-Summary Inputs & Outputs
-
-- D1 -> PWM - Set Value for Speed (10% -> 0rpm, 90% -> 12000rpm)
-- D2 -> Enable (high -> enable)
-- D3 -> Direction (high -> ccw)
-- P1 -> Speed Ramp (Potentiometer on board 0 - 2000rpm. Set <=50% to start)
-
+- Digital Inputs & Outputs
+    - D1 (in) -> PWM - Set Value for Speed (10% -> 0rpm, 90% -> 12000rpm)
+    - D2 (in) -> Enable (high -> enable)
+    - D3 (in) -> Direction (high -> ccw)
+    - D4 (out) -> Speed Comparator (high -> set speed is reached resp. "actual speed average")
+- Analog Inputs
+    - A1 (in) -> None
+    - A2 (in) -> None
+    - P1 (in) -> Speed ramp (on board potentiometer - configured above to set ramp speed)
+- Analog Output
+    - A1 (out) -> None
+    - A2 (out) -> None
+- Digital Output 4
+    - Mode: Limit
+    - Polarity: High above limit
+    - Direction: CW&CCW
+    - Limit: 0rpm
 
 
 
