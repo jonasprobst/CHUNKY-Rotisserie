@@ -2,7 +2,9 @@
 
 Welcome to Drama Dynamo, the device that brings theater props to life! We harness the power of DMX, the language of stage lighting and effects, decoded by the versatile ESP32 microcontroller. This enables any prop to move on cue - straight from the lightiong desk. Configuring your dynamic performance is a breeze through a Wi-Fi accessible webpage. Drama Dynamo, your key to creating truly immersive and interactive theater experiences.
 
-## WARNING: BEFORE EACH USE
+## WARNING
+
+### BEFORE EACH USE
 
 - Inspect the device for damage, wear, corrosion or absuse
 - Ensure the device is mounted correctly and savely.
@@ -11,6 +13,12 @@ Welcome to Drama Dynamo, the device that brings theater props to life! We harnes
 ** DO NOT USE, THE DEVICE IF ANY DAMAGE OR ERROR IS FOUND!**
 
 Please read the chapter [safety]() carefully and ensure any safety recomondations are implemented in your setup.
+
+## WHEN OPERATING
+
+Only operate the rotator when there is a clear view to the rotator and area around it.
+Before running the rotator, ensure that the ‘danger zone’ next to the rotator is cleared to avoid risk of injury.
+
 
 ## Setup
 
@@ -113,5 +121,14 @@ Motor Max Speed:
 
 Motor Achse: 4mm Durchmesser
 Wellen Achse: 8mm Durchmesser
+
+
+## Disclamer
+
+The hardware and software is a prototype. Any use of the actual device as well as any part of the information provided inside this repository (including but not limited to the code, documentation and any instructions) happens at your own risk. The author and maker of this information and hardware can not be held liable. By using anything provided in this repository or an actual device supplied by the owner of this repository you agree to these terms.
+
+## License
+
+The chosen license for this repository is [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.html).
 
 
