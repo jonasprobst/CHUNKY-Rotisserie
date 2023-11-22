@@ -61,13 +61,11 @@ void loop()
             }
             else if (cw_speed >= ccw_speed)
             {
-                ESP_LOGI(TAG, "cw_speed %d >= ccw_speed %d", cw_speed, ccw_speed);
                 motor_controller.SetDirectionCW();
                 motor_controller.SetSpeed(cw_speed);
             }
             else
             {
-                ESP_LOGI(TAG, "cw_speed %d < ccw_speed %d", cw_speed, ccw_speed);
                 motor_controller.SetDirectionCCW();
                 motor_controller.SetSpeed(ccw_speed);
             }
