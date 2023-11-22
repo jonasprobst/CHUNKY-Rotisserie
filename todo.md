@@ -9,23 +9,22 @@
 - [ ] Update main and test UI integration
 - [x] Research modes from Wahlberg Rotator
 - [x] Implement a basic MotorController for one of my small drivers and motors
-- [.] update main and test Motor Implementation
+- [x] update main and test Motor Implementation
 - [ ] write some tests and test things well considering personnel safety (write a e2e test protocol)
 
 - [x] get final motor specifications -> max 10kg
 - [x] order motor if needed
-- [ ] Limit switches? or closed system? Encoder?
-- [ ] update final motor driver class
-- [ ] test everything again thoroughly
+- [x] update final motor driver class
+- [x] test everything again thoroughly
 - [x] setup git hub
 - [x] upload to github
-- [ ] ask for a code review
+- [x] ask for a code review
 
 - [x] design construction
 - [x] design housing
-- [ ] assemble
-- [ ] test, test, test (emergency Stops! Blocked motor, fuse, signal loss, and other edge cases)
-- [ ] document things in the README.md for future me and technician
+- [.] assemble
+- [.] test, test, test (emergency Stops! Blocked motor, fuse, signal loss, and other edge cases)
+- [.] document things in the README.md for future me and technician
 - [ ] celebrate
 
 - [ ] test on stage, fix, repeat
