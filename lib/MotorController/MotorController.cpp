@@ -77,34 +77,32 @@ void MotorController::SetOperationMode(uint8_t operation_mode)
     // - 55-79% Position mode
     // - 80-100% Angular mode
 
-    // Map the operation mode to the range 0 to 100
-    operation_mode = map(operation_mode, 0, 255, 0, 100);
 
     // Set operation mode
-    if (operation_mode >= 1 && operation_mode <= 50)
-    { // FIXME: should this start at 0? @demi
-        operation_mode_ = MODE_ROTATION;
-        ESP_LOGI(TAG, "Operation mode set to ROTATION ");
+    if (operation_mode == 0)
+    {
+        operation_mode_ = MODE_STOP;
+        ESP_LOGI(TAG, "Operation mode set to STOP");
     }
-    else if (operation_mode >= 51 && operation_mode <= 54)
+    else if (operation_mode <= 127)
+    { 
+        operation_mode_ = MODE_ROTATION;
+        ESP_LOGI(TAG, "Operation mode set to ROTATION");
+    }
+    else if (operation_mode <= 137)
     {
         operation_mode_ = MODE_POSITION_SAVE;
-        ESP_LOGI(TAG, "Operation mode set to POSITION SAVE ");
+        ESP_LOGI(TAG, "Operation mode set to POSITION SAVE");
     }
-    else if (operation_mode >= 55 && operation_mode <= 79)
+    else if (operation_mode <= 203)
     {
         operation_mode_ = MODE_POSITION;
-        ESP_LOGI(TAG, "Operation mode set to POSITION ");
-    }
-    else if (operation_mode >= 80 && operation_mode <= 100)
-    {
-        operation_mode_ = MODE_ANGULAR;
-        ESP_LOGI(TAG, "Operation mode set to ANGULAR (not implemented yet) ");
+        ESP_LOGI(TAG, "Operation mode set to POSITION");
     }
     else
     {
-        operation_mode_ = MODE_STOP;
-        ESP_LOGI(TAG, "Operation mode set to STOP ");
+        operation_mode_ = MODE_ANGULAR;
+        ESP_LOGI(TAG, "Operation mode set to ANGULAR");
     }
 }
 
