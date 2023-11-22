@@ -77,20 +77,16 @@ void EsconDCController::SetOperationMode(uint8_t operation_mode)
     // WARNING: The Escon 36/2 DC only supports continuous rotation (operation_mode 1 - 50%)
     // THerefore values passed by operation_mode are ignored in this implementation.
 
-    if (operation_mode == MODE_STOP)
+    // operation_mode is a 8bit value that needs to be mapped to the enum OperationMode
+    if (operation_mode == 0)
     {
         operation_mode_ = MODE_STOP;
         ESP_LOGI(TAG, "Operation mode set to STOP.");
     }
-    else if (operation_mode == MODE_ROTATION)
-    {
-        operation_mode_ = MODE_ROTATION;
-        ESP_LOGI(TAG, "Operation mode set to ROTATION.");
-    }
     else
     {
         operation_mode_ = MODE_ROTATION;
-        ESP_LOGW(TAG, "Operation mode set to ROTATION. Other modes are not supported.");
+        ESP_LOGI(TAG, "Operation mode set to ROTATION.");
     }
 }
 
