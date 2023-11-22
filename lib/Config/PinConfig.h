@@ -37,8 +37,8 @@ constexpr gpio_num_t MOTOR_RUNNING = GPIO_NUM_18;    // DMX-Shield CLOCK - shift
 
 
 // Push Buttons
-// constexpr gpio_num_t BUTTON_AP = GPIO_NUM_25;
-// constexpr gpio_num_t BUTTON_STOP = GPIO_NUM_26;
+constexpr gpio_num_t BUTTON_AP = GPIO_NUM_14;
+constexpr gpio_num_t BUTTON_STOP = GPIO_NUM_32;
 // TODO: Feature: Add buttons to stop the motor and turn the access point on/off
 
 #endif // MY_PIN_CONFIG_H
