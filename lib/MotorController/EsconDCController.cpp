@@ -94,7 +94,7 @@ void EsconDCController::SetMaxSpeed(uint8_t speed)
 {
     // Map the speed percentage to the range 0 rpm to MOTOR_MAX_SPEED
     max_speed_ = map(speed, 0, 255, 0, MOTOR_MAX_SPEED);
-    ESP_LOGI(TAG, "Max speed set to %d", max_speed_);
+    ESP_LOGI(TAG, "Max speed set to %d rpm", max_speed_);
 }
 
 void EsconDCController::SetSpeed(uint8_t speed)
@@ -107,7 +107,7 @@ void EsconDCController::SetSpeed(uint8_t speed)
     u_int8_t duty_cycle = map(speed_, 0, MOTOR_MAX_SPEED, 25, 230);
 
     ledcWrite(PWM_CHANNEL, duty_cycle);
-    ESP_LOGI(TAG, "Speed set to %d", speed_);
+    ESP_LOGI(TAG, "Speed set to %d rpm", speed_);
 }
 
 void EsconDCController::SetCWLimitPosition()

@@ -19,7 +19,7 @@ uint16_t DMXController::GetTargetPosition()
   position_hb_ = GetChannelValue(POSITION_CHANNEL_HB, position_hb_);
   position_lb_ = GetChannelValue(POSITION_CHANNEL_LB, position_lb_);
   target_position_ = position_lb_ + (position_hb_ << 8);
-  ESP_LOGI(TAG, "Target Position: %d", target_position_);
+  ESP_LOGI(TAG, "Target Position value (16b): %d", target_position_);
   return target_position_;
 }
 
@@ -27,7 +27,7 @@ uint8_t DMXController::GetMaxSpeed()
 {
   // GetChannelValue retruns 0 on error to stop the motor.
   max_speed_ = GetChannelValue(MAX_SPEED_CHANNEL, 0);
-  ESP_LOGI(TAG, "Max Speed: %d", max_speed_);
+  ESP_LOGI(TAG, "Max Speed value: %d", max_speed_);
   return max_speed_;
 }
 
@@ -35,7 +35,7 @@ uint8_t DMXController::GetCWSpeed()
 {
   // GetChannelValue returns 0 on error to stop the motor
   cw_speed_ = GetChannelValue(CW_SPEED_CHANNEL, 0);
-  ESP_LOGI(TAG, "CW Speed: %d", cw_speed_);
+  ESP_LOGI(TAG, "CW Speed value: %d", cw_speed_);
   return cw_speed_;
 }
 
@@ -43,7 +43,7 @@ uint8_t DMXController::GetCCWSpeed()
 {
   // GetChannelValue returns 0 on error to stop the motor
   ccw_speed_ = GetChannelValue(CCW_SPEED_CHANNEL);
-  ESP_LOGI(TAG, "CCW Speed: %d", ccw_speed_);
+  ESP_LOGI(TAG, "CCW Speed value: %d", ccw_speed_);
   return ccw_speed_;
 }
 
@@ -52,7 +52,7 @@ uint8_t DMXController::GetOperationMode()
   // GetChannelValue returns the last known operation mode on error.
   // this is to prevent the motor from moving unintentionally
   operation_mode_ = GetChannelValue(OPERATION_MODE_CHANNEL, operation_mode_);
-  ESP_LOGI(TAG, "Operation Mode: %d", operation_mode_);
+  ESP_LOGI(TAG, "Operation Mode value: %d", operation_mode_);
   return operation_mode_;
 }
 
