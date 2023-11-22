@@ -7,11 +7,6 @@ class MotorControllerInterface
 {
 public:
 
-    // Ramp speed (set via motor mode on the webserver)
-    const uint16_t RAMP_SLOW = 300;
-    const uint16_t RAMP_NORMAL = 600;
-    const uint16_t RAMP_FAST = 900;
-
     // Operation mode: the mode the motor is currently in (DMX channel 6)
     enum OperationMode
     {
