@@ -56,18 +56,18 @@ void loop()
             {
                 // FIXME: what should we do here? stop the motor? @demi
                 // or ignore and just work with what ever value is bigger?
-                ESP_LOGE(TAG, "Both CW- && CCW-speed > 0. Stop.");
+                ESP_LOGE(TAG, "Both CW && CCW Speed > 0. Stop.");
                 motor_controller.Stop();
             }
             else if (cw_speed >= ccw_speed)
             {
-                ESP_LOGI(TAG, "cw_speed %f >= ccw_speed %f", cw_speed, ccw_speed);
+                ESP_LOGI(TAG, "cw_speed %d >= ccw_speed %d", cw_speed, ccw_speed);
                 motor_controller.SetDirectionCW();
                 motor_controller.SetSpeed(cw_speed);
             }
             else
             {
-                ESP_LOGI(TAG, "cw_speed %f < ccw_speed %f", cw_speed, ccw_speed);
+                ESP_LOGI(TAG, "cw_speed %d < ccw_speed %d", cw_speed, ccw_speed);
                 motor_controller.SetDirectionCCW();
                 motor_controller.SetSpeed(ccw_speed);
             }

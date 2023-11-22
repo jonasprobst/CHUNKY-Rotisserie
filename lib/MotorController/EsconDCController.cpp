@@ -215,6 +215,5 @@ bool EsconDCController::IsRunning()
     // My configuration (see hardware.md) is set to once the speed is above 0 D4 out of escon board is set to high.
 
     bool is_running = digitalRead(MOTOR_RUNNING);
-    ESP_LOGI(TAG, "Motor is running: %d", is_running);
     return is_running;
 }
