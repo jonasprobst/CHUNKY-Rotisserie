@@ -8,7 +8,14 @@ EsconDCController::EsconDCController(uint8_t motor_mode)
 {
     // IMPORTANT: Parameter motor_mode is ignored since the ramp is set via potentiometer on the ESCON board.
 
-    //TODO: Initialise ESCON connection (pins etc.)
+    // Initialize Pins
+    pinMode(MOTOR_ENABLE, OUTPUT);
+    pinMode(MOTOR_DIRECTION, OUTPUT);
+    pinMode(MOTOR_RUNNING, INPUT);
+
+    // Setup PWM (ledc) for speed control
+    ledcSetup(PWM_CHANNEL, PWM_FREQUENCY, PWM_RESOLUTION);
+    ledcAttachPin(MOTOR_STEP, PWM_CHANNEL); // attach Speed (Step) PWM channel 0 to pin
 
     SetOperationMode(MODE_STOP);
     DisableMotor();
@@ -33,7 +40,7 @@ void EsconDCController::SetMotorMode(uint8_t motor_mode)
 
     // WARNING: In the current setup the ramp speed is set via the potentiometer on the ESCON board.
     // Changes to the parameter motor_mode have absolutley no effect.
-    // A future feature would be to set the ramp via an analog output (PWM). The ESCON board supports this, 
+    // A future feature would be to set the ramp via an analog output (PWM). The ESCON board supports this,
     // but would need to be reconfigured via the ESCON Studio software.
 
     ESP_LOGW(TAG, "Motor mode is set with the potentiometer on the ESCON board.");
@@ -69,14 +76,19 @@ void EsconDCController::SetOperationMode(uint8_t operation_mode)
 
     // WARNING: The Escon 36/2 DC only supports continuous rotation (operation_mode 1 - 50%)
     // THerefore values passed by operation_mode are ignored in this implementation.
-    
-    if (operation_mode == MODE_STOP){
+
+    if (operation_mode == MODE_STOP)
+    {
         operation_mode_ = MODE_STOP;
         ESP_LOGI(TAG, "Operation mode set to STOP.");
-    } else if (operation_mode == MODE_ROTATION){
+    }
+    else if (operation_mode == MODE_ROTATION)
+    {
         operation_mode_ = MODE_ROTATION;
         ESP_LOGI(TAG, "Operation mode set to ROTATION.");
-    } else {
+    }
+    else
+    {
         operation_mode_ = MODE_ROTATION;
         ESP_LOGW(TAG, "Operation mode set to ROTATION. Other modes are not supported.");
     }
@@ -84,31 +96,37 @@ void EsconDCController::SetOperationMode(uint8_t operation_mode)
 
 void EsconDCController::SetMaxSpeed(uint8_t speed)
 {
-    // Map the speed percentage to the range 0 to MOTOR_MAX_SPEED
+    // Map the speed percentage to the range 0 rpm to MOTOR_MAX_SPEED
     max_speed_ = map(speed, 0, 255, 0, MOTOR_MAX_SPEED);
-    ESP_LOGI(TAG, "Max speed set to %f", max_speed_);
+    ESP_LOGI(TAG, "Max speed set to %d", max_speed_);
 }
 
 void EsconDCController::SetSpeed(uint8_t speed)
 {
-    // Map the speed percentage to the range 0 to current max_speed_
+    // Map the speed percentage to the range 0 rpm to current max_speed_
     speed_ = map(speed, 0, 255, 0, max_speed_);
-    ESP_LOGI(TAG, "Speed set to %f", speed_);
+
+    // The escon 36/2 has a duty cycle range (resolution) for pwm of 10 - 90% at 0.1% steps.
+    // Therefore we need to map the speed in rpm to a range of 25 - 230 (10-90% of a 8bit value)
+    u_int8_t duty_cycle = map(speed_, 0, MOTOR_MAX_SPEED, 25, 230);
+
+    ledcWrite(PWM_CHANNEL, duty_cycle);
+    ESP_LOGI(TAG, "Speed set to %d", speed_);
 }
 
 void EsconDCController::SetCWLimitPosition()
 {
-    ESP_LOGW(TAG, "SetCWLimitPosition is not supported by this implementation.");
+    ESP_LOGW(TAG, "SetCWLimitPosition is NOT SUPPORTED by this implementation.");
 }
 
 void EsconDCController::SetCCWLimitPosition()
 {
-    ESP_LOGW(TAG, "SetCCWLimitPosition is not supported by this implementation.");
+    ESP_LOGW(TAG, "SetCCWLimitPosition is NOT SUPPORTED by this implementation.");
 }
 
 void EsconDCController::SetTargetPosition(uint16_t position)
 {
-    ESP_LOGW(TAG, "SetTargetPosition is not supported by this implementation.");
+    ESP_LOGW(TAG, "SetTargetPosition is NOT SUPPORTED by this implementation.");
 }
 
 void EsconDCController::Run()
@@ -117,11 +135,16 @@ void EsconDCController::Run()
     {
     case OperationMode::MODE_STOP:
         // The motor is stopped.
-        if (IsRunning()){
+        if (IsRunning())
+        {
             Stop();
-        } else if (!IsRunning && IsEnabled()){
+        }
+        else if (!IsRunning() && IsEnabled())
+        {
             DisableMotor();
-        } else {
+        }
+        else
+        {
             // Do nothing
         }
         break;
@@ -131,25 +154,17 @@ void EsconDCController::Run()
         // - Channel 3: Set max speed
         // - Channel 4: Rotate CW relative to max speed. Channel 5 must be 0.
         // - Channel 5: Rotate CCW relative to max speed. Channel 4 must be 0.
-        if (!IsEnabled()){
-             EnableMotor();
-        } 
-        ContinuousRotation();
+        // - Other channels have no function in this implementation.
+        if (!IsEnabled())
+        {
+            EnableMotor();
+        }
+        // since Channel 3 - 5 are handled directly, there's nothing left to do ;-)
         break;
     default:
         // Technically this can't and shouldn't be called... I think
         ESP_LOGE(TAG, "Invalid operation mode");
     }
-}
-
-void EsconDCController::ContinuousRotation()
-{
-    // TODO: implement
-    // if not enabled, enable to motor?
-    // set direction
-    // set speed
-    // go
-
 }
 
 void EsconDCController::Stop()
@@ -160,16 +175,16 @@ void EsconDCController::Stop()
 
 void EsconDCController::EnableMotor()
 {
-        // TODO: Set MOTOR_ENABLE pin to High
-        is_enabled_ = true;
-        ESP_LOGI(TAG, "Motor enabled.");
+    digitalWrite(MOTOR_ENABLE, HIGH);
+    is_enabled_ = true;
+    ESP_LOGI(TAG, "Motor enabled.");
 }
 
 void EsconDCController::DisableMotor()
 {
-        // TODO: Set MOTOR_ENABLE pin to Low
-        is_enabled_ = false;
-        ESP_LOGI(TAG, "Motor disabled.");
+    digitalWrite(MOTOR_ENABLE, LOW);
+    is_enabled_ = false;
+    ESP_LOGI(TAG, "Motor disabled.");
 }
 
 bool EsconDCController::IsEnabled()
@@ -180,14 +195,15 @@ bool EsconDCController::IsEnabled()
 void EsconDCController::SetDirectionCW()
 {
     is_direction_cw_ = true;
-    // TODO: set MOTOR_DIRECTION pin to low
+    // set MOTOR_DIRECTION pin to low for cw as configered in escon studio
+    digitalWrite(MOTOR_DIRECTION, LOW);
     ESP_LOGI(TAG, "Direction set to CW");
 }
 
 void EsconDCController::SetDirectionCCW()
 {
     is_direction_cw_ = false;
-    // TODO: set MOTOR_DIRECTION pin to high
+    digitalWrite(MOTOR_DIRECTION, HIGH);
     ESP_LOGI(TAG, "Direction set to CCW");
 }
 
@@ -198,8 +214,7 @@ bool EsconDCController::IsRunning()
     // the preset speed for comparsion." This functionality has to be configured in the ESCON Studio software.
     // My configuration (see hardware.md) is set to once the speed is above 0 D4 out of escon board is set to high.
 
-    // TODO: read D4 pin and return true if high
-    bool is_running = false;
+    bool is_running = digitalRead(MOTOR_RUNNING);
     ESP_LOGI(TAG, "Motor is running: %d", is_running);
     return is_running;
 }

@@ -68,13 +68,13 @@ public:
 
     /**
      * @brief Sets soft limit for clockwise direction.
-     * @warning This is required to enable position mode.
+     * @warning Not implemented
      */
     void SetCWLimitPosition();
 
     /**
      * @brief Sets soft limit for counter-clockwise direction.
-     * @warning This is required to enable position mode.
+     * @warning Not implemented
      */
     void SetCCWLimitPosition();
 
@@ -82,6 +82,7 @@ public:
      * @brief Set the Target Position object.
      *
      * @param position The target position to set.
+     * @warning not implemented
      */
     void SetTargetPosition(uint16_t position);
 
@@ -112,38 +113,35 @@ public:
     void Stop();
 
 private:
-    static constexpr uint16_t MOTOR_MAX_SPEED = 12000;   // The Maximum Speed the Motor can operate at
-    static constexpr uint16_t STEPS_PER_ROTATION = 500;  // Feedback by Encoder: 500imp/rev
-    static constexpr uint16_t RAMP_SLOW = 250; // TODO: Test and adapt these ramp settings
+    static constexpr uint16_t MOTOR_MAX_SPEED = 12000; // The Maximum Speed the Motor can operate at
+    static constexpr uint16_t RAMP_SLOW = 250;         // TODO: Test and adapt these ramp settings
     static constexpr uint16_t RAMP_NORMAL = 500;
     static constexpr uint16_t RAMP_FAST = 1000;
+    static constexpr uint8_t PWM_CHANNEL = 0;       // ledc channel for PWM
+    static constexpr uint8_t PWM_RESOLUTION = 8;    // ledc resolution for PWM
+    static constexpr uint32_t PWM_FREQUENCY = 1000; // escon 36/2 has a pmw frequency range of 10 - 5kHz
 
     OperationMode operation_mode_ = MODE_STOP; // Motor mode
-    float max_speed_ = 0;                      // Motor max speed
-    float speed_ = 0;                          // Motor speed
-    uint16_t cw_limit_position_ = 0;           // CW limit position (position mode)
-    uint16_t ccw_limit_position_ = 0;          // CCW limit position (position mode)
-    uint16_t target_position_ = 0;             // Target position
-    uint16_t absolute_position_ = 0;           // Absolute position
-    uint16_t previous_position_ = 0;           // Previous position (helper to calculate absolute position)
+    uint16_t max_speed_ = 0;                   // Motor max speed
+    uint16_t speed_ = 0;                       // Motor speed
     bool is_enabled_ = false;                  // Motor enabled flag
     bool is_direction_cw_ = true;              // Direction flag
 
     /**
-    * @brief Sets the motor mode.
-    * The motor mode is based on the Wahloberg Rotator (https://wahlberg.dk/products/dmx-rotators/dmx-rotator).
-    * Unfortunately Whalberg has made a mess naming the modes.
-    * There is the mode that is set via DMX Channel 6: in this code reffered to as "Operation Mode" (see SetOperationMode for details).
-    * And the mode that is set on the rotary switches on the hardware: in this code reffered to as "Motor Mode".
-    * The Motor Mode is set via the Webserver in this implementation - requires a restart to take effect!
-    * Motor Mode 0-3 determines the ramping (up and down) of the motor (mode 0: neutral, mode 1: slow, mode 2: normal, mode 3: fast).
-    * Motor Mode 4-6 have no function (not implemented).
-    * Motor Mode 6-9 is a manual controll interface on the original hardware via the rotary switch buttons (not implemented).
-    * @warning This code only implements motor mode 0-3. The other modes are not implemented.
-    * @warning Changes to the motor mode need a restart of the ESP32 to take effect!
-    * 
-    * @param motor_mode The operation mode to set.
-    */
+     * @brief Sets the motor mode.
+     * The motor mode is based on the Wahloberg Rotator (https://wahlberg.dk/products/dmx-rotators/dmx-rotator).
+     * Unfortunately Whalberg has made a mess naming the modes.
+     * There is the mode that is set via DMX Channel 6: in this code reffered to as "Operation Mode" (see SetOperationMode for details).
+     * And the mode that is set on the rotary switches on the hardware: in this code reffered to as "Motor Mode".
+     * The Motor Mode is set via the Webserver in this implementation - requires a restart to take effect!
+     * Motor Mode 0-3 determines the ramping (up and down) of the motor (mode 0: neutral, mode 1: slow, mode 2: normal, mode 3: fast).
+     * Motor Mode 4-6 have no function (not implemented).
+     * Motor Mode 6-9 is a manual controll interface on the original hardware via the rotary switch buttons (not implemented).
+     * @warning This code only implements motor mode 0-3. The other modes are not implemented.
+     * @warning Changes to the motor mode need a restart of the ESP32 to take effect!
+     *
+     * @param motor_mode The operation mode to set.
+     */
 
     void SetMotorMode(uint8_t motor_mode);
 
