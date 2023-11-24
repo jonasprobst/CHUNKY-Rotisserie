@@ -171,16 +171,14 @@ void EsconDCController::Stop()
 
 void EsconDCController::EnableMotor()
 {
-    // Enable on escon 36/2 is LOW active
-    digitalWrite(MOTOR_ENABLE, LOW);
+    digitalWrite(MOTOR_ENABLE, HIGH);
     is_enabled_ = true;
     ESP_LOGI(TAG, "Motor enabled.");
 }
 
 void EsconDCController::DisableMotor()
 {
-    // Enable on escon 36/2 is LOW active
-    digitalWrite(MOTOR_ENABLE, HIGH);
+    digitalWrite(MOTOR_ENABLE, LOW);
     is_enabled_ = false;
     ESP_LOGI(TAG, "Motor disabled.");
 }
