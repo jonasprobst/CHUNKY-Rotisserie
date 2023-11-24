@@ -66,7 +66,7 @@ Following the settings set via setup wizard in ESCON Studio. Make sure the firmw
 - Speed Constant: 520 rpm/V (Motor Configuration - p.5)
 - Thermal time constant winding: 20s (Motor Configuration - p.5)
 - Max permissible Speed: 12000 (Motor Configuration - p.5 -> no load speed 12400, recomended speed gearbox 12000)
-- Nominal current: 0.87 A (Motor Configuration - p.5)
+- Nominal current: 2 A (default)
 - Max output current limit: 4A (ESCON 36/2 limit)
 - Speed sensor: Digital Incremental Encoder
 - Encoder Resolution: 500 Counts/turn (Motor Configuration - p.2)
@@ -78,14 +78,14 @@ Following the settings set via setup wizard in ESCON Studio. Make sure the firmw
     - Direction: Digital Input 3, high active (ccw on high, cw on low)
 - Set Value (speed): PWM Set Value (my choice -> higher resolution & pwm library with interrupts)
     - Input: Digital Input 1
-    - SPeed at 10%: 0 rpm
+    - speed at 10%: 0 rpm
     - speed at 90%: 12000rpm (correct?!)
 - Current Limit type: Fixed Current Limit
     - Current limit: 4 A (according to Datasheet motor can take 6 peak...)
 - Ramp type: Analog Ramp (//TODO change this to analog in 1 and use pwm on esp32 if setup is working?)
-    - Input: Potentiometer 1 (P1 in Datasheet, on board -> Liniar 210° //TODO set to 50% to start with!)
-    - Ramp at 0%: 0rpm/s (//TODO: check these are appropriate values)
-    - Ramp at 100%: 2000rpm/s
+    - Input: Potentiometer 1 (P1 in Datasheet, on board -> Liniar 210°)
+    - Ramp at 0%: 0rpm/s
+    - Ramp at 100%: 1000rpm/s
 - Offset type: Fixed Offset
     - Offset: 0rpm (-> no offset)
 - Digital Inputs & Outputs
