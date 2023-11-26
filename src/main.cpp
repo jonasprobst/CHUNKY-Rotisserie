@@ -24,7 +24,7 @@ unsigned long last_update = 0;
 void setup()
 {
     ui.DisplayMessage("starting AP...");
-    ui.ToggleAP(); // TODO: remove for production once buttons are implemented
+    ui.ToggleAP(); // start the access point and webserver, it will turn itself off after 5 minutes
 }
 
 void loop()

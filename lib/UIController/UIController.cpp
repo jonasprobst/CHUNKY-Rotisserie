@@ -29,6 +29,14 @@ void UIController::Update()
 {
     UpdateButtons();
     UpdateDisplay();
+
+    // turn off the access point after 5 minutes
+    if (config_server_.IsAPRunning())
+    {
+        if(millis() > 300000){
+            config_server_.ToggleAP();
+        }
+    }
 }
 
 void UIController::DisplayMessage(const String &message)
