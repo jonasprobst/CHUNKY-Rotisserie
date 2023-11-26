@@ -19,7 +19,7 @@ constexpr gpio_num_t DMX_RX = GPIO_NUM_16;    // UART2 RX [Pin 15]
 
 // SparkFun ESP32 Thing Plus (USB-C) connected to SparkFun DMX-To-LED Shield
 // From LED Shield to ESCON, the following pins are used:
-constexpr gpio_num_t MOTOR_ENABLE = GPIO_NUM_27;    // DMX-Shield DATA2  | ESCON D1gIn 2 (brown)
+constexpr gpio_num_t MOTOR_ENABLE = GPIO_NUM_35;    // DMX-Shield DATA2  | ESCON D1gIn 2 (brown)
 constexpr gpio_num_t MOTOR_DIRECTION = GPIO_NUM_19; // DMX-Shield DATA1  | ESCON D1gIn 3 (green)
 constexpr gpio_num_t MOTOR_STEP = GPIO_NUM_23;      // DMX-Shield DATA0  | ESCON D1gIn 1 (white)
 constexpr gpio_num_t MOTOR_RUNNING = GPIO_NUM_18;    // DMX-Shield CLOCK | ESCON D1gOut 4 (yellow)
