@@ -40,3 +40,6 @@
 [ ] das doppelte vom load muss gehen (schrauben, verbindungen, motor load?)
 
 
+## BUGS
+
+- [x] Motor doesn't stop on connection loss

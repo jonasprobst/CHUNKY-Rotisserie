@@ -35,11 +35,12 @@ void loop()
 
     if (dmx_controller.IsConnected() == 1)
     {
+        // TODO: update more often? Not necessary with a slow ramp
         if (millis() >= last_update + 1000)
         {
             last_update = millis();
 
-            // These log when called
+            // get values from dmx controller
             target_position = dmx_controller.GetTargetPosition();
             max_speed = dmx_controller.GetMaxSpeed();
             cw_speed = dmx_controller.GetCWSpeed();
@@ -52,6 +53,7 @@ void loop()
             motor_controller.SetMaxSpeed(max_speed);
 
             // set direction and speed (relevant for continuous rotation mode only)
+            // TODO: should this be handled by the motor controller?
             if (cw_speed > 0 && ccw_speed > 0)
             {
                 // FIXME: what should we do here? stop the motor? @demi
@@ -75,10 +77,13 @@ void loop()
     }
     else
     {
-        // TODO: DMX Connection lost!! (or not yet established) - do we need a grace period? (Timeout after 1s)
-        // Emergency stop + Update UI ?
-        // ui.displayError("no DMX signal");
-        // motor_controller.Stop();
-        // see: .pio/libdeps/debug_thing/esp_dmx/examples/DMXRead/DMXRead.ino
+        // No DMX signal for >5s. If the motor is running, stop it.
+        if(millis() >= last_update + 5000)
+        {
+            last_update = millis();
+            motor_controller.Stop();
+            ESP_LOGI(TAG, "No DMX signal");
+            // ui.displayError("no DMX signal");
+        }
     }
 }
