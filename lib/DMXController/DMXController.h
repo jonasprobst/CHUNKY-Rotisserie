@@ -104,7 +104,7 @@ private:
   static constexpr uint8_t OPERATION_MODE_CHANNEL = 6; // Modus Operandi
 
   dmx_port_t dmx_port_ = DMX_NUM_1; // The UART port to use. WARNING: Use the correct pin setup for this!
-  uint8_t base_channel_ = 0;        // The base channel (aka dmx address aka offset) to read from.
+  uint16_t base_channel_ = 0;        // The base channel (aka dmx address aka offset) to read from.
   byte channel_values_[DMX_PACKET_SIZE];      // The array to store the read values in.
   bool is_connected_ = false;               // Flag to indicate if the DMX connection is active.
 
