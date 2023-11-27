@@ -1,6 +1,8 @@
-# Drama Dynamo: Unleashing Dynamic Theater Performances
+# CHUNKY Rotor
 
-Welcome to Drama Dynamo, the device that brings theater props to life! We harness the power of DMX, the language of stage lighting and effects, decoded by the versatile ESP32 microcontroller. This enables any prop to move on cue - straight from the lightiong desk. Configuring your dynamic performance is a breeze through a Wi-Fi accessible webpage. Drama Dynamo, your key to creating truly immersive and interactive theater experiences.
+CHUNKY Rotor is a device designed to move theater props using DMX512 messages. It was invented for the performance "CHUNKY" by [Ernestyna Orlowska](https://www.ernestynaorlowska.ch) , first shown at Dampfzentrale in Bern on the 02.12.2023.
+
+This repository contains the firmware and some documentation to understand and operate the device. Since the device is build around an old fitnessbike frame, the hardware documentation is minimal.
 
 ## WARNING
 
@@ -12,36 +14,37 @@ Welcome to Drama Dynamo, the device that brings theater props to life! We harnes
 
 ** DO NOT USE, THE DEVICE IF ANY DAMAGE OR ERROR IS FOUND!**
 
-Please read the chapter [safety]() carefully and ensure any safety recomondations are implemented in your setup.
+Please read the chapter safety carefully.
 
 ## WHEN OPERATING
 
 Only operate the rotator when there is a clear view to the rotator and area around it.
-Before running the rotator, ensure that the ‘danger zone’ next to the rotator is cleared to avoid risk of injury.
+
+Before running the rotator, ensure that the ‘danger zone’ next to the rotor is cleared to avoid risk of injury.
 
 
 ## Setup
 
-Drama Dynamo is designed to control a motorized theater prop using DMX messages interpreted by an ESP32 device. The software inplementation and especially the DMX contoll interface is heavily based on the [Wahlberg Rotator](https://wahlberg.dk/products/dmx-rotators/dmx-rotator.), making this custom device easy to operate from a ligth desk.
+The software inplementation and especially the DMX contoll interface is heavily based on the [Wahlberg Rotator](https://wahlberg.dk/products/dmx-rotators/dmx-rotator.), making this custom device easy to operate from a ligth desk.
 
 ### Components
 
-1. **ESP32 Microcontroller**: The [Sparkfun ESP32 Thing Plus C]() will act as the brain of the system, interpreting DMX messages and controlling the movement of the motor.
-2. **DMX Shield**: The [Sparfunk DMX to LED Shield]() is used to receive DMX messages sent from the lighting desk.
-3. **Motor Driver Shield**: This shield will control the motor, following the instructions provided by the ESP32.
-4. **Stepper Motor**: The motor is responsible for the physical movement of the prop.
-5. **Wi-Fi Access Point**: The ESP32 will host a standalone Wi-Fi access point to enable easy configuration of the system.
-6. **Webpage for Configuration**: A simple webpage will be hosted on the ESP32. This will allow the user to set the mode and base channel for DMX communication.
+1. **ESP32 Microcontroller**: The [Sparkfun ESP32 Thing Plus C]() acts as the brain of the system, interpreting DMX messages and controlling the movement of the motor.
+2. **DMX Shield**: The [Sparfunk DMX to LED Shield]() receives DMX messages sent from the lighting desk.
+3. **Motor Driver**: Controls the motor, following the instructions provided by the ESP32.
+4. **Motor**: The motor physically moves the prop.
+5. **Wi-Fi Access Point**: The ESP32 hosts a standalone Wi-Fi access point to enable easy configuration of the system.
+6. **Webpage for Configuration**: A simple webpage will be served from the ESP32. To set the motor mode (ramping) and base channel for DMX communication.
 7. **LED Indicators**: Three LEDs will be used to provide status feedback about the system, access point, and motor state. **Not implemented**
 8. **Button for AP Control**: A button will be used to manually control the state of the Access Point. **Not implemented**
 
 ## System States & Settings
 
-The System has two distinct types of settings that determin the state the motor. In order to stay complient with the Wahlberg Rotator and it's [cheat sheet](https://wahlberg.dk/media/1186/281806004_rotator_cheat-sheet_a5.pdf) the naming has been copied. Unfortunately Wahlberg did a bad job at picking names, so here's an overview:
+The System has two distinct types of settings that determin the state the motor. In order to stay complient with the Wahlberg Rotator and it's [cheat sheet](https://wahlberg.dk/media/1186/281806004_rotator_cheat-sheet_a5.pdf) the naming has been copied. Unfortunately Wahlberg did a bad job at picking names, so here's an overview of my implementation:
 
 ### Wifi Config Interface
 
-On the wahlberg rotator theses settings are set by rotary switches on the actuall hardware. The original name for them is mode. The left side on the rotator's cheat sheet.
+On the wahlberg rotor theses settings are set by rotary switches on the actuall hardware. The original name for them is mode. The left side on the rotator's cheat sheet.
 
 Configurations made via Wifi Config Interface are saved to NVS, so that they persist even after the device is powered off. The setting *Motor Mode* requires a restart to take effect.
 
@@ -72,13 +75,13 @@ The following Channel numbers are offset by the *Base Channel* set via the Wifi 
 
 ## Software Architecture
 
-1. **Hardware Abstraction Layer (HAL):** Interacts with the DMX shield, WiFi module, stepper motor, LEDs, and the AP button. Contains classes/functions to handle hardware-specific tasks. It must implement robust error handling due to direct interface with hardware.
+1. **Hardware Abstraction Layer (HAL):** Interacts with the DMX shield, WiFi module, stepper motor, LEDs, and the AP button. Contains classes/functions to handle hardware-specific tasks.
 2. **DMX Controller:** Interprets the DMX messages received, mapping DMX channels to controls like position, speed, direction, etc.
-3. **Motor Controller:** Controls the stepper motor based on interpreted commands and manages the Motor LED state.
+3. **Motor Controller:** Controls the stepper motor based on interpreted commands 
 4. **WIFI AP Config Server:** Serves the webpage for mode and base channel settings, manages AP, and shuts down after 5 minutes of idleness.
 5. **NVS Settings:** Manages saving and retrieving the motor mode and base channel configuration persistently across power cycles (NVS).
-6. **System Controller:** Main controller for the system, manages the system LED and oversees the AP button functionality.
-7. **LED Controller:** Controls the LED indicators for system status, AP status, and motor status, based on states received from the System Controller, Web Server, and Motor Controller.
+6. **System Controller:** Main controller for the system.
+7. **UserInterface" Manages the AP, Buttons and LEDs.
 
 ## Safety 
 
