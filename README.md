@@ -33,7 +33,7 @@ WHEN OPERATING:
 
 - Dimensions (LWH):
 - Power Supply: 250VAC 50/60Hz
-- Power Inlet: 
+- Power Inlet:
 - DMX Control Signal: DMX 512, 6 channels used, channel numbers configurable
 - DMX Connection: 3 pole XLR in and out (not sure if link works)
 - Rotation Modes: Continuous Rotation, (WIP: Positional, Angular)
