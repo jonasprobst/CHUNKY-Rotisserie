@@ -1,8 +1,6 @@
-# Hardware 
+# Hardware
 
-## Setup
-
-### Components
+## Components
 
 - Powerplug with Switch and Fuse (10A)
 - Powwersuply 230VAC to 24VDC (6A fuse on output)
@@ -34,11 +32,12 @@
 - Maxon Motor DCX 22S GB KL 24V
 - Planetary Gearhead GPX22 A 138:1
 - Encoder ENC30 HEDL 5540 500IMP
-- Maxon ESCON 36/2 DC, 4-Q Servokontroller, 10-36 V, 2A/4A (https://www.maxongroup.ch/maxon/view/product/control/4-Q-Servokontroller/403112)
+- [Maxon ESCON 36/2 DC](https://www.maxongroup.ch/maxon/view/product/control/4-Q-Servokontroller/403112), 4-Q Servokontroller, 10-36 V, 2A/4A
 - Timing belt - Gearhead Output to Shaft: 12:16 = 0.75:1 | 12:18 = 0.666 (Gears: 12, 16, 18, 60)
 - V belt - Shaft to Axcel: 1:7.77
 
 ### Calc speed at swung object
+
 NominalSpeedMotor = 10'800rpm
 GearRatio = (138/1) x (12/16) x (7.77/1) = 138 x 0.75 x 7.77 =  804.2
 OutputSpeed = 10'800rpm / 804.2 = 13.43rpm
@@ -57,6 +56,7 @@ timing gear ratio options:
 ## ESCON Servo Driver
 
 ### Protection
+
 The ESCON 36/2 DC has protective circuits against overcurrent, excess temperature, under- and over-voltage, against voltage transients and against short-circuits in the motor cable. Furthermore it is equipped with protected digital inputs and outputs and an adjustable current limitation for protecting the motor and the load. The motor current and the actual speed of the motor shaft can be monitored by means of the analog output voltage.
 
 ### ESCON Setup (in Studio)

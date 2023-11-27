@@ -1,0 +1,61 @@
+# Software
+
+## Setup
+
+The software inplementation and especially the DMX contoll interface is heavily based on the [Wahlberg Rotator](https://wahlberg.dk/products/dmx-rotators/dmx-rotator.), making this custom device easy to operate from a ligth desk.
+
+### Components
+
+1. **ESP32 Microcontroller**: The [Sparkfun ESP32 Thing Plus C]() acts as the brain of the system, interpreting DMX messages and controlling the movement of the motor.
+2. **DMX Shield**: The [Sparfunk DMX to LED Shield]() receives DMX messages sent from the lighting desk.
+3. **Motor Driver**: Controls the motor, following the instructions provided by the ESP32.
+4. **Motor**: The motor physically moves the prop.
+5. **Wi-Fi Access Point**: The ESP32 hosts a standalone Wi-Fi access point to enable easy configuration of the system.
+6. **Webpage for Configuration**: A simple webpage will be served from the ESP32. To set the motor mode (ramping) and base channel for DMX communication.
+7. **LED Indicators**: Three LEDs will be used to provide status feedback about the system, access point, and motor state. **Not implemented**
+8. **Button for AP Control**: A button will be used to manually control the state of the Access Point. **Not implemented**
+
+## System States & Settings
+
+The System has two distinct types of settings that determin the state the motor. In order to stay complient with the Wahlberg Rotator and it's [cheat sheet](https://wahlberg.dk/media/1186/281806004_rotator_cheat-sheet_a5.pdf) the naming has been copied. Unfortunately Wahlberg did a bad job at picking names, so here's an overview of my implementation:
+
+### Wifi Config Interface
+
+On the wahlberg rotor theses settings are set by rotary switches on the actuall hardware. The original name for them is mode. The left side on the rotator's cheat sheet.
+
+Configurations made via Wifi Config Interface are saved to NVS, so that they persist even after the device is powered off. The setting *Motor Mode* requires a restart to take effect.
+
+//TODO: Test if it's possible to set basechannel to 0 (default) in webinterface
+- **Base Channel**: The starting address of the devices DMX Channel range. Value Range: 0 - 500, Default: 0.
+- **Motor Mode**: The ramp speed of the stepper motor (other modes are not supported). Requires a restart to take effect! Value Range: 0 - 9, Default: 2. //TODO make 2 the default value
+    - 0: no function
+    - 1 - 3: ramping speed (up and down synchronious) of the motor (1: slow, 2: normal, 3: fast).
+    - 4 - 6: no function
+    - 7 - 8: manual controll (not implemented). on the original hardware the motor can be controlled by the rotary switch buttons. 
+    - 9: no function
+
+### DMX Interface
+
+The following Channel numbers are offset by the *Base Channel* set via the Wifi config interface. For example, if base channel is set to 50: channel 1 will be addressed with 51, channel 2 with 52 etc.
+
+- Channel 1: Position rough (Hi of a 16bit DMX channel)
+- Channel 2: Position fine (Lo of a 16bit DMX channel)
+- Channel 3: Set the maximum speed (reached after ramp up)
+- Channel 4: Speed CW / Set CW limit (//TODO speed or just direction?!)
+- Channel 5: Speed CCW / Set CCW limit
+- Channel 6: **Operation mode** (named "mode control" by Wahlberg)
+    - set as a percentage of the channel value .
+    - 0-50% Continuous rotation mode
+    - 51-54% Position Mode (set limits enabled)
+    - 55-79% Position mode
+    - 80-100% Angular mode
+
+## Software Architecture
+
+1. **Hardware Abstraction Layer (HAL):** Interacts with the DMX shield, WiFi module, stepper motor, LEDs, and the AP button. Contains classes/functions to handle hardware-specific tasks.
+2. **DMX Controller:** Interprets the DMX messages received, mapping DMX channels to controls like position, speed, direction, etc.
+3. **Motor Controller:** Controls the stepper motor based on interpreted commands 
+4. **WIFI AP Config Server:** Serves the webpage for mode and base channel settings, manages AP, and shuts down after 5 minutes of idleness.
+5. **NVS Settings:** Manages saving and retrieving the motor mode and base channel configuration persistently across power cycles (NVS).
+6. **System Controller:** Main controller for the system.
+7. **UserInterface" Manages the AP, Buttons and LEDs.
