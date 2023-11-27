@@ -17,7 +17,7 @@
 class NVSStorage {
 public:
     // Default values
-    static constexpr uint16_t DEFAULT_BASE_CHANNEL = 500;
+    static constexpr uint16_t DEFAULT_BASE_CHANNEL = 0;
     static constexpr uint8_t DEFAULT_MODE = 2;
     /**
      * @brief Constructs an NVSStorage object with a default namespace.

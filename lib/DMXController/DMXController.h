@@ -28,7 +28,7 @@ public:
    * @param base_channel Set a base channel (aka offset address) to retrieve the channels from.
    *                     eg. 200 to retriev channel 201, 202, etc.
    */
-  DMXController(uint8_t base_channel);
+  DMXController(uint16_t base_channel);
 
   /**
    * @brief Retrieve the motor mode from the DMX data.
@@ -79,7 +79,7 @@ public:
    * @param channel The channel aka DMX address to read.
    * @return The channel value or if there was an error, the default value.
    */
-  uint8_t GetChannelValue(uint8_t channel, uint8_t default_value = 0);
+  uint8_t GetChannelValue(uint16_t channel, uint8_t default_value = 0);
 
   /**
    * @brief Check if the DMX connection is active.

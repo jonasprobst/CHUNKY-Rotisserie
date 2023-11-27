@@ -99,7 +99,7 @@ void WifiAPConfigServer::HandleRoot(AsyncWebServerRequest *request)
 
     // get the mode and base channel from settings
     uint8_t mode = dmx_settings_.GetMode();
-    uint8_t base_channel = dmx_settings_.GetBaseChannel();
+    uint16_t base_channel = dmx_settings_.GetBaseChannel();
     ESP_LOGI(TAG, "Settings loaded. M: %d, BC: %d", mode, base_channel);
 
     // Load the HTML page from SPIFFS

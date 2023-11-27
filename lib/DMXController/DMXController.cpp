@@ -4,7 +4,7 @@
 
 static constexpr const char TAG[] = "DMXController";
 
-DMXController::DMXController(uint8_t base_channel)
+DMXController::DMXController(uint16_t base_channel)
     : base_channel_(base_channel), is_connected_(false)
 {
   // Initialise DMX Connection
@@ -56,7 +56,7 @@ uint8_t DMXController::GetOperationMode()
   return operation_mode_;
 }
 
-uint8_t DMXController::GetChannelValue(uint8_t channel, uint8_t default_value)
+uint8_t DMXController::GetChannelValue(uint16_t channel, uint8_t default_value)
 {
   // Check if DMX is connected and channel in range
   // On error, return default value to prevent motor from moving unintentionally
