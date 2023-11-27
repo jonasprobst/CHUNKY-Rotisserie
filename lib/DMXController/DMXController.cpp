@@ -66,13 +66,13 @@ uint8_t DMXController::GetChannelValue(uint16_t channel, uint8_t default_value)
     ESP_LOGE(TAG, "Error: DMX not connected.");
     return default_value;
   }
-  else if (channel < 1 || channel > DMX_PACKET_SIZE)
+  else if (channel <= 0 || channel > DMX_PACKET_SIZE)
   {
     ESP_LOGE(TAG, "Error: Invalid channel number: %d", channel);
     return default_value;
   }
   // Return the value of the requested channel offset by base channel
-  return channel_values_[base_channel_ + channel -1];
+  return channel_values_[base_channel_ + channel];
 }
 
 bool DMXController::IsConnected()
