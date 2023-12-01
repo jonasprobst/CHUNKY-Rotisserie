@@ -1,25 +1,40 @@
 # Hardware
 
+## Technical Data
+
+- Dimensions (LWH): ca. 55cm x 42cm x 25cm
+- Power Supply: 250VAC 50/60Hz, 10A fuse
+- Power Inlet: Universal Power Cord C13/T12
+- DMX Control Signal: 6 channels, configurable (DMX512)
+- DMX Connection: 3 pole XLR in and out (not sure if link works)
+- Rotation Modes: Continuous Rotation, (WIP: Positional, Angular)
+- Rotation Speed: <= ~20 rpm at output
+- Load Limits: ~50kg (shaft down)
+- Own weight: ~20kg
+- Mounting Clamp: Global Truss 823 Half Coupler, for 48-51mm pipes, 500kg max load
+- Motor: 24 VDC, 24 Watt, gear ratio 804:1
+
 ## Components
 
-- Powerplug with Switch and Fuse (10A)
-- Powwersuply 230VAC to 24VDC (6A fuse on output)
-- Spannungsregler 24VDC zu 5VCD (1A fuse on output)
-- Maxon ESCON Servo Driver
-- Maxon Motor with Planetary Gearhead and Encoder
-- Sparkfun DMX-Shield
-- Sparkfun ESP32 Thing Plus C
-- Repurposed Fitness Bike Frame with custom axel
+- Power supply: 230VAC to 24VDC, [Power Inlet T12](/docs/datasheets/Power-inlet_IEC-60320_T12.pdf), 10A fuse
+  - Switching regulator: 24VDC to 5VCD 1A, [Recom DC/DC converter R-78T5.0-1.0](/docs/datasheets/Recom_R-78T50_1-0.pdf)
+- [Drive](/docs/datasheets/Maxon%20Configuration-B74421A7E48E_4.pdf):
+  - Motor: Maxon DCX 22S GB KL 24V
+  - Planetary gear head: Maxon GPX22 A 138:1
+  - Encoder: Maxon ENC30 HEDL 5540 500IMDC7DC converter
+- Servo Controller: [Maxon ESCON 36/2 DC](/docs/datasheets/Maxon%20ESCON-36-2-DC-Hardware-Reference-En.pdf), [configuration](/docs/escon_config.md)
+- [Sparkfun DMX-Shield](/docs/datasheets/SparkFun_ESP32_Thing_Plus_DMX_to_LED_Shield.pdf)
+- [Sparkfun ESP32 Thing Plus C](/docs/datasheets/SparkFun_Thing_Plus_ESP32_Pin%20Configuration.pdf)
 - Timing Belt 5M, 9mm
-- Gearhead 5M, 12 Teeth, 9mm
-- Gearhead 5M, 18 Teeth, 15mm
-- 2 clamps 50mm for truss attachment, fixed 
-- 1 clamp 50mm for truss attachment, position flexible
+- [Gear head 5M, 12 Teeth](/docs/datasheets/Zahnriemenscheibe_12-5M-9.pdf)
+- [Gear head 5M, 18 Teeth](/docs/datasheets/Zahnriemenscheibe_18-5M-9.pdf)
+- 3 Mounting Clamp: [Global Truss 823 Half Coupler](/docs/datasheets/GlobalTruss_823-Half-Coupler.jpg), for 48-51mm pipes, 500kg max load
+- Repurposed fitness bike frame
 - Custom metal housing
-- Various wires, criped
-- Various screews, nuts and bolts
+- Various wires, crimped
+- Various screws, nuts and bolts
 
-### Powersupply (wireing)
+### Wiring
 
 - Powerplug (10A Sicherung) -> Netzteil 24VDC
 - Netzteil -> 6A Sicherung -> ESCON @ 24VDC
@@ -27,14 +42,6 @@
 - DMX Controller 5VDC -> Onboard Spannungswandler 3.3VDC -> ESP32 Thing
 - DMX Controller 5VDC -> Optocopler -> DMX Anschluss
 
-## Drive
-
-- Maxon Motor DCX 22S GB KL 24V
-- Planetary Gearhead GPX22 A 138:1
-- Encoder ENC30 HEDL 5540 500IMP
-- [Maxon ESCON 36/2 DC](https://www.maxongroup.ch/maxon/view/product/control/4-Q-Servokontroller/403112), 4-Q Servokontroller, 10-36 V, 2A/4A
-- Timing belt - Gearhead Output to Shaft: 12:16 = 0.75:1 | 12:18 = 0.666 (Gears: 12, 16, 18, 60)
-- V belt - Shaft to Axcel: 1:7.77
 
 ### Calc speed at swung object
 
@@ -52,59 +59,3 @@ timing gear ratio options:
 - 12:18 -> 3.96 m/s -> 14.24 km/h <== plan A (if belt fit's)
 - 12:60 -> 13.18 m/s -> 47.46 km/h (belt wo't fit)
 - 16:18 -> 2.97 m/s -> 10.68 km/h (too slow)
-
-## ESCON Servo Driver
-
-### Protection
-
-The ESCON 36/2 DC has protective circuits against overcurrent, excess temperature, under- and over-voltage, against voltage transients and against short-circuits in the motor cable. Furthermore it is equipped with protected digital inputs and outputs and an adjustable current limitation for protecting the motor and the load. The motor current and the actual speed of the motor shaft can be monitored by means of the analog output voltage.
-
-### ESCON Setup (in Studio)
-
-Following the settings set via setup wizard in ESCON Studio. Make sure the firmware is up to date.
-
-- Speed Constant: 520 rpm/V (Motor Configuration - p.5)
-- Thermal time constant winding: 20s (Motor Configuration - p.5)
-- Max permissible Speed: 12000 (Motor Configuration - p.5 -> no load speed 12400, recomended speed gearbox 12000)
-- Nominal current: 2 A (default)
-- Max output current limit: 4A (ESCON 36/2 limit)
-- Speed sensor: Digital Incremental Encoder
-- Encoder Resolution: 500 Counts/turn (Motor Configuration - p.2)
-    - Encoder Direction: Maxon (guess since it's a maxon sensor)
-- Mode of operation: Speed Controller closed loop (my choice)
-    - Inner current control loop (default)
-- Enable: Enable & Direction (how my firmware works)
-    - Enable: Digital Input 2, high active (enabled on high, disabled on low)
-    - Direction: Digital Input 3, high active (ccw on high, cw on low)
-- Set Value (speed): PWM Set Value (my choice -> higher resolution & pwm library with interrupts)
-    - Input: Digital Input 1
-    - speed at 10%: 0 rpm
-    - speed at 90%: 12000rpm (correct?!)
-- Current Limit type: Fixed Current Limit
-    - Current limit: 4 A (according to Datasheet motor can take 6 peak...)
-- Ramp type: Analog Ramp (//TODO change this to analog in 1 and use pwm on esp32 if setup is working?)
-    - Input: Potentiometer 1 (P1 in Datasheet, on board -> Liniar 210°)
-    - Ramp at 0%: 0rpm/s
-    - Ramp at 100%: 1000rpm/s
-- Offset type: Fixed Offset
-    - Offset: 0rpm (-> no offset)
-- Digital Inputs & Outputs
-    - D1 (in) -> PWM - Set Value for Speed (10% -> 0rpm, 90% -> 12000rpm)
-    - D2 (in) -> Enable (high -> enable)
-    - D3 (in) -> Direction (high -> ccw)
-    - D4 (out) -> Speed Comparator (high -> set speed is reached resp. "actual speed average")
-- Analog Inputs
-    - A1 (in) -> None
-    - A2 (in) -> None
-    - P1 (in) -> Speed ramp (on board potentiometer - configured above to set ramp speed)
-- Analog Output
-    - A1 (out) -> None
-    - A2 (out) -> None
-- Digital Output 4
-    - Mode: Limit
-    - Polarity: High above limit
-    - Direction: CW&CCW
-    - Limit: 0rpm
-
-
-
