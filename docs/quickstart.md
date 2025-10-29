@@ -37,5 +37,29 @@
 
 ## Modus Operandi
 
+## ESCON - Setup
+
+### Motor Mode (Webserver)
+
+    // Motor mode sets the ramp (up and down) of the stepper motor. It is set via Webserver.
+    // IMPORTANT: this is not the same as the operation mode (see SetOperationMode for details)
+    // IMPORTANT: Parameter motor_mode is ignored since the ramp is set via potentiometer on the ESCON board.
+
+    // WARNING: In the current setup the ramp speed is set via the potentiometer on the ESCON board.
+    // Changes to the parameter motor_mode have absolutley no effect.
+    // A future feature would be to set the ramp via an analog output (PWM). The ESCON board supports this,
+    // but would need to be reconfigured via the ESCON Studio software.
+
+### Modus Operandi
+
+    // Operation mode is set as a percentage of the DMX Channel 6 value.
+    // IMPORTANT: this is not the same as motor mode (see SetMotorMode for details)
+
+    // WARNING: The Escon 36/2 DC only supports continuous rotation
+    // 0: STOP
+    // 1-255: Continuous Rotation
+
+    
+
 
 
